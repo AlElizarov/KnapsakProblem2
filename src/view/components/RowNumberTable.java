@@ -178,6 +178,7 @@ public class RowNumberTable extends JTable implements ChangeListener,
 
 			if (isSelected) {
 				setFont(getFont().deriveFont(Font.BOLD));
+				setBackground(tableManager.getFocusRow(row));
 			}
 			else{
 				setBackground(tableManager.getUnFocusRow(row));
