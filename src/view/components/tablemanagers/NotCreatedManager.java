@@ -67,10 +67,4 @@ class NotCreatedManager implements ITableType {
 		return null;
 	}
 
-	@Override
-	public boolean isFull() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 }

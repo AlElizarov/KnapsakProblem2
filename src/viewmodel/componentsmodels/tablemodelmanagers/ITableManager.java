@@ -7,8 +7,6 @@ import javax.swing.table.TableCellRenderer;
 
 public interface ITableManager {
 
-	public ITableType getTableType();
-
 	public TableCellEditor getCellEditor(int row, int column);
 
 	public int getColumnCount();
