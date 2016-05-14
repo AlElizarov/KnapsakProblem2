@@ -52,7 +52,6 @@ public class KnapsakProblemTableModel extends AbstractTableModel {
 
 	@Override
 	public void fireTableStructureChanged() {
-		System.out.println("yes");
 		super.fireTableStructureChanged();
 		if (tableManager.isFull()) {
 			tableManager.onFullEvent();
