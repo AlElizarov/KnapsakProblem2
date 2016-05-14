@@ -101,7 +101,7 @@ public class MenuBarViewModelTests {
 	
 	@Test
 	public void byDefaultEconomButtonIsDisabled() {
-		assertFalse(isSaveAndSolutionEnable());
+		assertFalse(menuBarViewModel.isEconomButtonEnabled());
 	}
 
 	private void fullTable() {
