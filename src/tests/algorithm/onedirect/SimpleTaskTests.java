@@ -1,4 +1,4 @@
-package tests.algorithm;
+package tests.algorithm.onedirect;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -9,7 +9,7 @@ import model.Top;
 import org.junit.Before;
 import org.junit.Test;
 
-public class SolverTests {
+public class SimpleTaskTests {
 
 	private OneDirectSolver solver;
 	private Task task;
@@ -32,6 +32,7 @@ public class SolverTests {
 
 	@Test
 	public void byDefaultSolverNotEnd() {
+		
 		assertFalse(solver.isEnd());
 	}
 
@@ -41,6 +42,26 @@ public class SolverTests {
 		solver = new OneDirectSolver(task);
 		
 		assertFalse(solver.hasSolution());
+	}
+	
+	@Test
+	public void taskWithAbsoluteSolutions() {
+		task.setValue(100, 1, 5);
+		solver = new OneDirectSolver(task);
+		solve();
+		Top top = solver.getCurrentLeaderTop();
+		
+		assertTop(30, 30, top);
+	}
+	
+	@Test
+	public void taskWithOneVariableSolutions() {
+		task.setValue(2, 1, 5);
+		solver = new OneDirectSolver(task);
+		solve();
+		Top top = solver.getCurrentLeaderTop();
+		
+		assertTop(6, 6, top);
 	}
 
 	@Test
@@ -69,12 +90,16 @@ public class SolverTests {
 	
 	@Test
 	public void getSolution() {
-		while(!solver.isEnd()){
-			solver.solve();
-		}
+		solve();
 		Top top = solver.getCurrentLeaderTop();
 		
 		assertTop(21, 21, top);
+	}
+
+	private void solve() {
+		while(!solver.isEnd()){
+			solver.solve();
+		}
 	}
 
 	private void assertTop(int expectH, int expectV, Top top) {
