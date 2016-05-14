@@ -2,21 +2,10 @@ package viewmodel.areasmodels;
 
 import viewmodel.TaskManager;
 
-public class MenuBarViewModel {
-
-	private boolean isEconomMenuEnable = false;
-	private TaskManager manager;
+public class MenuBarViewModel extends ControlViewModel {
 
 	public MenuBarViewModel(TaskManager manager) {
-		this.manager = manager;
-	}
-
-	public boolean isSaveAndSolutionEnable() {
-		if (manager.isTaskFull()) {
-			return true;
-		} else {
-			return false;
-		}
+		super(manager);
 	}
 
 	public boolean isTableMenuEnabled() {
@@ -24,10 +13,6 @@ public class MenuBarViewModel {
 			return true;
 		}
 		return false;
-	}
-	
-	public boolean isEconomButtonEnabled() {
-		return isEconomMenuEnable;
 	}
 
 }
