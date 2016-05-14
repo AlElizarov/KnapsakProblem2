@@ -44,9 +44,4 @@ class NotSolutionNotEconomicManager extends TableType {
 		return 20;
 	}
 
-	@Override
-	protected boolean isEnythingElseFull() {
-		return true;
-	}
-
 }

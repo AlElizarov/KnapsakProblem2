@@ -128,38 +128,6 @@ public class Task {
 		return name;
 	}
 
-	public List<List<Integer>> getCriterions() {
-		return costs;
-	}
-
-	public List<List<Integer>> getLimitations() {
-		return weights;
-	}
-
-	public List<Integer> getLimits() {
-		return limits;
-	}
-
-	public List<String> getVarNames() {
-		return varNames;
-	}
-
-	public List<String> getCritNames() {
-		return critNames;
-	}
-
-	public List<String> getLimitNames() {
-		return limitNames;
-	}
-
-	public List<String> getCritUnits() {
-		return critUnits;
-	}
-
-	public List<String> getLimitUnits() {
-		return limitUnits;
-	}
-
 	public void addCriterion() {
 		List<Integer> tmp = new ArrayList<>();
 		for (int i = 0; i < variableCount; i++) {
@@ -213,9 +181,9 @@ public class Task {
 	}
 
 	public void deleteEconomVariable() {
-		if(variableCount > 1){
+		if (variableCount > 1) {
 			deleteVariable();
-			varNames.remove(varNames.size()-1);
+			varNames.remove(varNames.size() - 1);
 		}
 	}
 
@@ -237,7 +205,7 @@ public class Task {
 	public void deleteLimitation() {
 		if (limitationCount > 1) {
 			weights.remove(weights.size() - 1);
-			limits.remove(limits.size()-1);
+			limits.remove(limits.size() - 1);
 			limitationCount--;
 		}
 	}
@@ -254,5 +222,131 @@ public class Task {
 			limitNames.remove(limitNames.size() - 1);
 			limitUnits.remove(limitUnits.size() - 1);
 		}
+	}
+
+	public void setValue(int intValue, int row, int col) {
+		if (col == variableCount) {
+			limits.set(row - criterionCount, intValue);
+			return;
+		}
+		if (row < criterionCount) {
+			costs.get(row).set(col, intValue);
+			return;
+		}
+		weights.get(row - criterionCount).set(col, intValue);
+	}
+
+	public void setEconomValue(Object value, int row, int col) {
+		if (row == 0) {
+			varNames.set(col, value.toString());
+			return;
+		}
+		if (col == 0) {
+			setNames(value, row - 1);
+			return;
+		}
+		setUnits(value, row - 1);
+	}
+
+	private void setUnits(Object value, int row) {
+		if (row < criterionCount) {
+			critUnits.set(row, value.toString());
+		} else {
+			limitUnits.set(row - criterionCount, value.toString());
+		}
+	}
+
+	private void setNames(Object value, int row) {
+		if (row < criterionCount) {
+			critNames.set(row, value.toString());
+		} else {
+			limitNames.set(row - criterionCount, value.toString());
+		}
+	}
+
+	public Object getValue(int row, int col) {
+		if (col == variableCount) {
+			return limits.get(row - criterionCount);
+		}
+		if (row < criterionCount) {
+			return costs.get(row).get(col);
+		}
+		return weights.get(row - criterionCount).get(col);
+	}
+
+	public Object getEconomValue(int row, int col) {
+		if (row == 0) {
+			return varNames.get(col);
+		}
+		if (col == 0) {
+			return getNames(row - 1);
+		}
+
+		if (col == 1) {
+			return getUnits(row - 1);
+		}
+		return null;
+	}
+
+	private Object getUnits(int row) {
+		if (row < criterionCount) {
+			return critUnits.get(row);
+		}
+		if (row >= criterionCount) {
+			return limitUnits.get(row - criterionCount);
+		}
+		return null;
+	}
+
+	private Object getNames(int row) {
+		if (row < criterionCount) {
+			return critNames.get(row);
+		}
+		if (row >= criterionCount) {
+			return limitNames.get(row - criterionCount);
+		}
+		return null;
+	}
+
+	public boolean isFull() {
+		return isCriterionsFull() && isLimitationFull() && isLimitsFull();
+	}
+
+	private boolean isLimitsFull() {
+		return !limits.contains(null);
+	}
+
+	private boolean isLimitationFull() {
+		for (int row = 0; row < limitationCount; row++) {
+			if (weights.get(row).contains(null)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private boolean isCriterionsFull() {
+		for (int row = 0; row < criterionCount; row++) {
+			if (costs.get(row).contains(null)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public boolean isEconomFull() {
+		return isCritNamesFull() && isLimitationNamesFull() && isVarNamesFull();
+	}
+
+	private boolean isVarNamesFull() {
+		return !varNames.contains(null);
+	}
+
+	private boolean isLimitationNamesFull() {
+		return !limitNames.contains(null);
+	}
+
+	private boolean isCritNamesFull() {
+		return !critNames.contains(null);
 	}
 }

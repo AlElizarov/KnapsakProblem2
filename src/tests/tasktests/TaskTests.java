@@ -81,17 +81,6 @@ public class TaskTests {
 	}
 
 	@Test
-	public void addCriterionToEconomTask() {
-		int expectUnitCount = CRITERION_COUNT + 1;
-
-		Task task = createNotEconomTask();
-		task.addEconomCriterion();
-		int actualUnitCount = task.getCritUnits().size();
-
-		assertEquals(expectUnitCount, actualUnitCount);
-	}
-
-	@Test
 	public void deleteCriterionfromNotEconomTask() {
 		int expectCritCount = CRITERION_COUNT - 1;
 
@@ -116,17 +105,6 @@ public class TaskTests {
 	}
 
 	@Test
-	public void deleteCriterionfromEconomTask() {
-		int expectUnitCount = CRITERION_COUNT - 1;
-
-		Task task = createEconomTask();
-		task.deleteEconomCriterion();
-		int actualUnitCount = task.getCritUnits().size();
-
-		assertEquals(expectUnitCount, actualUnitCount);
-	}
-	
-	@Test
 	public void addLimitationToNotEconomTask() {
 		int expectLimitCount = LIMITATION_COUNT + 1;
 
@@ -136,7 +114,7 @@ public class TaskTests {
 
 		assertEquals(expectLimitCount, actualLimitCount);
 	}
-	
+
 	@Test
 	public void deleteLimitationFromNotEconomTask() {
 		int expectLimitCount = LIMITATION_COUNT - 1;
@@ -147,29 +125,7 @@ public class TaskTests {
 
 		assertEquals(expectLimitCount, actualLimitCount);
 	}
-	
-	@Test
-	public void addLimitationToEconomTask() {
-		int expectLimitUnitCount = LIMITATION_COUNT + 1;
 
-		Task task = createNotEconomTask();
-		task.addEconomLimitation();
-		int actualLimitUnitCount = task.getLimitUnits().size();
-
-		assertEquals(expectLimitUnitCount, actualLimitUnitCount);
-	}
-	
-	@Test
-	public void deleteLimitationFromEconomTask() {
-		int expectLimitCount = LIMITATION_COUNT - 1;
-
-		Task task = createNotEconomTask();
-		task.deleteEconomLimitation();
-		int actualLimitCount = task.getLimitUnits().size();
-
-		assertEquals(expectLimitCount, actualLimitCount);
-	}
-	
 	@Test
 	public void addNotEconomVariable() {
 		int expectVarCount = VAR_COUNT + 1;
@@ -180,7 +136,7 @@ public class TaskTests {
 
 		assertEquals(expectVarCount, actualVarCount);
 	}
-	
+
 	@Test
 	public void deleteNotEconomVariable() {
 		int expectVarCount = VAR_COUNT - 1;
@@ -192,28 +148,6 @@ public class TaskTests {
 		assertEquals(expectVarCount, actualVarCount);
 	}
 
-	@Test
-	public void addEconomVariable() {
-		int expectVarNameCount = VAR_COUNT + 1;
-
-		Task task = createEconomTask();
-		task.addEconomVariable();
-		int actualVarNameCount = task.getVarNames().size();
-
-		assertEquals(expectVarNameCount, actualVarNameCount);
-	}
-	
-	@Test
-	public void deleteEconomVariable() {
-		int expectVarNameCount = VAR_COUNT - 1;
-
-		Task task = createEconomTask();
-		task.deleteEconomVariable();
-		int actualVarNameCount = task.getVarNames().size();
-
-		assertEquals(expectVarNameCount, actualVarNameCount);
-	}
-	
 	private Task createNotEconomTask() {
 		Task task = new Task("first Task", VAR_COUNT, LIMITATION_COUNT,
 				CRITERION_COUNT, true);

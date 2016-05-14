@@ -23,11 +23,6 @@ public class TableManager implements ITableManager, Observer {
 	}
 
 	@Override
-	public ITableType getTableType() {
-		return tableType;
-	}
-
-	@Override
 	public TableCellEditor getCellEditor(int row, int column) {
 		return tableType.getCellEditor(row, column);
 	}
@@ -58,9 +53,6 @@ public class TableManager implements ITableManager, Observer {
 			tableType = new NotSolutionEconomManager(manager);
 		} else {
 			tableType = new NotSolutionNotEconomicManager(manager);
-		}
-		if(isFull()){
-			manager.setTaskFull(true);
 		}
 	}
 
@@ -106,7 +98,7 @@ public class TableManager implements ITableManager, Observer {
 
 	@Override
 	public boolean isFull() {
-		return tableType.isFull();
+		return manager.isTaskFull();
 	}
 
 	@Override

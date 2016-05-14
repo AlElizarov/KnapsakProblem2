@@ -249,7 +249,7 @@ public class NotSolutionEconomicManagerTests {
 		String expectName = "Name";
 
 		createEconomTask();
-		String actualName = tableManager.getTableType().getColumnName(0);
+		String actualName = tableManager.getColumnName(0);
 
 		assertEquals(expectName, actualName);
 	}
@@ -259,7 +259,7 @@ public class NotSolutionEconomicManagerTests {
 		String expectName = "Unit";
 
 		createEconomTask();
-		String actualName = tableManager.getTableType().getColumnName(1);
+		String actualName = tableManager.getColumnName(1);
 
 		assertEquals(expectName, actualName);
 	}
@@ -269,7 +269,7 @@ public class NotSolutionEconomicManagerTests {
 		String expectName = "X1";
 
 		createEconomTask();
-		String actualName = tableManager.getTableType().getColumnName(2);
+		String actualName = tableManager.getColumnName(2);
 
 		assertEquals(expectName, actualName);
 	}
@@ -279,7 +279,7 @@ public class NotSolutionEconomicManagerTests {
 		String expectName = "X4";
 
 		createEconomTask();
-		String actualName = tableManager.getTableType().getColumnName(
+		String actualName = tableManager.getColumnName(
 				VAR_COUNT + 1);
 
 		assertEquals(expectName, actualName);
@@ -290,7 +290,7 @@ public class NotSolutionEconomicManagerTests {
 		String expectName = "Type";
 
 		createEconomTask();
-		String actualName = tableManager.getTableType().getColumnName(
+		String actualName = tableManager.getColumnName(
 				VAR_COUNT + 2);
 
 		assertEquals(expectName, actualName);
@@ -301,7 +301,7 @@ public class NotSolutionEconomicManagerTests {
 		String expectName = "B";
 
 		createEconomTask();
-		String actualName = tableManager.getTableType().getColumnName(
+		String actualName = tableManager.getColumnName(
 				VAR_COUNT + 3);
 
 		assertEquals(expectName, actualName);

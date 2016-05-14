@@ -201,7 +201,7 @@ public class NotSolutionNotEconomicManagerTests {
 		createNotEconomTask();
 		tableManager.setValue(3, 2, 2);
 		tableManager.setValue(5, 2, 2);
-		int actualValue = manager.getCriterions().get(2).get(2);
+		Object actualValue = tableManager.getValueAt(2, 2);
 
 		assertEquals(expectValue, actualValue);
 	}
@@ -213,7 +213,7 @@ public class NotSolutionNotEconomicManagerTests {
 		createNotEconomTask();
 		tableManager.setValue(3, 2, 2);
 		tableManager.setValue(5, 1, 1);
-		int actualValue = manager.getCriterions().get(2).get(2);
+		Object actualValue = tableManager.getValueAt(2, 2);
 
 		assertEquals(expectValue, actualValue);
 	}
@@ -355,27 +355,28 @@ public class NotSolutionNotEconomicManagerTests {
 
 		assertFalse(tableManager.isFull());
 	}
-	
+
 	@Test
-	public void whenInputNotAllCellTableIsNotFull(){
+	public void whenInputNotAllCellTableIsNotFull() {
 		createNotEconomTask();
 		tableManager.setValue(1, 0, 0);
-		
+
 		assertFalse(tableManager.isFull());
 	}
-	
+
 	@Test
-	public void whenInputAllCellTablIsFull(){
+	public void whenInputAllCellTablIsFull() {
 		createNotEconomTask();
-		for(int row = 0; row < LIMITATION_COUNT+CRITERION_COUNT; row++){
-			for(int col = 0; col < VAR_COUNT; col++){
+		for (int row = 0; row < LIMITATION_COUNT + CRITERION_COUNT; row++) {
+			for (int col = 0; col < VAR_COUNT; col++) {
 				tableManager.setValue(1, row, col);
 			}
 		}
-		for(int row = CRITERION_COUNT; row < LIMITATION_COUNT+CRITERION_COUNT; row++){
-			tableManager.setValue(1, row, VAR_COUNT+1);
+		for (int row = CRITERION_COUNT; row < LIMITATION_COUNT
+				+ CRITERION_COUNT; row++) {
+			tableManager.setValue(1, row, VAR_COUNT + 1);
 		}
-		
+
 		assertTrue(tableManager.isFull());
 	}
 

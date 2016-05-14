@@ -25,50 +25,14 @@ abstract class TableType implements ITableType {
 	public Object getValueAt(int row, int col) {
 		row -= rowMargin;
 		col -= columnMargin;
-		if (isCriterionCell(row, col)) {
-			return manager.getCriterions().get(row).get(col);
-		}
-		if (isLimitationCell(row, col)) {
-			return manager.getLimitations()
-					.get(row - manager.getCriterionCount()).get(col);
-		}
-		if (isLimitCell(row, col)) {
-			return manager.getLimits().get(row - manager.getCriterionCount());
+		if (isDataCell(row, col)) {
+			if (isLimitCell(row, col)) {
+				return manager.getValue(row, col - 1);
+			} else {
+				return manager.getValue(row, col);
+			}
 		}
 		return getAllTheRest(row, col);
-	}
-
-	@Override
-	public void setValue(Object value, int row, int col) {
-		row -= rowMargin;
-		col -= columnMargin;
-		if (isDataCell(row, col)) {
-			setValueInDataCell(value, row, col);
-		}
-		setEnythingElse(value, row, col);
-	}
-
-	protected abstract void setEnythingElse(Object value, int row, int col);
-
-	private void setValueInDataCell(Object value, int row, int col) {
-		int criterionCount = manager.getCriterionCount();
-		try {
-			int intValue = Integer.parseInt(value.toString());
-			if (isLimitCell(row, col)) {
-				manager.getLimits().set(row - criterionCount, intValue);
-				return;
-			}
-			if (isCriterionCell(row, col)) {
-				manager.getCriterions().get(row).set(col, intValue);
-				return;
-			}
-			if (isLimitationCell(row, col)) {
-				manager.getLimitations().get(row - criterionCount)
-						.set(col, intValue);
-			}
-		} catch (NumberFormatException exc) {
-			throw new TooBigNumberException();
-		}
 	}
 
 	protected Object getAllTheRest(int row, int col) {
@@ -87,6 +51,31 @@ abstract class TableType implements ITableType {
 	}
 
 	protected abstract Object gerEnythingElse(int row, int col);
+
+	@Override
+	public void setValue(Object value, int row, int col) {
+		row -= rowMargin;
+		col -= columnMargin;
+		if (isDataCell(row, col)) {
+			setValueInDataCell(value, row, col);
+		}
+		setEnythingElse(value, row, col);
+	}
+
+	protected abstract void setEnythingElse(Object value, int row, int col);
+
+	private void setValueInDataCell(Object value, int row, int col) {
+		try {
+			int intValue = Integer.parseInt(value.toString());
+			if (isLimitCell(row, col)) {
+				manager.setValue(intValue, row, col - 1);
+			} else {
+				manager.setValue(intValue, row, col);
+			}
+		} catch (NumberFormatException exc) {
+			throw new TooBigNumberException();
+		}
+	}
 
 	@Override
 	public boolean isCellEditable(int row, int col) {
@@ -228,23 +217,6 @@ abstract class TableType implements ITableType {
 		}
 		return null;
 	}
-
-	public boolean isFull() {
-		return isCriterionsFull()
-				&& !manager.getLimitations().contains(null)
-				&& !manager.getLimits().contains(null) && isEnythingElseFull();
-	}
-
-	private boolean isCriterionsFull() {
-		for(int row = 0; row < manager.getCriterionCount(); row++){
-			if(manager.getCriterions().get(row).contains(null)){
-				return false;
-			}
-		}
-		return true;
-	}
-
-	protected abstract boolean isEnythingElseFull();
 
 	protected abstract int getFirstRowHeight();
 

@@ -1,6 +1,5 @@
 package viewmodel;
 
-import java.util.List;
 import java.util.Observable;
 
 import model.Task;
@@ -19,8 +18,6 @@ public class TaskManager extends Observable {
 	private String criterionCount;
 	private String economText;
 	private boolean isMax = false;
-
-	private boolean isTaskFull;
 
 	public static TaskManager getInstance() {
 		if (instance == null) {
@@ -41,7 +38,6 @@ public class TaskManager extends Observable {
 		limitationCount = null;
 		criterionCount = null;
 		economText = null;
-		isTaskFull = false;
 	}
 
 	public boolean isTaskCreated() {
@@ -58,7 +54,6 @@ public class TaskManager extends Observable {
 				Integer.parseInt(limitationCount),
 				Integer.parseInt(criterionCount), isMax);
 		isTaskCreated = true;
-		isTaskFull = false;
 		setChanged();
 		notifyObservers();
 	}
@@ -132,45 +127,12 @@ public class TaskManager extends Observable {
 		return task.getVariableCount();
 	}
 
-	public List<List<Integer>> getCriterions() {
-		return task.getCriterions();
-	}
-
-	public List<List<Integer>> getLimitations() {
-		return task.getLimitations();
-	}
-
-	public List<Integer> getLimits() {
-		return task.getLimits();
-	}
-
-	public List<String> getVarNames() {
-		return task.getVarNames();
-	}
-
-	public List<String> getCritNames() {
-		return task.getCritNames();
-	}
-
-	public List<String> getLimitNames() {
-		return task.getLimitNames();
-	}
-
-	public List<String> getCritUnits() {
-		return task.getCritUnits();
-	}
-
-	public List<String> getLimitUnits() {
-		return task.getLimitUnits();
-	}
-
 	public void addCriterion() {
 		if (isTaskEconom) {
 			task.addEconomCriterion();
 		} else {
 			task.addCriterion();
 		}
-		isTaskFull = false;
 		setChanged();
 		notifyObservers();
 	}
@@ -201,7 +163,6 @@ public class TaskManager extends Observable {
 		} else {
 			task.addVariable();
 		}
-		isTaskFull = false;
 		setChanged();
 		notifyObservers();
 	}
@@ -222,23 +183,47 @@ public class TaskManager extends Observable {
 		} else {
 			task.addLimitation();
 		}
-		isTaskFull = false;
 		setChanged();
 		notifyObservers();
 	}
 
 	public void onFullEvent() {
-		isTaskFull = true;
 		setChanged();
 		notifyObservers();
 	}
 
 	public boolean isTaskFull() {
-		return isTaskFull;
+		if(!isTaskCreated){
+			return false;
+		}
+		if(isTaskEconom){
+			return isFull() && isEconomFull();
+		}
+		return isFull();
 	}
 
-	public void setTaskFull(boolean isFull) {
-		isTaskFull = isFull;
+	public void setValue(int intValue, int row, int col) {
+		task.setValue(intValue, row, col);
+	}
+
+	public void setEconomValue(Object value, int row, int col) {
+		task.setEconomValue(value, row, col);
+	}
+
+	public Object getValue(int row, int col) {
+		return task.getValue(row, col);
+	}
+
+	public Object getEconomValue(int row, int col) {
+		return task.getEconomValue(row, col);
+	}
+
+	private boolean isFull() {
+		return task.isFull();
+	}
+
+	private boolean isEconomFull() {
+		return task.isEconomFull();
 	}
 
 }

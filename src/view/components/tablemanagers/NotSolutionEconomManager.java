@@ -34,36 +34,14 @@ class NotSolutionEconomManager extends TableType {
 	@Override
 	protected Object gerEnythingElse(int row, int col) {
 		if (row == -1 && col >= 0 && col < manager.getVariableCount()) {
-			return manager.getVarNames().get(col);
+			return manager.getEconomValue(row + 1, col);
 		}
 		if (col == -2 && row > -1) {
-			return getNames(row);
+			return manager.getEconomValue(row+1, col + 2);
 		}
 
 		if (col == -1 && row > -1) {
-			return getUnits(row);
-		}
-		return null;
-	}
-
-	private Object getUnits(int row) {
-		if (row < manager.getCriterionCount()) {
-			return manager.getCritUnits().get(row);
-		}
-		if (row >= manager.getCriterionCount()) {
-			return manager.getLimitUnits().get(
-					row - manager.getCriterionCount());
-		}
-		return null;
-	}
-
-	private Object getNames(int row) {
-		if (row < manager.getCriterionCount()) {
-			return manager.getCritNames().get(row);
-		}
-		if (row >= manager.getCriterionCount()) {
-			return manager.getLimitNames().get(
-					row - manager.getCriterionCount());
+			return manager.getEconomValue(row+1, col + 2);
 		}
 		return null;
 	}
@@ -71,34 +49,11 @@ class NotSolutionEconomManager extends TableType {
 	@Override
 	protected void setEnythingElse(Object value, int row, int col) {
 		if (row == -1) {
-			manager.getVarNames().set(col, value.toString());
-		}
-		if (col == -2) {
-			setNames(value, row);
-		}
-
-		if (col == -1) {
-			setUnits(value, row);
-		}
-	}
-
-	private void setUnits(Object value, int row) {
-		if (row < manager.getCriterionCount()) {
-			manager.getCritUnits().set(row, value.toString());
-		}
-		if (row >= manager.getCriterionCount()) {
-			manager.getLimitUnits().set(row - manager.getCriterionCount(),
-					value.toString());
-		}
-	}
-
-	private void setNames(Object value, int row) {
-		if (row < manager.getCriterionCount()) {
-			manager.getCritNames().set(row, value.toString());
-		}
-		if (row >= manager.getCriterionCount()) {
-			manager.getLimitNames().set(row - manager.getCriterionCount(),
-					value.toString());
+			manager.setEconomValue(value, row + 1, col);
+		} else if (col == -2) {
+			manager.setEconomValue(value, row+1, col + 2);
+		} else if (col == -1) {
+			manager.setEconomValue(value, row+1, col + 2);
 		}
 	}
 
@@ -114,21 +69,6 @@ class NotSolutionEconomManager extends TableType {
 	@Override
 	protected int getFirstRowHeight() {
 		return 40;
-	}
-
-	@Override
-	protected boolean isEnythingElseFull() {
-		return isCritNamesFull()
-				&& isLimitationNamesFull()
-				&& !manager.getVarNames().contains(null);
-	}
-
-	private boolean isLimitationNamesFull() {
-		return !manager.getLimitNames().contains(null);
-	}
-
-	private boolean isCritNamesFull() {
-		return !manager.getCritNames().contains(null);
 	}
 
 }
