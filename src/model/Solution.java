@@ -3,17 +3,17 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Top implements Comparable<Top> {
+public class Solution implements Comparable<Solution> {
 
 	private int h;
 	private int v;
 	private int fix;
 	private List<Integer> constVariables = new ArrayList<>();
 
-	public Top() {
+	public Solution() {
 	}
 
-	public Top(List<Integer> constVariables) {
+	public Solution(List<Integer> constVariables) {
 		this.constVariables.addAll(constVariables);
 	}
 
@@ -32,7 +32,7 @@ public class Top implements Comparable<Top> {
 	}
 
 	@Override
-	public int compareTo(Top that) {
+	public int compareTo(Solution that) {
 		if (this.v > that.v) {
 			return 1;
 		} else if (this.v < that.v) {
