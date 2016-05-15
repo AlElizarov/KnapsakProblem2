@@ -37,7 +37,7 @@ public class Task {
 		if (costs.size() == 1) {
 			return costs.get(0);
 		}
-		return null;
+		return calculateSvertka();
 	}
 
 	List<Integer> getLimitation(int numberOfLimitation) {
@@ -363,5 +363,17 @@ public class Task {
 
 	private boolean isCritNamesFull() {
 		return !critNames.contains(null);
+	}
+
+	public ArrayList<Integer> calculateSvertka() {
+		ArrayList<Integer> svertka = new ArrayList<>();
+		for (int i = 0; i < variableCount; i++) {
+			double tmpX = 0;
+			for (int j = 0; j < criterionCount; j++) {
+				tmpX += costs.get(j).get(i) * 0.25;
+			}
+			svertka.add((int) tmpX);
+		}
+		return svertka;
 	}
 }
