@@ -5,114 +5,32 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class OneDirectSolver {
-
-	private Variable[] sortVariableList;
-	private Top currentLeaderTop = new Top();
-	private int leftLimit;
-	private List<Top> candidatesTop = new ArrayList<>();
-	private boolean hasSolution = true;
-	private int limit;
-
-	public OneDirectSolver() {
-	}
+public class OneDirectSolver extends Solver {
 
 	public OneDirectSolver(Task task) {
-		setOneDirectSolver(new OneDirectTask(task, 0));
+		super(task);
 	}
 
-	protected void setOneDirectSolver(OneDirectTask oneDirectTask) {
-		createSortListOfVariable(oneDirectTask);
-		limit = oneDirectTask.getLimit();
-		setLeftLimit();
-		createFirstTop();
-	}
-
-	private void createSortListOfVariable(OneDirectTask oneDirectTask) {
-		sortVariableList = new Variable[oneDirectTask.getVariableCount()];
-		for (int col = 0; col < sortVariableList.length; col++) {
-			Object cost = oneDirectTask.getCost(col);
-			Object weight = oneDirectTask.getWeight(col);
-			sortVariableList[col] = new Variable(cost, weight, col);
-		}
-		Arrays.sort(sortVariableList, Collections.reverseOrder());
-	}
-
-	private void setLeftLimit() {
-		leftLimit = limit;
-	}
-
-	public boolean isEnd() {
-		if (currentLeaderTop.getV() == currentLeaderTop.getH()) {
-			return true;
-		}
-		return false;
-	}
-
-	public Top getCurrentLeaderTop() {
-		return currentLeaderTop;
-	}
-
-	public void solve() {
-		createLeftTop();
-		createRightTop();
-
-		candidatesTop.remove(currentLeaderTop);
-		if (candidatesTop.size() > 0) {
-			currentLeaderTop = Collections.max(candidatesTop);
-		}
-	}
-
-	private void createTop(int currentH, int currentV, Top top) {
-		setHAndVAndFix(currentH, currentV, top);
-		if (isTopCandidate(top)) {
-			candidatesTop.add(top);
-		}
-		setLeftLimit();
-	}
-
-	private boolean isTopCandidate(Top top) {
-		return top.getV() >= currentLeaderTop.getH() && top.getV() > 0;
-	}
-
-	private void setHAndVAndFix(int currentH, int currentV, Top top) {
-		for (int i = 0; i < sortVariableList.length; i++) {
-			if (currentLeaderTop.getConstVariables().contains(i)) {
-				continue;
-			}
-			int cost = sortVariableList[i].getCost();
-			int weight = sortVariableList[i].getWeight();
-			if (weight <= leftLimit) {
-				currentH += cost;
-				currentV += cost;
-			} else if (leftLimit > 0) {
-				top.setFix(i);
-				currentV += ((double) leftLimit / weight) * cost;
-			}
-			leftLimit -= weight;
-		}
-		top.setH(currentH);
-		top.setV(currentV);
-	}
-
-	private void createFirstTop() {
-		Top top = new Top();
-		createTop(0, 0, top);
-		if (candidatesTop.size() > 0) {
-			currentLeaderTop = Collections.max(candidatesTop);
+	@Override
+	public void createFirstTop() {
+		Solution solution = new Solution();
+		createTop(0, 0, solution);
+		if (candidatesSolutions.size() > 0) {
+			currentLeaderSolution = Collections.max(candidatesSolutions);
 		} else {
 			hasSolution = false;
 		}
 	}
 
-	private void createRightTop() {
-		Top top = new Top(currentLeaderTop.getConstVariables());
+	@Override
+	protected void createRightTop() {
+		Solution solution = new Solution(currentLeaderSolution.getConstVariables());
 		int h = 0;
 		int v = 0;
 		int weight = 0;
 		int cost = 0;
-		for (int i = 0; i < currentLeaderTop.getConstVariables().size(); i++) {
-			Variable constVariable = sortVariableList[currentLeaderTop
+		for (int i = 0; i < currentLeaderSolution.getConstVariables().size(); i++) {
+			Variable constVariable = sortVariableList[currentLeaderSolution
 					.getConstVariables().get(i)];
 			weight = constVariable.getWeight();
 			cost = constVariable.getCost();
@@ -123,16 +41,13 @@ public class OneDirectSolver {
 			h += cost;
 			v += cost;
 		}
-		createTop(h, v, top);
+		createTop(h, v, solution);
 	}
 
-	private void createLeftTop() {
-		Top top = new Top(currentLeaderTop.getConstVariables());
-		createTop(0, 0, top);
-	}
-
-	public boolean hasSolution() {
-		return hasSolution;
+	@Override
+	protected void createLeftTop() {
+		Solution solution = new Solution(currentLeaderSolution.getConstVariables());
+		createTop(0, 0, solution);
 	}
 
 }

@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import model.OneDirectSolver;
 import model.Task;
-import model.Top;
+import model.Solution;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -32,6 +32,7 @@ public class OneDirectTests {
 
 	@Test
 	public void byDefaultSolverNotEnd() {
+		solver.createFirstTop();
 		assertFalse(solver.isEnd());
 	}
 
@@ -39,71 +40,78 @@ public class OneDirectTests {
 	public void taskWithoutSolutions() {
 		task.setValue(0, 1, 5);
 		solver = new OneDirectSolver(task);
-		
+		solver.createFirstTop();
+
 		assertFalse(solver.hasSolution());
 	}
-	
+
 	@Test
 	public void taskWithAbsoluteSolutions() {
 		task.setValue(100, 1, 5);
 		solver = new OneDirectSolver(task);
+		solver.createFirstTop();
 		solve();
-		Top top = solver.getCurrentLeaderTop();
-		
-		assertTop(30, 30, top);
+		Solution solution = solver.getCurrentLeaderTop();
+
+		assertTop(30, 30, solution);
 	}
-	
+
 	@Test
 	public void taskWithOneVariableSolutions() {
 		task.setValue(2, 1, 5);
 		solver = new OneDirectSolver(task);
+		solver.createFirstTop();
 		solve();
-		Top top = solver.getCurrentLeaderTop();
-		
-		assertTop(6, 6, top);
+		Solution solution = solver.getCurrentLeaderTop();
+
+		assertTop(6, 6, solution);
 	}
 
 	@Test
 	public void getLeaderTopRound0() {
-		Top top = solver.getCurrentLeaderTop();
+		solver.createFirstTop();
+		Solution solution = solver.getCurrentLeaderTop();
 
-		assertTop(21, 24, top);
+		assertTop(21, 24, solution);
 	}
 
 	@Test
 	public void getLeaderTopRound1() {
+		solver.createFirstTop();
 		solver.solve();
-		Top top = solver.getCurrentLeaderTop();
+		Solution solution = solver.getCurrentLeaderTop();
 
-		assertTop(19, 23, top);
+		assertTop(19, 23, solution);
 	}
-	
+
 	@Test
 	public void getLeaderTopRound2() {
+		solver.createFirstTop();
 		solver.solve();
 		solver.solve();
-		Top top = solver.getCurrentLeaderTop();
+		Solution solution = solver.getCurrentLeaderTop();
 
-		assertTop(18, 23, top);
+		assertTop(18, 23, solution);
 	}
-	
+
 	@Test
 	public void getSolution() {
+		solver.createFirstTop();
 		solve();
-		Top top = solver.getCurrentLeaderTop();
-		
-		assertTop(21, 21, top);
+		Solution solution = solver.getCurrentLeaderTop();
+
+		assertTop(21, 21, solution);
 	}
 
 	private void solve() {
-		while(!solver.isEnd()){
+		while (!solver.isEnd()) {
 			solver.solve();
 		}
 	}
 
-	private void assertTop(int expectH, int expectV, Top top) {
-		int actualH = top.getH();
-		int actualV = top.getV();
+	private void assertTop(int expectH, int expectV, Solution solution) {
+		int actualH = solution.getH();
+		int actualV = solution.getV();
 
 		assertEquals(expectH, actualH);
 		assertEquals(expectV, actualV);
