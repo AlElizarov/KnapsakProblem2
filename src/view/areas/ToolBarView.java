@@ -1,6 +1,8 @@
 package view.areas;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JToolBar;
@@ -33,6 +35,13 @@ class ToolBarView extends JToolBar implements BindableArea {
 		addSeparator();
 		add(newTask);
 		add(solve);
+		solve.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				manager.solveTask();
+			}
+		});
 		add(gen);
 		add(econom);
 	}

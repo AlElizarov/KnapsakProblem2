@@ -6,7 +6,6 @@ public class SimpleCenterViewModel {
 
 	private boolean isSplitForTableAndSolutionOneTouchExpandeble = true;
 	private boolean isSplitForTableAndSolutionContinouslyLayout = true;
-	private int splitForTableAndSolutionDividerSize = 0;
 	private TaskManager manager;
 
 	public SimpleCenterViewModel(TaskManager manager) {
@@ -22,7 +21,10 @@ public class SimpleCenterViewModel {
 	}
 
 	public int getSplitForTableAndSolutionDivivderSize() {
-		return splitForTableAndSolutionDividerSize;
+		if (manager.isTaskSolved()) {
+			return 5;
+		}
+		return 0;
 	}
 
 	public boolean isPanelForTableVisible() {
@@ -30,6 +32,20 @@ public class SimpleCenterViewModel {
 			return true;
 		}
 		return false;
+	}
+
+	public boolean isPanelForSolutionVisible() {
+		if (manager.isTaskSolved()) {
+			return true;
+		}
+		return false;
+	}
+
+	public double getResizeWeight() {
+		if (manager.isTaskSolved()) {
+			return 0.7;
+		}
+		return 0;
 	}
 
 }

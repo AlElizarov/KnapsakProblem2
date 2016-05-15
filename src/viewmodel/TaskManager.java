@@ -19,6 +19,8 @@ public class TaskManager extends Observable {
 	private String economText;
 	private boolean isMax = false;
 
+	private boolean isTaskSolved;
+
 	public static TaskManager getInstance() {
 		if (instance == null) {
 			instance = new TaskManager();
@@ -38,6 +40,7 @@ public class TaskManager extends Observable {
 		limitationCount = null;
 		criterionCount = null;
 		economText = null;
+		isTaskSolved = false;
 	}
 
 	public boolean isTaskCreated() {
@@ -193,10 +196,10 @@ public class TaskManager extends Observable {
 	}
 
 	public boolean isTaskFull() {
-		if(!isTaskCreated){
+		if (!isTaskCreated) {
 			return false;
 		}
-		if(isTaskEconom){
+		if (isTaskEconom) {
 			return isFull() && isEconomFull();
 		}
 		return isFull();
@@ -224,6 +227,16 @@ public class TaskManager extends Observable {
 
 	private boolean isEconomFull() {
 		return task.isEconomFull();
+	}
+
+	public boolean isTaskSolved() {
+		return isTaskSolved;
+	}
+
+	public void solveTask() {
+		isTaskSolved = true;
+		setChanged();
+		notifyObservers();
 	}
 
 }

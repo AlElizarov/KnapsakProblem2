@@ -4,10 +4,14 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 
+import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextPane;
 
+import net.miginfocom.swing.MigLayout;
 import view.components.KnapsakProblemTable;
 import view.components.RowNumberTable;
 import view.components.tablemanagers.TableManager;
@@ -24,13 +28,40 @@ class SimpleMode extends CenterViewMode {
 	private SimpleCenterViewModel centerViewModel;
 	private JTable table;
 	private TableManager tableManager;
+	private JPanel panelForSolution;
+	private JLabel labelForSverka;
+	private JTextPane textPaneForSolution;
 
 	public SimpleMode(TaskManager manager) {
 		super(manager);
 		centerViewModel = new SimpleCenterViewModel(manager);
 		panelForTable = new JPanel(new BorderLayout());
 		panelForTable.add(createTable());
+		panelForSolution = new JPanel(new BorderLayout());
+		createSolutionPanel();
 		setTopComponent(panelForTable);
+		setBottomComponent(panelForSolution);
+	}
+
+	private void createSolutionPanel() {
+		JPanel panelForButtonAndSvertka = new JPanel(new BorderLayout());
+
+		JPanel buttonPanel = new JPanel(new MigLayout());
+		JButton start = new JButton("start");
+		JButton stop = new JButton("stop");
+		buttonPanel.add(start, "sg 1");
+		buttonPanel.add(stop, "sg 1");
+		buttonPanel.setBackground(new Color(205, 190, 112));
+		panelForButtonAndSvertka.add(buttonPanel, BorderLayout.NORTH);
+
+		labelForSverka = new JLabel("sver");
+		panelForButtonAndSvertka.add(labelForSverka, BorderLayout.CENTER);
+
+		panelForSolution.add(panelForButtonAndSvertka, BorderLayout.NORTH);
+
+		textPaneForSolution = new JTextPane();
+		textPaneForSolution.setContentType("text/html");
+		panelForSolution.add(textPaneForSolution, BorderLayout.CENTER);
 	}
 
 	private Component createTable() {
@@ -53,12 +84,16 @@ class SimpleMode extends CenterViewMode {
 	public void bind() {
 		table.setModel(new KnapsakProblemTableModel(tableManager));
 		panelForTable.setVisible(centerViewModel.isPanelForTableVisible());
+		panelForSolution
+				.setVisible(centerViewModel.isPanelForSolutionVisible());
 		setContinuousLayout(centerViewModel
 				.isSplitForTableAndSolutionContinuoslyLayout());
 		setOneTouchExpandable(centerViewModel
 				.isSplitForTableAndSolutionOneTouchExpandable());
 		setDividerSize(centerViewModel
 				.getSplitForTableAndSolutionDivivderSize());
+		setResizeWeight(centerViewModel.getResizeWeight());
+		setDividerLocation(centerViewModel.getResizeWeight());
 	}
 
 }
