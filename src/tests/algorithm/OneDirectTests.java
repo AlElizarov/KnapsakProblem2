@@ -1,4 +1,4 @@
-package tests.algorithm.onedirect;
+package tests.algorithm;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -9,7 +9,7 @@ import model.Top;
 import org.junit.Before;
 import org.junit.Test;
 
-public class SimpleTaskTests {
+public class OneDirectTests {
 
 	private OneDirectSolver solver;
 	private Task task;
@@ -32,7 +32,6 @@ public class SimpleTaskTests {
 
 	@Test
 	public void byDefaultSolverNotEnd() {
-		
 		assertFalse(solver.isEnd());
 	}
 
