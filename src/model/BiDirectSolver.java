@@ -37,16 +37,21 @@ public class BiDirectSolver extends Solver {
 		setSolutionAndH(solutions, solutionOnTop);
 		setV(solutions, solutionOnTop);
 		int fixIdx = 0;
-		for(int var = 0; var < sortVariableList.length; var++){
-			if(currentLeaderSolution.getConstVariables().contains(var)){
-				fixIdx++;
-			}
-			else{
-				break;
+		int maxCost = 0;
+		for(int i = 0; i < sortVariableList.length; i++){
+			if(unsortVariableList[i].getCost() > maxCost && !currentLeaderSolution.getConstVariables().contains(i)){
+				fixIdx = i;
+				maxCost = unsortVariableList[i].getCost();
 			}
 		}
+//		for (int var = 0; var < sortVariableList.length; var++) {
+//			if (currentLeaderSolution.getConstVariables().contains(var)) {
+//				fixIdx++;
+//			} else {
+//				break;
+//			}
+//		}
 		solutionOnTop.setFix(fixIdx);
-		System.out.println(fixIdx);
 		if (isTopCandidate(solutionOnTop)) {
 			candidatesSolutions.add(solutionOnTop);
 		}
@@ -54,9 +59,9 @@ public class BiDirectSolver extends Solver {
 
 	private void setSolutionAndH(Solution[] solutions, Solution solutionOnTop) {
 		int h = 0;
-		out: for(int var = 0; var < sortVariableList.length; var++){
-			for(int solution = 0; solution < solutions.length; solution++){
-				if(!solutions[solution].isVarTaken(var)){
+		out: for (int var = 0; var < sortVariableList.length; var++) {
+			for (int solution = 0; solution < solutions.length; solution++) {
+				if (!solutions[solution].isVarTaken(var)) {
 					continue out;
 				}
 			}
@@ -68,8 +73,8 @@ public class BiDirectSolver extends Solver {
 
 	private void setV(Solution[] solutions, Solution solutionOnTop) {
 		int v = solutions[0].getV();
-		for(int solution = 1; solution < solutions.length; solution++){
-			if(solutions[solution].getV() < v){
+		for (int solution = 1; solution < solutions.length; solution++) {
+			if (solutions[solution].getV() < v) {
 				v = solutions[solution].getV();
 			}
 		}
@@ -78,14 +83,40 @@ public class BiDirectSolver extends Solver {
 
 	@Override
 	protected void createRightTop() {
-		// TODO Auto-generated method stub
+		Solution[] solutions = new Solution[oneDirectTasks.length];
+		for (int row = 0; row < task.getLimitationCount(); row++) {
+			setOneDirectTask(oneDirectTasks[row]);
+			solutions[row] = createSolution();
+			prepareToSolution(new Preparable() {
 
+				@Override
+				public boolean prepare(int varIdx, int unsortNumber) {
+					return varIdx == currentLeaderSolution.getFix()
+							|| currentLeaderSolution.isVarTaken(unsortNumber);
+				}
+			}, solutions[row]);
+			System.out.println(solutions[row]);
+		}
+		createSolutionOnTop(solutions);
 	}
 
 	@Override
 	protected void createLeftTop() {
-		// TODO Auto-generated method stub
+		Solution[] solutions = new Solution[oneDirectTasks.length];
+		for (int row = 0; row < task.getLimitationCount(); row++) {
+			setOneDirectTask(oneDirectTasks[row]);
+			solutions[row] = createSolution();
+			prepareToSolution(new Preparable() {
 
+				@Override
+				public boolean prepare(int varIdx, int unsortNumber) {
+					return varIdx != currentLeaderSolution.getFix()
+							&& currentLeaderSolution.isVarTaken(unsortNumber);
+				}
+			}, solutions[row]);
+			System.out.println(solutions[row]);
+		}
+		createSolutionOnTop(solutions);
 	}
 
 }

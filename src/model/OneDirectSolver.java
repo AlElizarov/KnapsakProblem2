@@ -22,6 +22,7 @@ public class OneDirectSolver extends Solver {
 
 	@Override
 	protected void createRightTop() {
+		Solution solution = createSolution();
 		prepareToSolution(new Preparable() {
 
 			@Override
@@ -29,37 +30,13 @@ public class OneDirectSolver extends Solver {
 				return varIdx == currentLeaderSolution.getFix()
 						|| currentLeaderSolution.isVarTaken(unsortNumber);
 			}
-		});
-	}
-
-	private void prepareToSolution(Preparable preparable) {
-		Solution solution = createSolution();
-		int weight = 0;
-		int cost = 0;
-		for (int var = 0; var < currentLeaderSolution.getConstVariables()
-				.size(); var++) {
-			int currentConstVariableIdx = currentLeaderSolution
-					.getConstVariables().get(var);
-			int unsortNumber = sortVariableList[currentConstVariableIdx]
-					.getNumber();
-			if (preparable.prepare(currentConstVariableIdx, unsortNumber)) {
-				solution.setVariable(unsortNumber);
-				Variable constVariable = unsortVariableList[unsortNumber];
-				weight = constVariable.getWeight();
-				cost += constVariable.getCost();
-				if (weight > leftLimit) {
-					setLeftLimit();
-					return;
-				}
-				leftLimit -= weight;
-			}
-		}
-		createTop(cost, solution);
+		}, solution);
 		addCandidate(solution);
 	}
 
 	@Override
 	protected void createLeftTop() {
+		Solution solution = createSolution();
 		prepareToSolution(new Preparable() {
 
 			@Override
@@ -67,7 +44,8 @@ public class OneDirectSolver extends Solver {
 				return varIdx != currentLeaderSolution.getFix()
 						&& currentLeaderSolution.isVarTaken(unsortNumber);
 			}
-		});
+		}, solution);
+		addCandidate(solution);
 	}
 
 }

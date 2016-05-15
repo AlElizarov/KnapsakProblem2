@@ -46,7 +46,7 @@ public class OneDirectTests {
 	}
 
 	@Test
-	public void taskWithAbsoluteSolutions() {
+	public void taskWithAbsoluteSolution() {
 		task.setValue(100, 1, 5);
 		solver = new OneDirectSolver(task);
 		solver.createFirstTop();
@@ -57,7 +57,7 @@ public class OneDirectTests {
 	}
 
 	@Test
-	public void taskWithOneVariableSolutions() {
+	public void taskWithOneVariableSolution() {
 		task.setValue(2, 1, 5);
 		solver = new OneDirectSolver(task);
 		solver.createFirstTop();

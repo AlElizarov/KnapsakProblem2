@@ -3,8 +3,8 @@ package tests.algorithm;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import model.BiDirectSolver;
-import model.Task;
 import model.Solution;
+import model.Task;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -42,11 +42,78 @@ public class BiDirectSolverTests {
 	}
 	
 	@Test
+	public void taskWithoutSolutions() {
+		task.setValue(0, 1, 5);
+		solver = new BiDirectSolver(task);
+		solver.createFirstTop();
+
+		assertFalse(solver.hasSolution());
+	}
+	
+	@Test
+	public void taskWithAbsoluteSolution() {
+		task.setValue(100, 1, 5);
+		task.setValue(100, 2, 5);
+		solver = new BiDirectSolver(task);
+		solver.createFirstTop();
+		solve();
+		Solution solution = solver.getCurrentLeaderTop();
+
+		assertTop(26, 26, solution);
+	}
+
+	@Test
+	public void taskWithOneVariableSolution() {
+		task.setValue(2, 1, 5);
+		task.setValue(1, 2, 5);
+		solver = new BiDirectSolver(task);
+		solver.createFirstTop();
+		solve();
+		Solution solution = solver.getCurrentLeaderTop();
+
+		assertTop(5, 5, solution);
+	}
+	
+	@Test
 	public void getLeaderTopRound0() {
 		solver.createFirstTop();
 		Solution top = solver.getCurrentLeaderTop();
 
 		assertTop(13, 21, top);
+	}
+	
+	@Test
+	public void getLeaderTopRound1() {
+		solver.createFirstTop();
+		solver.solve();
+		Solution solution = solver.getCurrentLeaderTop();
+
+		assertTop(13, 21, solution);
+	}
+	
+	@Test
+	public void getLeaderTopRound2() {
+		solver.createFirstTop();
+		solver.solve();
+		solver.solve();
+		Solution solution = solver.getCurrentLeaderTop();
+
+		assertTop(19, 20, solution);
+	}
+	
+	@Test
+	public void getSolution() {
+		solver.createFirstTop();
+		solve();
+		Solution solution = solver.getCurrentLeaderTop();
+
+		assertTop(19, 19, solution);
+	}
+
+	private void solve() {
+		while (!solver.isEnd()) {
+			solver.solve();
+		}
 	}
 	
 	private void assertTop(int expectH, int expectV, Solution top) {

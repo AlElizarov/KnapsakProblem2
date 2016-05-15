@@ -77,7 +77,7 @@ public abstract class Solver {
 	protected void setHAndVAndFix(int currentH, Solution solution) {
 		int currentV = currentH;
 		for (int var = 0; var < sortVariableList.length; var++) {
-			if (currentLeaderSolution.getConstVariables().contains(var)) {
+			if (currentLeaderSolution.getConstVariables().contains(sortVariableList[var].getNumber())) {
 				continue;
 			}
 			Variable currentVariable = unsortVariableList[sortVariableList[var]
@@ -89,7 +89,7 @@ public abstract class Solver {
 				currentV += cost;
 				solution.setVariable(sortVariableList[var].getNumber());
 			} else if (leftLimit > 0) {
-				solution.setFix(var);
+				solution.setFix(sortVariableList[var].getNumber());
 				currentV += ((double) leftLimit / weight) * cost;
 			}
 			leftLimit -= weight;
@@ -118,6 +118,31 @@ public abstract class Solver {
 				currentLeaderSolution.getConstVariables());
 		solution.initializeSolution(sortVariableList.length);
 		return solution;
+	}
+	
+	protected void prepareToSolution(Preparable preparable, Solution solution) {
+		System.out.println("prepare");
+		int weight = 0;
+		int cost = 0;
+		for (int var = 0; var < currentLeaderSolution.getConstVariables()
+				.size(); var++) {
+			int currentConstVariableIdx = currentLeaderSolution
+					.getConstVariables().get(var);
+			int unsortNumber = unsortVariableList[currentConstVariableIdx]
+					.getNumber();
+			if (preparable.prepare(currentConstVariableIdx, unsortNumber)) {
+				solution.setVariable(unsortNumber);
+				Variable constVariable = unsortVariableList[unsortNumber];
+				weight = constVariable.getWeight();
+				cost += constVariable.getCost();
+				if (weight > leftLimit) {
+					setLeftLimit();
+					return;
+				}
+				leftLimit -= weight;
+			}
+		}
+		createTop(cost, solution);
 	}
 
 }
