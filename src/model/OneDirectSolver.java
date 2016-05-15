@@ -13,6 +13,10 @@ public class OneDirectSolver extends Solver {
 
 	@Override
 	public void createFirstTop() {
+		sol = new ArrayList<>();
+		for (int i = 0; i < sortVariableList.length; i++) {
+			sol.add(false);
+		}
 		Solution solution = new Solution();
 		createTop(0, 0, solution);
 		if (candidatesSolutions.size() > 0) {
@@ -24,30 +28,66 @@ public class OneDirectSolver extends Solver {
 
 	@Override
 	protected void createRightTop() {
-		Solution solution = new Solution(currentLeaderSolution.getConstVariables());
+		sol = new ArrayList<>();
+		for (int i = 0; i < sortVariableList.length; i++) {
+			sol.add(false);
+		}
+		Solution solution = new Solution(
+				currentLeaderSolution.getConstVariables());
 		int h = 0;
 		int v = 0;
 		int weight = 0;
 		int cost = 0;
 		for (int i = 0; i < currentLeaderSolution.getConstVariables().size(); i++) {
-			Variable constVariable = sortVariableList[currentLeaderSolution
-					.getConstVariables().get(i)];
-			weight = constVariable.getWeight();
-			cost = constVariable.getCost();
-			if (weight > leftLimit) {
-				return;
+			if (currentLeaderSolution.getConstVariables().get(i) == currentLeaderSolution.getFix()
+					|| currentLeaderSolution.getSolution().get(sortVariableList[currentLeaderSolution.getConstVariables().get(i)].getNumber())) {
+				sol.set(sortVariableList[currentLeaderSolution.getConstVariables().get(i)].getNumber(), true);
+				Variable constVariable = unsortVariableList[sortVariableList[currentLeaderSolution
+						.getConstVariables().get(i)].getNumber()];
+				weight = constVariable.getWeight();
+				cost = constVariable.getCost();
+				if (weight > leftLimit) {
+					setLeftLimit();
+					return;
+				}
+				leftLimit -= weight;
+				h += cost;
+				v += cost;
 			}
-			leftLimit -= weight;
-			h += cost;
-			v += cost;
 		}
 		createTop(h, v, solution);
 	}
 
 	@Override
 	protected void createLeftTop() {
-		Solution solution = new Solution(currentLeaderSolution.getConstVariables());
-		createTop(0, 0, solution);
+		sol = new ArrayList<>();
+		for (int i = 0; i < sortVariableList.length; i++) {
+			sol.add(false);
+		}
+		int h = 0;
+		int v = 0;
+		int weight = 0;
+		int cost = 0;
+		for (int i = 0; i < currentLeaderSolution.getConstVariables().size(); i++) {
+			if (currentLeaderSolution.getConstVariables().get(i) != currentLeaderSolution.getFix()
+					&& currentLeaderSolution.getSolution().get(sortVariableList[currentLeaderSolution.getConstVariables().get(i)].getNumber())) {
+				sol.set(sortVariableList[currentLeaderSolution.getConstVariables().get(i)].getNumber(), true);
+				Variable constVariable = unsortVariableList[sortVariableList[currentLeaderSolution
+						.getConstVariables().get(i)].getNumber()];
+				weight = constVariable.getWeight();
+				cost = constVariable.getCost();
+				if (weight > leftLimit) {
+					setLeftLimit();
+					return;
+				}
+				leftLimit -= weight;
+				h += cost;
+				v += cost;
+			}
+		}
+		Solution solution = new Solution(
+				currentLeaderSolution.getConstVariables());
+		createTop(h, v, solution);
 	}
 
 }
