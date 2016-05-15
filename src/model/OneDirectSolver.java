@@ -9,16 +9,14 @@ public class OneDirectSolver extends Solver {
 	}
 
 	@Override
-	public void createFirstTop() {
-		Solution solution = createSolution();
-		prepareToSolution(new Preparable() {
-			
+	public void createFirstSolution() {
+		createTop(new Preparable() {
+
 			@Override
 			public boolean prepare(int varIdx, int unsortNumber) {
 				return false;
 			}
-		}, solution);
-		addCandidate(solution);
+		});
 		if (candidatesSolutions.size() > 0) {
 			currentLeaderSolution = Collections.max(candidatesSolutions);
 		} else {
@@ -27,30 +25,33 @@ public class OneDirectSolver extends Solver {
 	}
 
 	@Override
-	protected void createRightTop() {
-		Solution solution = createSolution();
-		prepareToSolution(new Preparable() {
+	protected void createRightSolution() {
+		createTop(new Preparable() {
 
 			@Override
 			public boolean prepare(int varIdx, int unsortNumber) {
 				return varIdx == currentLeaderSolution.getFix()
 						|| currentLeaderSolution.isVarTaken(unsortNumber);
 			}
-		}, solution);
-		addCandidate(solution);
+		});
 	}
 
 	@Override
-	protected void createLeftTop() {
-		Solution solution = createSolution();
-		prepareToSolution(new Preparable() {
+	protected void createLeftSolution() {
+		createTop(new Preparable() {
 
 			@Override
 			public boolean prepare(int varIdx, int unsortNumber) {
 				return varIdx != currentLeaderSolution.getFix()
 						&& currentLeaderSolution.isVarTaken(unsortNumber);
 			}
-		}, solution);
+		});
+	}
+
+	@Override
+	protected void createTop(Preparable preparable) {
+		Solution solution = initializeSolution();
+		calculateSolution(preparable, solution);
 		addCandidate(solution);
 	}
 

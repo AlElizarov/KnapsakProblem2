@@ -32,7 +32,7 @@ public class OneDirectTests {
 
 	@Test
 	public void byDefaultSolverNotEnd() {
-		solver.createFirstTop();
+		solver.createFirstSolution();
 		assertFalse(solver.isEnd());
 	}
 
@@ -40,7 +40,7 @@ public class OneDirectTests {
 	public void taskWithoutSolutions() {
 		task.setValue(0, 1, 5);
 		solver = new OneDirectSolver(task);
-		solver.createFirstTop();
+		solver.createFirstSolution();
 
 		assertFalse(solver.hasSolution());
 	}
@@ -49,7 +49,7 @@ public class OneDirectTests {
 	public void taskWithAbsoluteSolution() {
 		task.setValue(100, 1, 5);
 		solver = new OneDirectSolver(task);
-		solver.createFirstTop();
+		solver.createFirstSolution();
 		solve();
 		Solution solution = solver.getCurrentLeaderTop();
 
@@ -60,7 +60,7 @@ public class OneDirectTests {
 	public void taskWithOneVariableSolution() {
 		task.setValue(2, 1, 5);
 		solver = new OneDirectSolver(task);
-		solver.createFirstTop();
+		solver.createFirstSolution();
 		solve();
 		Solution solution = solver.getCurrentLeaderTop();
 
@@ -69,7 +69,7 @@ public class OneDirectTests {
 
 	@Test
 	public void getLeaderTopRound0() {
-		solver.createFirstTop();
+		solver.createFirstSolution();
 		Solution solution = solver.getCurrentLeaderTop();
 
 		assertTop(21, 24, solution);
@@ -77,7 +77,7 @@ public class OneDirectTests {
 
 	@Test
 	public void getLeaderTopRound1() {
-		solver.createFirstTop();
+		solver.createFirstSolution();
 		solver.solve();
 		Solution solution = solver.getCurrentLeaderTop();
 
@@ -86,7 +86,7 @@ public class OneDirectTests {
 
 	@Test
 	public void getLeaderTopRound2() {
-		solver.createFirstTop();
+		solver.createFirstSolution();
 		solver.solve();
 		solver.solve();
 		Solution solution = solver.getCurrentLeaderTop();
@@ -96,7 +96,7 @@ public class OneDirectTests {
 
 	@Test
 	public void getSolution() {
-		solver.createFirstTop();
+		solver.createFirstSolution();
 		solve();
 		Solution solution = solver.getCurrentLeaderTop();
 

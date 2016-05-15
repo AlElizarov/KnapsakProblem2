@@ -37,7 +37,7 @@ public class BiDirectSolverTests {
 
 	@Test
 	public void byDefaultSolverNotEnd() {
-		solver.createFirstTop();
+		solver.createFirstSolution();
 		assertFalse(solver.isEnd());
 	}
 	
@@ -45,7 +45,7 @@ public class BiDirectSolverTests {
 	public void taskWithoutSolutions() {
 		task.setValue(0, 1, 5);
 		solver = new BiDirectSolver(task);
-		solver.createFirstTop();
+		solver.createFirstSolution();
 
 		assertFalse(solver.hasSolution());
 	}
@@ -55,7 +55,7 @@ public class BiDirectSolverTests {
 		task.setValue(100, 1, 5);
 		task.setValue(100, 2, 5);
 		solver = new BiDirectSolver(task);
-		solver.createFirstTop();
+		solver.createFirstSolution();
 		solve();
 		Solution solution = solver.getCurrentLeaderTop();
 
@@ -67,7 +67,7 @@ public class BiDirectSolverTests {
 		task.setValue(2, 1, 5);
 		task.setValue(1, 2, 5);
 		solver = new BiDirectSolver(task);
-		solver.createFirstTop();
+		solver.createFirstSolution();
 		solve();
 		Solution solution = solver.getCurrentLeaderTop();
 
@@ -76,7 +76,7 @@ public class BiDirectSolverTests {
 	
 	@Test
 	public void getLeaderTopRound0() {
-		solver.createFirstTop();
+		solver.createFirstSolution();
 		Solution top = solver.getCurrentLeaderTop();
 
 		assertTop(13, 21, top);
@@ -84,7 +84,7 @@ public class BiDirectSolverTests {
 	
 	@Test
 	public void getLeaderTopRound1() {
-		solver.createFirstTop();
+		solver.createFirstSolution();
 		solver.solve();
 		Solution solution = solver.getCurrentLeaderTop();
 
@@ -93,7 +93,7 @@ public class BiDirectSolverTests {
 	
 	@Test
 	public void getLeaderTopRound2() {
-		solver.createFirstTop();
+		solver.createFirstSolution();
 		solver.solve();
 		solver.solve();
 		Solution solution = solver.getCurrentLeaderTop();
@@ -103,7 +103,7 @@ public class BiDirectSolverTests {
 	
 	@Test
 	public void getSolution() {
-		solver.createFirstTop();
+		solver.createFirstSolution();
 		solve();
 		Solution solution = solver.getCurrentLeaderTop();
 

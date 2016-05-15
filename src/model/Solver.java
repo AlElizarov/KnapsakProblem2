@@ -7,26 +7,36 @@ import java.util.List;
 
 public abstract class Solver {
 
-	protected Variable[] sortVariableList;
+	private Variable[] sortVariableList;
 	protected Variable[] unsortVariableList;
 	protected Solution currentLeaderSolution = new Solution();
-	protected int leftLimit;
+	private int leftLimit;
 	protected List<Solution> candidatesSolutions = new ArrayList<>();
 	protected boolean hasSolution = true;
-	protected int limit;
-	protected ArrayList<Boolean> sol;
+	private int limit;
+	private int currentMaxH;
 
 	public Solver(Task task) {
 		setOneDirectTask(new OneDirectTask(task, 0));
 	}
 
 	public void solve() {
-		createLeftTop();
-		createRightTop();
+		createLeftSolution();
+		createRightSolution();
 
 		candidatesSolutions.remove(currentLeaderSolution);
 		if (candidatesSolutions.size() > 0) {
 			currentLeaderSolution = Collections.max(candidatesSolutions);
+		}
+		deleteNonPerspectiveTops();
+	}
+
+	private void deleteNonPerspectiveTops() {
+		for (int candidate = 0; candidate < candidatesSolutions.size(); candidate++) {
+			if (candidatesSolutions.get(candidate).getV() < currentMaxH) {
+				candidatesSolutions.remove(candidate);
+				candidate--;
+			}
 		}
 	}
 
@@ -36,22 +46,22 @@ public abstract class Solver {
 		setLeftLimit();
 	}
 
-	public abstract void createFirstTop();
-
-	protected void createTop(int currentH, Solution solution) {
-		setHAndVAndFix(currentH, solution);
-		setLeftLimit();
-	}
-
 	protected void addCandidate(Solution solution) {
 		if (isTopCandidate(solution)) {
 			candidatesSolutions.add(solution);
+			if (solution.getH() > currentMaxH) {
+				currentMaxH = solution.getH();
+			}
 		}
 	}
 
-	protected abstract void createRightTop();
+	protected abstract void createTop(Preparable preparable);
 
-	protected abstract void createLeftTop();
+	protected abstract void createRightSolution();
+
+	protected abstract void createLeftSolution();
+
+	public abstract void createFirstSolution();
 
 	private void createSortListOfVariable(OneDirectTask oneDirectTask) {
 		sortVariableList = new Variable[oneDirectTask.getVariableCount()];
@@ -65,16 +75,16 @@ public abstract class Solver {
 		Arrays.sort(sortVariableList, Collections.reverseOrder());
 	}
 
-	protected void setLeftLimit() {
+	private void setLeftLimit() {
 		leftLimit = limit;
 	}
 
-	protected boolean isTopCandidate(Solution solution) {
+	private boolean isTopCandidate(Solution solution) {
 		return solution.getV() >= currentLeaderSolution.getH()
 				&& solution.getV() > 0;
 	}
 
-	protected void setHAndVAndFix(int currentH, Solution solution) {
+	private void setHAndVAndFix(int currentH, Solution solution) {
 		int currentV = currentH;
 		for (int var = 0; var < unsortVariableList.length; var++) {
 			if (currentLeaderSolution.getConstVariables().contains(
@@ -114,14 +124,14 @@ public abstract class Solver {
 		return hasSolution;
 	}
 
-	protected Solution createSolution() {
+	protected Solution initializeSolution() {
 		Solution solution = new Solution(
 				currentLeaderSolution.getConstVariables());
 		solution.initializeSolution(sortVariableList.length);
 		return solution;
 	}
 
-	protected void prepareToSolution(Preparable preparable, Solution solution) {
+	protected void calculateSolution(Preparable preparable, Solution solution) {
 		int weight = 0;
 		int cost = 0;
 		for (int var = 0; var < currentLeaderSolution.getConstVariables()
@@ -142,7 +152,8 @@ public abstract class Solver {
 				leftLimit -= weight;
 			}
 		}
-		createTop(cost, solution);
+		setHAndVAndFix(cost, solution);
+		setLeftLimit();
 	}
 
 }

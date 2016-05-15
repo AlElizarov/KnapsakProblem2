@@ -17,8 +17,8 @@ public class BiDirectSolver extends Solver {
 	}
 
 	@Override
-	public void createFirstTop() {
-		createBiDirectTop(new Preparable() {
+	public void createFirstSolution() {
+		createTop(new Preparable() {
 			
 			@Override
 			public boolean prepare(int varIdx, int unsortNumber) {
@@ -33,7 +33,7 @@ public class BiDirectSolver extends Solver {
 	}
 
 	private void createSolutionOnTop(Solution[] solutions) {
-		Solution solutionOnTop = createSolution();
+		Solution solutionOnTop = initializeSolution();
 		setSolutionAndH(solutions, solutionOnTop);
 		setV(solutions, solutionOnTop);
 		setFix(solutionOnTop);
@@ -77,8 +77,8 @@ public class BiDirectSolver extends Solver {
 	}
 
 	@Override
-	protected void createRightTop() {
-		createBiDirectTop(new Preparable() {
+	protected void createRightSolution() {
+		createTop(new Preparable() {
 			
 			@Override
 			public boolean prepare(int varIdx, int unsortNumber) {
@@ -89,8 +89,8 @@ public class BiDirectSolver extends Solver {
 	}
 
 	@Override
-	protected void createLeftTop() {
-		createBiDirectTop(new Preparable() {
+	protected void createLeftSolution() {
+		createTop(new Preparable() {
 			
 			@Override
 			public boolean prepare(int varIdx, int unsortNumber) {
@@ -100,12 +100,13 @@ public class BiDirectSolver extends Solver {
 		});
 	}
 
-	private void createBiDirectTop(Preparable preparable) {
+	@Override
+	protected void createTop(Preparable preparable) {
 		Solution[] solutions = new Solution[oneDirectTasks.length];
 		for (int row = 0; row < task.getLimitationCount(); row++) {
 			setOneDirectTask(oneDirectTasks[row]);
-			solutions[row] = createSolution();
-			prepareToSolution(preparable, solutions[row]);
+			solutions[row] = initializeSolution();
+			calculateSolution(preparable, solutions[row]);
 		}
 		createSolutionOnTop(solutions);
 	}
