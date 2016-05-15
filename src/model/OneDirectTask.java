@@ -31,4 +31,12 @@ public class OneDirectTask {
 		return weights.get(col);
 	}
 
+	@Override
+	public String toString() {
+		return "OneDirectTask [costs=" + costs + ", weights=" + weights
+				+ ", limit=" + limit + "]";
+	}
+	
+	
+
 }

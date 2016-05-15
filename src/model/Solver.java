@@ -38,10 +38,10 @@ public abstract class Solver {
 
 	public abstract void createFirstTop();
 
-	protected void createTop(int currentH, int currentV, Solution top) {
-		setHAndVAndFix(currentH, currentV, top);
-		if (isTopCandidate(top)) {
-			candidatesSolutions.add(top);
+	protected void createTop(int currentH, Solution soluton) {
+		setHAndVAndFix(currentH, soluton);
+		if (isTopCandidate(soluton)) {
+			candidatesSolutions.add(soluton);
 		}
 		setLeftLimit();
 	}
@@ -66,35 +66,33 @@ public abstract class Solver {
 		leftLimit = limit;
 	}
 
-	protected boolean isTopCandidate(Solution top) {
-		return top.getV() >= currentLeaderSolution.getH() && top.getV() > 0;
+	protected boolean isTopCandidate(Solution soluton) {
+		return soluton.getV() >= currentLeaderSolution.getH()
+				&& soluton.getV() > 0;
 	}
 
-	protected void setHAndVAndFix(int currentH, int currentV, Solution top) {
-		for (int i = 0; i < sortVariableList.length; i++) {
-			if (currentLeaderSolution.getConstVariables().contains(i)) {
-				//sol.set(i, currentLeaderSolution.getSolution().get(i));
+	protected void setHAndVAndFix(int currentH, Solution soluton) {
+		int currentV = currentH;
+		for (int var = 0; var < sortVariableList.length; var++) {
+			if (currentLeaderSolution.getConstVariables().contains(var)) {
 				continue;
 			}
-			int cost = unsortVariableList[sortVariableList[i].getNumber()]
-					.getCost();
-			int weight = unsortVariableList[sortVariableList[i].getNumber()]
-					.getWeight();
+			Variable currentVariable = unsortVariableList[sortVariableList[var]
+					.getNumber()];
+			int cost = currentVariable.getCost();
+			int weight = currentVariable.getWeight();
 			if (weight <= leftLimit) {
 				currentH += cost;
 				currentV += cost;
-				sol.set(sortVariableList[i].getNumber(), true);
+				soluton.setVariable(sortVariableList[var].getNumber());
 			} else if (leftLimit > 0) {
-				top.setFix(i);
+				soluton.setFix(var);
 				currentV += ((double) leftLimit / weight) * cost;
 			}
 			leftLimit -= weight;
 		}
-		top.setH(currentH);
-		top.setV(currentV);
-		top.setSolution(sol);
-		System.out.print(top.getSolution()+"   ");
-		System.out.println(top);
+		soluton.setH(currentH);
+		soluton.setV(currentV);
 	}
 
 	public boolean isEnd() {
@@ -110,6 +108,13 @@ public abstract class Solver {
 
 	public boolean hasSolution() {
 		return hasSolution;
+	}
+	
+	protected Solution createSolution() {
+		Solution solution = new Solution(
+				currentLeaderSolution.getConstVariables());
+		solution.initializeSolution(sortVariableList.length);
+		return solution;
 	}
 
 }

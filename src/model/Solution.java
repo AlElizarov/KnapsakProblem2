@@ -9,6 +9,7 @@ public class Solution implements Comparable<Solution> {
 	private int v;
 	private int fix;
 	private List<Integer> constVariables = new ArrayList<>();
+	private boolean[] discretSolution;
 
 	public Solution() {
 	}
@@ -27,8 +28,13 @@ public class Solution implements Comparable<Solution> {
 
 	@Override
 	public String toString() {
-		return "Top [h=" + h + ", v=" + v + ", fix = " + fix + ", constants = "
-				+ constVariables + "]";
+		String res = "Solution [h=" + h + ", v=" + v + ", fix = " + fix
+				+ ", constants = " + constVariables + ", solution = [";
+		for(int var = 0; var < discretSolution.length; var++){
+			res+=discretSolution[var]+", ";
+		}
+		res += "]]";
+		return res;
 	}
 
 	@Override
@@ -62,4 +68,18 @@ public class Solution implements Comparable<Solution> {
 		return constVariables;
 	}
 
+	public void initializeSolution(int size) {
+		discretSolution = new boolean[size];
+		for (int var = 0; var < size; var++) {
+			discretSolution[var] = false;
+		}
+	}
+
+	public void setVariable(int var) {
+		discretSolution[var] = true;
+	}
+
+	public boolean isVarTaken(int var) {
+		return discretSolution[var];
+	}
 }
