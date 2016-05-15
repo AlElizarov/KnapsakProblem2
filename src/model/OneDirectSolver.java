@@ -11,7 +11,13 @@ public class OneDirectSolver extends Solver {
 	@Override
 	public void createFirstTop() {
 		Solution solution = createSolution();
-		createTop(0, solution);
+		prepareToSolution(new Preparable() {
+			
+			@Override
+			public boolean prepare(int varIdx, int unsortNumber) {
+				return false;
+			}
+		}, solution);
 		addCandidate(solution);
 		if (candidatesSolutions.size() > 0) {
 			currentLeaderSolution = Collections.max(candidatesSolutions);

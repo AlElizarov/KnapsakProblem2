@@ -56,7 +56,7 @@ public abstract class Solver {
 	private void createSortListOfVariable(OneDirectTask oneDirectTask) {
 		sortVariableList = new Variable[oneDirectTask.getVariableCount()];
 		unsortVariableList = new Variable[oneDirectTask.getVariableCount()];
-		for (int col = 0; col < sortVariableList.length; col++) {
+		for (int col = 0; col < unsortVariableList.length; col++) {
 			Object cost = oneDirectTask.getCost(col);
 			Object weight = oneDirectTask.getWeight(col);
 			sortVariableList[col] = new Variable(cost, weight, col);
@@ -76,8 +76,9 @@ public abstract class Solver {
 
 	protected void setHAndVAndFix(int currentH, Solution solution) {
 		int currentV = currentH;
-		for (int var = 0; var < sortVariableList.length; var++) {
-			if (currentLeaderSolution.getConstVariables().contains(sortVariableList[var].getNumber())) {
+		for (int var = 0; var < unsortVariableList.length; var++) {
+			if (currentLeaderSolution.getConstVariables().contains(
+					sortVariableList[var].getNumber())) {
 				continue;
 			}
 			Variable currentVariable = unsortVariableList[sortVariableList[var]
@@ -112,16 +113,15 @@ public abstract class Solver {
 	public boolean hasSolution() {
 		return hasSolution;
 	}
-	
+
 	protected Solution createSolution() {
 		Solution solution = new Solution(
 				currentLeaderSolution.getConstVariables());
 		solution.initializeSolution(sortVariableList.length);
 		return solution;
 	}
-	
+
 	protected void prepareToSolution(Preparable preparable, Solution solution) {
-		System.out.println("prepare");
 		int weight = 0;
 		int cost = 0;
 		for (int var = 0; var < currentLeaderSolution.getConstVariables()

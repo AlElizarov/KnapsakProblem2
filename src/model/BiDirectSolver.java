@@ -18,13 +18,13 @@ public class BiDirectSolver extends Solver {
 
 	@Override
 	public void createFirstTop() {
-		Solution[] solutions = new Solution[oneDirectTasks.length];
-		for (int row = 0; row < task.getLimitationCount(); row++) {
-			setOneDirectTask(oneDirectTasks[row]);
-			solutions[row] = createSolution();
-			createTop(0, solutions[row]);
-		}
-		createSolutionOnTop(solutions);
+		createBiDirectTop(new Preparable() {
+			
+			@Override
+			public boolean prepare(int varIdx, int unsortNumber) {
+				return false;
+			}
+		});
 		if (candidatesSolutions.size() > 0) {
 			currentLeaderSolution = Collections.max(candidatesSolutions);
 		} else {
@@ -36,30 +36,25 @@ public class BiDirectSolver extends Solver {
 		Solution solutionOnTop = createSolution();
 		setSolutionAndH(solutions, solutionOnTop);
 		setV(solutions, solutionOnTop);
+		setFix(solutionOnTop);
+		addCandidate(solutionOnTop);
+	}
+
+	private void setFix(Solution solutionOnTop) {
 		int fixIdx = 0;
 		int maxCost = 0;
-		for(int i = 0; i < sortVariableList.length; i++){
+		for(int i = 0; i < unsortVariableList.length; i++){
 			if(unsortVariableList[i].getCost() > maxCost && !currentLeaderSolution.getConstVariables().contains(i)){
 				fixIdx = i;
 				maxCost = unsortVariableList[i].getCost();
 			}
 		}
-//		for (int var = 0; var < sortVariableList.length; var++) {
-//			if (currentLeaderSolution.getConstVariables().contains(var)) {
-//				fixIdx++;
-//			} else {
-//				break;
-//			}
-//		}
 		solutionOnTop.setFix(fixIdx);
-		if (isTopCandidate(solutionOnTop)) {
-			candidatesSolutions.add(solutionOnTop);
-		}
 	}
 
 	private void setSolutionAndH(Solution[] solutions, Solution solutionOnTop) {
 		int h = 0;
-		out: for (int var = 0; var < sortVariableList.length; var++) {
+		out: for (int var = 0; var < unsortVariableList.length; var++) {
 			for (int solution = 0; solution < solutions.length; solution++) {
 				if (!solutions[solution].isVarTaken(var)) {
 					continue out;
@@ -83,38 +78,34 @@ public class BiDirectSolver extends Solver {
 
 	@Override
 	protected void createRightTop() {
-		Solution[] solutions = new Solution[oneDirectTasks.length];
-		for (int row = 0; row < task.getLimitationCount(); row++) {
-			setOneDirectTask(oneDirectTasks[row]);
-			solutions[row] = createSolution();
-			prepareToSolution(new Preparable() {
-
-				@Override
-				public boolean prepare(int varIdx, int unsortNumber) {
-					return varIdx == currentLeaderSolution.getFix()
-							|| currentLeaderSolution.isVarTaken(unsortNumber);
-				}
-			}, solutions[row]);
-			System.out.println(solutions[row]);
-		}
-		createSolutionOnTop(solutions);
+		createBiDirectTop(new Preparable() {
+			
+			@Override
+			public boolean prepare(int varIdx, int unsortNumber) {
+				return varIdx == currentLeaderSolution.getFix()
+						|| currentLeaderSolution.isVarTaken(unsortNumber);
+			}
+		});
 	}
 
 	@Override
 	protected void createLeftTop() {
+		createBiDirectTop(new Preparable() {
+			
+			@Override
+			public boolean prepare(int varIdx, int unsortNumber) {
+				return varIdx != currentLeaderSolution.getFix()
+						&& currentLeaderSolution.isVarTaken(unsortNumber);
+			}
+		});
+	}
+
+	private void createBiDirectTop(Preparable preparable) {
 		Solution[] solutions = new Solution[oneDirectTasks.length];
 		for (int row = 0; row < task.getLimitationCount(); row++) {
 			setOneDirectTask(oneDirectTasks[row]);
 			solutions[row] = createSolution();
-			prepareToSolution(new Preparable() {
-
-				@Override
-				public boolean prepare(int varIdx, int unsortNumber) {
-					return varIdx != currentLeaderSolution.getFix()
-							&& currentLeaderSolution.isVarTaken(unsortNumber);
-				}
-			}, solutions[row]);
-			System.out.println(solutions[row]);
+			prepareToSolution(preparable, solutions[row]);
 		}
 		createSolutionOnTop(solutions);
 	}
