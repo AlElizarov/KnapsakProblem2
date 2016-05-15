@@ -19,6 +19,7 @@ public class Task {
 	private List<String> limitNames;
 	private List<String> critUnits;
 	private List<String> limitUnits;
+	private List<Integer> svertka;
 
 	public Task(String name, int variableCount, int limitationCount,
 			int criterionCount, boolean isMax) {
@@ -33,11 +34,12 @@ public class Task {
 		this.economMeaning = economMeaning;
 	}
 
-	List<Integer> getSvertka() {
+	public List<Integer> getSvertka() {
 		if (costs.size() == 1) {
 			return costs.get(0);
 		}
-		return calculateSvertka();
+		calculateSvertka();
+		return svertka;
 	}
 
 	List<Integer> getLimitation(int numberOfLimitation) {
@@ -365,8 +367,8 @@ public class Task {
 		return !critNames.contains(null);
 	}
 
-	public ArrayList<Integer> calculateSvertka() {
-		ArrayList<Integer> svertka = new ArrayList<>();
+	public void calculateSvertka() {
+		svertka = new ArrayList<>();
 		for (int i = 0; i < variableCount; i++) {
 			double tmpX = 0;
 			for (int j = 0; j < criterionCount; j++) {
@@ -374,6 +376,5 @@ public class Task {
 			}
 			svertka.add((int) tmpX);
 		}
-		return svertka;
 	}
 }
