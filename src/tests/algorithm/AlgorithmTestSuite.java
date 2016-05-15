@@ -7,6 +7,6 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({
 		OneDirectTests.class,
-		BiDirectSolverTests.class })
+		BiDirectSolverTests.class, MultyCriteriaTests.class })
 public class AlgorithmTestSuite {
 }

@@ -1,11 +1,10 @@
 package tests.algorithm;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 
-import model.BiDirectSolver;
 import model.Task;
 
 import org.junit.Before;
@@ -13,7 +12,6 @@ import org.junit.Test;
 
 public class MultyCriteriaTests {
 
-	private BiDirectSolver solver;
 	private Task task;
 
 	@Before
@@ -36,7 +34,6 @@ public class MultyCriteriaTests {
 			task.setValue(limits[row - costs.length], row, weights[row
 					- costs.length].length);
 		}
-		solver = new BiDirectSolver(task);
 	}
 
 	@Test
@@ -48,7 +45,7 @@ public class MultyCriteriaTests {
 		expectSvertka.add(7);
 		expectSvertka.add(6);
 
-		ArrayList<Integer> actualSvertka = task.calculateSvertka();
+		List<Integer> actualSvertka = task.getSvertka();
 
 		assertEquals(expectSvertka, actualSvertka);
 	}
