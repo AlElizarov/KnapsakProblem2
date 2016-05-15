@@ -7,33 +7,39 @@ import java.util.List;
 
 public class OneDirectSolver {
 
-	private Task task;
 	private Variable[] sortVariableList;
 	private Top currentLeaderTop = new Top();
 	private int leftLimit;
 	private List<Top> candidatesTop = new ArrayList<>();
 	private boolean hasSolution = true;
+	private int limit;
+
+	public OneDirectSolver() {
+	}
 
 	public OneDirectSolver(Task task) {
-		this.task = task;
-		createSortListOfVariable();
+		setOneDirectSolver(new OneDirectTask(task, 0));
+	}
+
+	protected void setOneDirectSolver(OneDirectTask oneDirectTask) {
+		createSortListOfVariable(oneDirectTask);
+		limit = oneDirectTask.getLimit();
 		setLeftLimit();
 		createFirstTop();
 	}
 
-	private void createSortListOfVariable() {
-		sortVariableList = new Variable[task.getVariableCount()];
+	private void createSortListOfVariable(OneDirectTask oneDirectTask) {
+		sortVariableList = new Variable[oneDirectTask.getVariableCount()];
 		for (int col = 0; col < sortVariableList.length; col++) {
-			Object cost = task.getValue(0, col);
-			Object weight = task.getValue(1, col);
+			Object cost = oneDirectTask.getCost(col);
+			Object weight = oneDirectTask.getWeight(col);
 			sortVariableList[col] = new Variable(cost, weight, col);
 		}
 		Arrays.sort(sortVariableList, Collections.reverseOrder());
 	}
 
 	private void setLeftLimit() {
-		leftLimit = (int) task.getValue(task.getCriterionCount(),
-				task.getVariableCount());
+		leftLimit = limit;
 	}
 
 	public boolean isEnd() {

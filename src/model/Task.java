@@ -33,6 +33,21 @@ public class Task {
 		this.economMeaning = economMeaning;
 	}
 
+	List<Integer> getSvertka() {
+		if (costs.size() == 1) {
+			return costs.get(0);
+		}
+		return null;
+	}
+
+	List<Integer> getLimitation(int numberOfLimitation) {
+		return weights.get(numberOfLimitation);
+	}
+
+	int getLimit(int numberOfLimit) {
+		return limits.get(numberOfLimit);
+	}
+
 	private void setStartState(String name, int variableCount,
 			int limitationCount, int criterionCount, boolean isMax) {
 		this.name = name;
