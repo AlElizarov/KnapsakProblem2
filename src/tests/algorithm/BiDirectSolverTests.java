@@ -43,6 +43,7 @@ public class BiDirectSolverTests {
 	
 	@Test
 	public void getLeaderTopRound0() {
+		solver.createFirstTop();
 		Solution top = solver.getCurrentLeaderTop();
 
 		assertTop(13, 21, top);
