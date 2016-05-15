@@ -12,6 +12,7 @@ public class OneDirectSolver extends Solver {
 	public void createFirstTop() {
 		Solution solution = createSolution();
 		createTop(0, solution);
+		addCandidate(solution);
 		if (candidatesSolutions.size() > 0) {
 			currentLeaderSolution = Collections.max(candidatesSolutions);
 		} else {
@@ -54,6 +55,7 @@ public class OneDirectSolver extends Solver {
 			}
 		}
 		createTop(cost, solution);
+		addCandidate(solution);
 	}
 
 	@Override

@@ -38,12 +38,15 @@ public abstract class Solver {
 
 	public abstract void createFirstTop();
 
-	protected void createTop(int currentH, Solution soluton) {
-		setHAndVAndFix(currentH, soluton);
-		if (isTopCandidate(soluton)) {
-			candidatesSolutions.add(soluton);
-		}
+	protected void createTop(int currentH, Solution solution) {
+		setHAndVAndFix(currentH, solution);
 		setLeftLimit();
+	}
+
+	protected void addCandidate(Solution solution) {
+		if (isTopCandidate(solution)) {
+			candidatesSolutions.add(solution);
+		}
 	}
 
 	protected abstract void createRightTop();
@@ -66,12 +69,12 @@ public abstract class Solver {
 		leftLimit = limit;
 	}
 
-	protected boolean isTopCandidate(Solution soluton) {
-		return soluton.getV() >= currentLeaderSolution.getH()
-				&& soluton.getV() > 0;
+	protected boolean isTopCandidate(Solution solution) {
+		return solution.getV() >= currentLeaderSolution.getH()
+				&& solution.getV() > 0;
 	}
 
-	protected void setHAndVAndFix(int currentH, Solution soluton) {
+	protected void setHAndVAndFix(int currentH, Solution solution) {
 		int currentV = currentH;
 		for (int var = 0; var < sortVariableList.length; var++) {
 			if (currentLeaderSolution.getConstVariables().contains(var)) {
@@ -84,15 +87,15 @@ public abstract class Solver {
 			if (weight <= leftLimit) {
 				currentH += cost;
 				currentV += cost;
-				soluton.setVariable(sortVariableList[var].getNumber());
+				solution.setVariable(sortVariableList[var].getNumber());
 			} else if (leftLimit > 0) {
-				soluton.setFix(var);
+				solution.setFix(var);
 				currentV += ((double) leftLimit / weight) * cost;
 			}
 			leftLimit -= weight;
 		}
-		soluton.setH(currentH);
-		soluton.setV(currentV);
+		solution.setH(currentH);
+		solution.setV(currentV);
 	}
 
 	public boolean isEnd() {

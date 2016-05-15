@@ -34,6 +34,25 @@ public class BiDirectSolver extends Solver {
 
 	private void createSolutionOnTop(Solution[] solutions) {
 		Solution solutionOnTop = createSolution();
+		setSolutionAndH(solutions, solutionOnTop);
+		setV(solutions, solutionOnTop);
+		int fixIdx = 0;
+		for(int var = 0; var < sortVariableList.length; var++){
+			if(currentLeaderSolution.getConstVariables().contains(var)){
+				fixIdx++;
+			}
+			else{
+				break;
+			}
+		}
+		solutionOnTop.setFix(fixIdx);
+		System.out.println(fixIdx);
+		if (isTopCandidate(solutionOnTop)) {
+			candidatesSolutions.add(solutionOnTop);
+		}
+	}
+
+	private void setSolutionAndH(Solution[] solutions, Solution solutionOnTop) {
 		int h = 0;
 		out: for(int var = 0; var < sortVariableList.length; var++){
 			for(int solution = 0; solution < solutions.length; solution++){
@@ -45,6 +64,9 @@ public class BiDirectSolver extends Solver {
 			h += unsortVariableList[var].getCost();
 		}
 		solutionOnTop.setH(h);
+	}
+
+	private void setV(Solution[] solutions, Solution solutionOnTop) {
 		int v = solutions[0].getV();
 		for(int solution = 1; solution < solutions.length; solution++){
 			if(solutions[solution].getV() < v){
@@ -52,11 +74,6 @@ public class BiDirectSolver extends Solver {
 			}
 		}
 		solutionOnTop.setV(v);
-		if (isTopCandidate(solutionOnTop)) {
-			candidatesSolutions.add(solutionOnTop);
-		}
-		System.out.println(solutionOnTop);
-		System.out.println("candidates = "+candidatesSolutions);
 	}
 
 	@Override
