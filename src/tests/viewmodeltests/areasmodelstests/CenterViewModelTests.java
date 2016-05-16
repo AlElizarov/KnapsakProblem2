@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
+import tests.MockTaskManager;
 import viewmodel.TaskManager;
 import viewmodel.areasmodels.SimpleCenterViewModel;
 
@@ -17,7 +18,7 @@ public class CenterViewModelTests {
 
 	@Before
 	public void setUp() {
-		manager = TaskManager.getInstance();
+		manager = MockTaskManager.getInstance();
 		centerViewModel = new SimpleCenterViewModel(manager);
 		manager.setStartState();
 	}

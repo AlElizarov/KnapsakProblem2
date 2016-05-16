@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import tests.MockTaskManager;
 import view.components.tablemanagers.TableManager;
 import viewmodel.TaskManager;
 import viewmodel.componentsmodels.tablemodelmanagers.ITableManager;
@@ -19,7 +20,7 @@ public class SolvedEconomManagerTests {
 
 	@Before
 	public void setUp() {
-		manager = TaskManager.getInstance();
+		manager = MockTaskManager.getInstance();
 		tableManager = new TableManager(manager);
 		manager.setStartState();
 	}
