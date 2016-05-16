@@ -376,7 +376,7 @@ public class Task {
 		for (int i = 0; i < variableCount; i++) {
 			double tmpX = 0;
 			for (int j = 0; j < criterionCount; j++) {
-				tmpX += costs.get(j).get(i) * 1/criterionCount;
+				tmpX += costs.get(j).get(i) * (1.0/criterionCount);
 			}
 			svertka.add((int) tmpX);
 		}
