@@ -239,7 +239,6 @@ public class TaskManager extends Observable {
 
 	public void solveTask() {
 		Solver solver = createSolver();
-		solver.createFirstSolution();
 		if (!solver.hasSolution()) {
 			for (int i = 0; i < task.getVariableCount(); i++) {
 				task.setSolutionVariable(false, i);

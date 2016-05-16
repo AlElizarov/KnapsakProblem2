@@ -12,12 +12,29 @@ public abstract class Solver {
 	protected Solution currentLeaderSolution = new Solution();
 	private int leftLimit;
 	protected List<Solution> candidatesSolutions = new ArrayList<>();
-	protected boolean hasSolution = true;
+	protected boolean hasSolution = false;
 	private int limit;
 	private int currentMaxH;
+	protected Task task;
 
 	public Solver(Task task) {
+		this.task = task;
 		setOneDirectTask(new OneDirectTask(task, 0));
+		out: for (int col = 0; col < task.getVariableCount(); col++) {
+			for (int row = task.getCriterionCount(); row < task
+					.getCriterionCount() + task.getLimitationCount(); row++) {
+				if ((int) task.getValue(row, col) > (int) task.getValue(row,
+						task.getVariableCount())) {
+					continue out;
+				}
+			}
+			hasSolution = true;
+			break;
+		}
+		createFirstSolution();
+		if (candidatesSolutions.size() > 0) {
+			currentLeaderSolution = Collections.max(candidatesSolutions);
+		}
 	}
 
 	public void solve() {
@@ -25,9 +42,7 @@ public abstract class Solver {
 		createRightSolution();
 
 		candidatesSolutions.remove(currentLeaderSolution);
-		if (candidatesSolutions.size() > 0) {
-			currentLeaderSolution = Collections.max(candidatesSolutions);
-		}
+		currentLeaderSolution = Collections.max(candidatesSolutions);
 		deleteNonPerspectiveTops();
 	}
 
@@ -61,7 +76,7 @@ public abstract class Solver {
 
 	protected abstract void createLeftSolution();
 
-	public abstract void createFirstSolution();
+	protected abstract void createFirstSolution();
 
 	private void createSortListOfVariable(OneDirectTask oneDirectTask) {
 		sortVariableList = new Variable[oneDirectTask.getVariableCount()];
@@ -81,7 +96,7 @@ public abstract class Solver {
 
 	private boolean isTopCandidate(Solution solution) {
 		return solution.getV() >= currentLeaderSolution.getH()
-				&& solution.getH() > 0;
+				&& solution.getV() > 0;
 	}
 
 	private void setHAndVAndFix(int currentH, Solution solution) {

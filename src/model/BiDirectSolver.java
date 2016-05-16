@@ -1,23 +1,20 @@
 package model;
 
-import java.util.Collections;
 
 public class BiDirectSolver extends Solver {
 
-	private Task task;
 	private OneDirectTask[] oneDirectTasks;
 
 	public BiDirectSolver(Task task) {
 		super(task);
-		this.task = task;
-		oneDirectTasks = new OneDirectTask[task.getLimitationCount()];
-		for (int row = 0; row < task.getLimitationCount(); row++) {
-			oneDirectTasks[row] = new OneDirectTask(task, row);
-		}
 	}
 
 	@Override
 	public void createFirstSolution() {
+		oneDirectTasks = new OneDirectTask[task.getLimitationCount()];
+		for (int row = 0; row < task.getLimitationCount(); row++) {
+			oneDirectTasks[row] = new OneDirectTask(task, row);
+		}
 		createTop(new Preparable() {
 			
 			@Override
@@ -25,11 +22,6 @@ public class BiDirectSolver extends Solver {
 				return false;
 			}
 		});
-		if (candidatesSolutions.size() > 0) {
-			currentLeaderSolution = Collections.max(candidatesSolutions);
-		} else {
-			hasSolution = false;
-		}
 	}
 
 	private void createSolutionOnTop(Solution[] solutions) {

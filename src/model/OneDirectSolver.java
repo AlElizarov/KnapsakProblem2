@@ -1,6 +1,5 @@
 package model;
 
-import java.util.Collections;
 
 public class OneDirectSolver extends Solver {
 
@@ -9,7 +8,7 @@ public class OneDirectSolver extends Solver {
 	}
 
 	@Override
-	public void createFirstSolution() {
+	protected void createFirstSolution() {
 		createTop(new Preparable() {
 
 			@Override
@@ -17,11 +16,6 @@ public class OneDirectSolver extends Solver {
 				return false;
 			}
 		});
-		if (candidatesSolutions.size() > 0) {
-			currentLeaderSolution = Collections.max(candidatesSolutions);
-		} else {
-			hasSolution = false;
-		}
 	}
 
 	@Override
