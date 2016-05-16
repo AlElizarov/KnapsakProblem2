@@ -57,6 +57,7 @@ public class TaskManager extends Observable {
 				Integer.parseInt(limitationCount),
 				Integer.parseInt(criterionCount), isMax);
 		isTaskCreated = true;
+		isTaskSolved = false;
 		setChanged();
 		notifyObservers();
 	}

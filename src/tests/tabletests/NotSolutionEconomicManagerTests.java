@@ -466,6 +466,20 @@ public class NotSolutionEconomicManagerTests {
 			tableManager.setValue("ss", row, 0);
 		}
 	}
+	
+	@Test
+	public void getValueAtCritNamesCellAfterSolution() {
+		Object expectValue = "ee";
+		int row = 1;
+		int col = 0;
+
+		createEconomTask();
+		tableManager.setValue("ee", row, col);
+		manager.solveTask();
+		Object actualValue = tableManager.getValueAt(row, col);
+
+		assertSame(expectValue, actualValue);
+	}
 
 	@Test(expected = TooBigNumberException.class)
 	public void setTooBigNumber() {

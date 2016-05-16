@@ -2,6 +2,7 @@ package view.components.tablemanagers;
 
 import javax.swing.table.TableCellEditor;
 
+import view.components.tablemanagers.editors.DataCellEditor;
 import viewmodel.TaskManager;
 import viewmodel.componentsmodels.tablemodelmanagers.ITableType;
 
@@ -19,10 +20,13 @@ class SolvedManager extends TableType {
 
 	@Override
 	protected Object gerEnythingElse(int row, int col) {
-		if (row < tableType.getRowCount()) {
-			return tableType.getValueAt(row, col);
+		if (row < tableType.getRowCount()-rowMargin && col < tableType.getColumnCount()-columnMargin) {
+			return tableType.getValueAt(row+rowMargin, col+columnMargin);
 		} else {
-			return 1;
+			if (col >= 0 && col < manager.getVariableCount()) {
+				return 1;
+			}
+			return null;
 		}
 	}
 
@@ -34,10 +38,15 @@ class SolvedManager extends TableType {
 
 	@Override
 	protected boolean isEnythingElseEditable(int row, int col) {
-		if (row < tableType.getRowCount()-2) {
-			return tableType.isCellEditable(row, col);
+		if (row < tableType.getRowCount()-rowMargin && col < tableType.getColumnCount()-columnMargin) {
+			return tableType.isCellEditable(row+rowMargin, col+columnMargin);
 		} else {
 			if (col >= 0 && col < manager.getVariableCount()) {
+				return true;
+			}
+			row += rowMargin;
+			col += columnMargin;
+			if(col == getColumnCount()-1 && row < getRowCount()-1 && row >= manager.getCriterionCount()){
 				return true;
 			}
 			return false;
@@ -47,7 +56,7 @@ class SolvedManager extends TableType {
 	@Override
 	protected TableCellEditor getEnythingElseEditor(int row, int column) {
 		// TODO Auto-generated method stub
-		return null;
+		return new DataCellEditor();
 	}
 
 	@Override

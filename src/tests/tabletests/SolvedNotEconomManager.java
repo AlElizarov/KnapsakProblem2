@@ -95,6 +95,54 @@ public class SolvedNotEconomManager {
 		
 		assertFalse(tableManager.isCellEditable(row, col));
 	}
+	
+	@Test
+	public void lastRowFirstColumnGetValue() {
+		Object expectValue = 1;
+		int row = LIMITATION_COUNT+CRITERION_COUNT;
+		int col = 0;
+		
+		createEconomSolvedTask();
+		Object actualValue = tableManager.getValueAt(row, col);
+		
+		assertEquals(expectValue, actualValue);
+	}
+	
+	@Test
+	public void lastRowLastVarColumnGetValue() {
+		Object expectValue = 1;
+		int row = LIMITATION_COUNT+CRITERION_COUNT;
+		int col = VAR_COUNT-1;
+		
+		createEconomSolvedTask();
+		Object actualValue = tableManager.getValueAt(row, col);
+		
+		assertEquals(expectValue, actualValue);
+	}
+	
+	@Test
+	public void lastRowLastTypeColumnGetValue() {
+		Object expectValue = null;
+		int row = LIMITATION_COUNT+CRITERION_COUNT;
+		int col = VAR_COUNT;
+		
+		createEconomSolvedTask();
+		Object actualValue = tableManager.getValueAt(row, col);
+		
+		assertEquals(expectValue, actualValue);
+	}
+	
+	@Test
+	public void lastRowLastColumnGetValue() {
+		Object expectValue = null;
+		int row = LIMITATION_COUNT+CRITERION_COUNT;
+		int col = VAR_COUNT+1;
+		
+		createEconomSolvedTask();
+		Object actualValue = tableManager.getValueAt(row, col);
+		
+		assertEquals(expectValue, actualValue);
+	}
 
 	private void createEconomSolvedTask() {
 		manager.setTaskData("4", "3", "2");

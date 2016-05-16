@@ -36,7 +36,8 @@ abstract class TableType implements ITableType {
 	}
 
 	protected Object getAllTheRest(int row, int col) {
-		if (col == manager.getVariableCount()) {
+		if (col == manager.getVariableCount()
+				&& (row + rowMargin) < (getRowCount() - rowMarginBottom)) {
 			if (row < manager.getCriterionCount()) {
 				if (row >= 0) {
 					return "-->";
@@ -45,6 +46,10 @@ abstract class TableType implements ITableType {
 				return manager.isMax() ? "<=" : ">=";
 			}
 		} else {
+			if (col == manager.getVariableCount() + 1
+					&& row < manager.getCriterionCount()) {
+				return manager.isMax() ? "max" : "min";
+			}
 			return gerEnythingElse(row, col);
 		}
 		return null;
@@ -93,8 +98,7 @@ abstract class TableType implements ITableType {
 	}
 
 	private boolean isLimitCell(int row, int col) {
-		return col == manager.getVariableCount() + 1
-				&& checkRow(row);
+		return col == manager.getVariableCount() + 1 && checkRow(row);
 	}
 
 	private boolean isTypeColumn(int col) {
@@ -114,10 +118,10 @@ abstract class TableType implements ITableType {
 	private boolean isLimitationCell(int row, int col) {
 		return checkColumn(col) && checkRow(row);
 	}
-	
-	private boolean checkRow(int row){
+
+	private boolean checkRow(int row) {
 		return (row >= manager.getCriterionCount())
-				&& (row+rowMargin) < (getRowCount() - rowMarginBottom);
+				&& (row + rowMargin) < (getRowCount() - rowMarginBottom);
 	}
 
 	private boolean checkColumn(int col) {
@@ -233,17 +237,19 @@ abstract class TableType implements ITableType {
 	}
 
 	private void handleRowIndex(int row) {
-		if(row >= getRowCount()){
-			throw new IndexOutOfBoundsException("row count: "+getRowCount()+" index: "+row);
+		if (row >= getRowCount()) {
+			throw new IndexOutOfBoundsException("row count: " + getRowCount()
+					+ " index: " + row);
 		}
 	}
-	
+
 	private void handleColumnIndex(int col) {
-		if(col >= getColumnCount()){
-			throw new IndexOutOfBoundsException("column count: "+getColumnCount()+" index: "+col);
+		if (col >= getColumnCount()) {
+			throw new IndexOutOfBoundsException("column count: "
+					+ getColumnCount() + " index: " + col);
 		}
 	}
-	
+
 	private void handleRowAndColumnIndexes(int row, int column) {
 		handleRowIndex(row);
 		handleColumnIndex(column);

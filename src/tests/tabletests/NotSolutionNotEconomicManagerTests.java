@@ -182,8 +182,8 @@ public class NotSolutionNotEconomicManagerTests {
 	}
 
 	@Test
-	public void getValueAtLastCriterionRow() {
-		Object expectValue = null;
+	public void getValueAtLastColumnCriterionRow() {
+		Object expectValue = "max";
 		int row = 0;
 		int col = VAR_COUNT + 1;
 
