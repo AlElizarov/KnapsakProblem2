@@ -10,6 +10,7 @@ import model.Task;
 public class TaskManager extends Observable {
 
 	protected static TaskManager instance;
+	protected static MockTaskManager mockInstance;
 
 	private Task task;
 	private boolean isTaskCreated = false;
@@ -270,6 +271,14 @@ public class TaskManager extends Observable {
 
 	public void setSolutionVariable(boolean value, int col) {
 		task.setSolutionVariable(value, col);
+	}
+
+	public long getSum(int row) {
+		return task.getSum(row);
+	}
+
+	public boolean allSumsOk() {
+		return task.allSumsOk();
 	}
 
 }

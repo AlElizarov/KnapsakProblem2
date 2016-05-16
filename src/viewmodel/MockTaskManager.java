@@ -1,17 +1,16 @@
-package tests;
+package viewmodel;
 
-import viewmodel.TaskManager;
 
 public class MockTaskManager extends TaskManager {
 
 	protected MockTaskManager() {
 	}
 
-	public static TaskManager getInstance() {
-		if (instance == null) {
-			instance = new MockTaskManager();
+	public static MockTaskManager getMockInstance() {
+		if (mockInstance == null) {
+			mockInstance = new MockTaskManager();
 		}
-		return instance;
+		return mockInstance;
 	}
 
 	@Override
