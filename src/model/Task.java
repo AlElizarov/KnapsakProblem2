@@ -376,7 +376,7 @@ public class Task {
 		for (int i = 0; i < variableCount; i++) {
 			double tmpX = 0;
 			for (int j = 0; j < criterionCount; j++) {
-				tmpX += costs.get(j).get(i) * (1.0/criterionCount);
+				tmpX += costs.get(j).get(i) * (1.0 / criterionCount);
 			}
 			svertka.add((int) tmpX);
 		}
@@ -393,4 +393,38 @@ public class Task {
 	public void setSolutionVariable(boolean value, int col) {
 		discretSolution[col] = value;
 	}
+
+	public long getSum(int row) {
+		long sum = 0;
+		for (int i = 0; i < discretSolution.length; i++) {
+			if (discretSolution[i]) {
+				if (row < criterionCount) {
+					sum += costs.get(row).get(i);
+				} else {
+					sum += weights.get(row - criterionCount).get(i);
+				}
+			}
+		}
+		return sum;
+	}
+
+	@Override
+	public String toString() {
+		return "Task [costs=" + costs + ", weights=" + weights + ", limits="
+				+ limits + "]";
+	}
+
+	public boolean allSumsOk() {
+		for(int i = 0; i < limitationCount; i++){
+			if(!sumOk(i)){
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private boolean sumOk(int row) {
+		return getSum(row+criterionCount) <= limits.get(row);
+	}
+	
 }
