@@ -10,42 +10,42 @@ import viewmodel.TaskManager;
 
 public class TaskManagerTests {
 
-	private TaskManager sharedViewModel;
+	private TaskManager manager;
 
 	@Before
 	public void setUp() {
-		sharedViewModel = TaskManager.getInstance();
-		sharedViewModel.setStartState();
+		manager = TaskManager.getInstance();
+		manager.setStartState();
 	}
 
 	@Test
 	public void byDefaultTaskIsNotCreated() {
-		assertFalse(sharedViewModel.isTaskCreated());
+		assertFalse(manager.isTaskCreated());
 	}
 	
 	@Test
 	public void createTask() {
-		sharedViewModel.setTaskData("4", "2", "3");
-		sharedViewModel.createTask();
+		manager.setTaskData("4", "2", "3");
+		manager.createTask();
 		
-		assertTrue(sharedViewModel.isTaskCreated());
+		assertTrue(manager.isTaskCreated());
 	}
 
 	@Test
 	public void createNotEconomTask() {
-		sharedViewModel.setTaskData("4", "2", "3");
-		sharedViewModel.createTask();
+		manager.setTaskData("4", "2", "3");
+		manager.createTask();
 		
-		assertFalse(sharedViewModel.isTaskEconom());
+		assertFalse(manager.isTaskEconom());
 	}
 
 	@Test
 	public void createEconomTask() {
-		sharedViewModel.setTaskData("4", "2", "3");
-		sharedViewModel.setEconomText("dresses");
-		sharedViewModel.createTask();
+		manager.setTaskData("4", "2", "3");
+		manager.setEconomText("dresses");
+		manager.createTask();
 		
-		assertTrue(sharedViewModel.isTaskEconom());
+		assertTrue(manager.isTaskEconom());
 	}
 
 }

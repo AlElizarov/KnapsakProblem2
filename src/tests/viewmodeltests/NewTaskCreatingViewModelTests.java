@@ -14,14 +14,14 @@ import viewmodel.framesmodels.NewTaskCreatinngViewModel;
 public class NewTaskCreatingViewModelTests {
 
 	private NewTaskCreatinngViewModel newTaskCreatingViewModel;
-	private TaskManager sharedViewModel;
+	private TaskManager taskManager;
 
 	@Before
 	public void setUp() {
-		sharedViewModel = TaskManager.getInstance();
+		taskManager = TaskManager.getInstance();
 		newTaskCreatingViewModel = new NewTaskCreatinngViewModel(
-				sharedViewModel);
-		sharedViewModel.setStartState();
+				taskManager);
+		taskManager.setStartState();
 	}
 
 	@Test
@@ -162,7 +162,7 @@ public class NewTaskCreatingViewModelTests {
 		String expectEconomText = "";
 
 		createInCorrectEconomMeaning();
-		sharedViewModel.setTaskData("11", "3", "2");
+		taskManager.setTaskData("11", "3", "2");
 		newTaskCreatingViewModel.setEconomText("dr.");
 		newTaskCreatingViewModel.createTask();
 		newTaskCreatingViewModel.setEconomCheckBoxSelected(false);
