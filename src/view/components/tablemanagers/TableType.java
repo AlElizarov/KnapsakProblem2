@@ -15,6 +15,7 @@ abstract class TableType implements ITableType {
 	protected int columnMargin;
 	protected int rowMargin;
 	protected int rowMarginBottom;
+	protected int columnMarginRight;
 
 	public TableType(TaskManager task) {
 		this.manager = task;
@@ -171,6 +172,8 @@ abstract class TableType implements ITableType {
 			return "Name";
 		} else if (col == -1) {
 			return "Unit";
+		} else if ((col+columnMargin) == getColumnCount() - columnMarginRight) {
+			return "Sum";
 		} else if (col == manager.getVariableCount()) {
 			return "Type";
 		} else if (col == manager.getVariableCount() + 1) {
@@ -201,6 +204,9 @@ abstract class TableType implements ITableType {
 		if (row == -1) {
 			return "Economic";
 		}
+		if (row == (getRowCount() - rowMarginBottom)) {
+			return "Solution";
+		}
 		if (row < manager.getCriterionCount()) {
 			return "F" + (row + 1);
 		} else {
@@ -212,7 +218,7 @@ abstract class TableType implements ITableType {
 	public Color getUnFocusRow(int row) {
 		handleRowIndex(row);
 		row -= rowMargin;
-		if (row == -1) {
+		if (row == -1 || (row+rowMargin) == (getRowCount() - rowMarginBottom)) {
 			return Color.YELLOW;
 		}
 		if (row < manager.getCriterionCount()) {
@@ -228,7 +234,7 @@ abstract class TableType implements ITableType {
 	public Color getFocusRow(int row) {
 		handleRowIndex(row);
 		row -= rowMargin;
-		if (row == -1) {
+		if (row == -1 || (row+rowMargin) == (getRowCount() - rowMarginBottom)) {
 			return new Color(255, 215, 0);
 		}
 		if (row < manager.getCriterionCount()) {

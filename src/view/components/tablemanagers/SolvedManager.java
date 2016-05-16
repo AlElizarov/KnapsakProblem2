@@ -16,6 +16,7 @@ class SolvedManager extends TableType {
 		columnMargin = tableType.getColumnMargin();
 		rowMargin = tableType.getRowMargin();
 		rowMarginBottom = 1;
+		columnMarginRight = 1;
 	}
 
 	@Override
