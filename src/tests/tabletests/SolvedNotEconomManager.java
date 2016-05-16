@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import tests.MockTaskManager;
 import view.components.tablemanagers.TableManager;
 import viewmodel.TaskManager;
 import viewmodel.componentsmodels.tablemodelmanagers.ITableManager;
@@ -19,7 +20,7 @@ public class SolvedNotEconomManager {
 
 	@Before
 	public void setUp() {
-		manager = TaskManager.getInstance();
+		manager = MockTaskManager.getInstance();
 		tableManager = new TableManager(manager);
 		manager.setStartState();
 	}
@@ -28,7 +29,7 @@ public class SolvedNotEconomManager {
 	public void getColumnCount() {
 		int expectColumnCount = VAR_COUNT + 2 + 1;
 
-		createEconomSolvedTask();
+		createNotEconomSolvedTask();
 		int actualColumnCount = tableManager.getColumnCount();
 
 		assertEquals(expectColumnCount, actualColumnCount);
@@ -38,7 +39,7 @@ public class SolvedNotEconomManager {
 	public void getRowCount() {
 		int expectRowCount = CRITERION_COUNT + LIMITATION_COUNT + 1;
 
-		createEconomSolvedTask();
+		createNotEconomSolvedTask();
 		int actualRowCount = tableManager.getRowCount();
 
 		assertEquals(expectRowCount, actualRowCount);
@@ -48,7 +49,7 @@ public class SolvedNotEconomManager {
 	public void getFirstRowHeight() {
 		int expectFirstRowHeight = 20;
 
-		createEconomSolvedTask();
+		createNotEconomSolvedTask();
 		int actualFirstRowHeight = tableManager.getRowHeight(0);
 
 		assertEquals(expectFirstRowHeight, actualFirstRowHeight);
@@ -58,7 +59,7 @@ public class SolvedNotEconomManager {
 	public void getLastRowHeight() {
 		int expectLastRowHeight = 40;
 
-		createEconomSolvedTask();
+		createNotEconomSolvedTask();
 		int actualLastRowHeight = tableManager.getRowHeight(tableManager
 				.getRowCount()-1);
 
@@ -70,7 +71,7 @@ public class SolvedNotEconomManager {
 		int row = LIMITATION_COUNT+CRITERION_COUNT;
 		int col = 0;
 		
-		createEconomSolvedTask();
+		createNotEconomSolvedTask();
 		
 		assertTrue(tableManager.isCellEditable(row, col));
 	}
@@ -81,7 +82,7 @@ public class SolvedNotEconomManager {
 		int row = LIMITATION_COUNT+CRITERION_COUNT;
 		int col = VAR_COUNT-1;
 		
-		createEconomSolvedTask();
+		createNotEconomSolvedTask();
 		
 		assertTrue(tableManager.isCellEditable(row, col));
 	}
@@ -91,18 +92,18 @@ public class SolvedNotEconomManager {
 		int row = LIMITATION_COUNT+CRITERION_COUNT;
 		int col = VAR_COUNT+1;
 		
-		createEconomSolvedTask();
+		createNotEconomSolvedTask();
 		
 		assertFalse(tableManager.isCellEditable(row, col));
 	}
 	
 	@Test
 	public void lastRowFirstColumnGetValue() {
-		Object expectValue = 1;
 		int row = LIMITATION_COUNT+CRITERION_COUNT;
 		int col = 0;
 		
-		createEconomSolvedTask();
+		createNotEconomSolvedTask();
+		Object expectValue = manager.getSolutionVariable(col) ? 1 : 0;
 		Object actualValue = tableManager.getValueAt(row, col);
 		
 		assertEquals(expectValue, actualValue);
@@ -110,11 +111,11 @@ public class SolvedNotEconomManager {
 	
 	@Test
 	public void lastRowLastVarColumnGetValue() {
-		Object expectValue = 1;
 		int row = LIMITATION_COUNT+CRITERION_COUNT;
 		int col = VAR_COUNT-1;
 		
-		createEconomSolvedTask();
+		createNotEconomSolvedTask();
+		Object expectValue = manager.getSolutionVariable(col) ? 1 : 0;
 		Object actualValue = tableManager.getValueAt(row, col);
 		
 		assertEquals(expectValue, actualValue);
@@ -126,7 +127,7 @@ public class SolvedNotEconomManager {
 		int row = LIMITATION_COUNT+CRITERION_COUNT;
 		int col = VAR_COUNT;
 		
-		createEconomSolvedTask();
+		createNotEconomSolvedTask();
 		Object actualValue = tableManager.getValueAt(row, col);
 		
 		assertEquals(expectValue, actualValue);
@@ -138,13 +139,26 @@ public class SolvedNotEconomManager {
 		int row = LIMITATION_COUNT+CRITERION_COUNT;
 		int col = VAR_COUNT+1;
 		
-		createEconomSolvedTask();
+		createNotEconomSolvedTask();
+		Object actualValue = tableManager.getValueAt(row, col);
+		
+		assertEquals(expectValue, actualValue);
+	}
+	
+	@Test
+	public void setSolutionVariable(){
+		Object expectValue = 1;
+		int row = LIMITATION_COUNT+CRITERION_COUNT;
+		int col = 0;
+		
+		createNotEconomSolvedTask();
+		tableManager.setValue(1, row, col);
 		Object actualValue = tableManager.getValueAt(row, col);
 		
 		assertEquals(expectValue, actualValue);
 	}
 
-	private void createEconomSolvedTask() {
+	private void createNotEconomSolvedTask() {
 		manager.setTaskData("4", "3", "2");
 		manager.createTask();
 		manager.solveTask();
