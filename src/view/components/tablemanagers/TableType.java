@@ -14,15 +14,15 @@ abstract class TableType implements ITableType {
 	protected TaskManager manager;
 	protected int columnMargin;
 	protected int rowMargin;
+	protected int rowMarginBottom;
 
 	public TableType(TaskManager task) {
 		this.manager = task;
-		setColumnMargin();
-		setRowMargin();
 	}
 
 	@Override
 	public Object getValueAt(int row, int col) {
+		handleRowAndColumnIndexes(row, col);
 		row -= rowMargin;
 		col -= columnMargin;
 		if (isDataCell(row, col)) {
@@ -54,6 +54,7 @@ abstract class TableType implements ITableType {
 
 	@Override
 	public void setValue(Object value, int row, int col) {
+		handleRowAndColumnIndexes(row, col);
 		row -= rowMargin;
 		col -= columnMargin;
 		if (isDataCell(row, col)) {
@@ -79,6 +80,7 @@ abstract class TableType implements ITableType {
 
 	@Override
 	public boolean isCellEditable(int row, int col) {
+		handleRowAndColumnIndexes(row, col);
 		col -= columnMargin;
 		row -= rowMargin;
 		if (isDataCell(row, col)) {
@@ -92,7 +94,7 @@ abstract class TableType implements ITableType {
 
 	private boolean isLimitCell(int row, int col) {
 		return col == manager.getVariableCount() + 1
-				&& row >= manager.getCriterionCount();
+				&& checkRow(row);
 	}
 
 	private boolean isTypeColumn(int col) {
@@ -110,7 +112,12 @@ abstract class TableType implements ITableType {
 	}
 
 	private boolean isLimitationCell(int row, int col) {
-		return checkColumn(col) && (row >= manager.getCriterionCount());
+		return checkColumn(col) && checkRow(row);
+	}
+	
+	private boolean checkRow(int row){
+		return (row >= manager.getCriterionCount())
+				&& (row+rowMargin) < (getRowCount() - rowMarginBottom);
 	}
 
 	private boolean checkColumn(int col) {
@@ -130,12 +137,9 @@ abstract class TableType implements ITableType {
 
 	protected abstract boolean isEnythingElseEditable(int row, int col);
 
-	protected abstract void setColumnMargin();
-
-	protected abstract void setRowMargin();
-
 	@Override
 	public TableCellEditor getCellEditor(int row, int column) {
+		handleRowAndColumnIndexes(row, column);
 		row -= rowMargin;
 		column -= columnMargin;
 		if (isDataCell(row, column)) {
@@ -153,6 +157,7 @@ abstract class TableType implements ITableType {
 
 	@Override
 	public String getColumnName(int col) {
+		handleColumnIndex(col);
 		col -= columnMargin;
 		if (col == -2) {
 			return "Name";
@@ -169,14 +174,21 @@ abstract class TableType implements ITableType {
 
 	@Override
 	public int getRowHeight(int row) {
+		handleRowIndex(row);
 		if (row == 0) {
 			return getFirstRowHeight();
+		}
+		if (row == getRowCount() - 1) {
+			return getLastRowHeight();
 		}
 		return 20;
 	}
 
+	protected abstract int getLastRowHeight();
+
 	@Override
 	public String getRowName(int row) {
+		handleRowIndex(row);
 		row -= rowMargin;
 		if (row == -1) {
 			return "Economic";
@@ -190,6 +202,7 @@ abstract class TableType implements ITableType {
 
 	@Override
 	public Color getUnFocusRow(int row) {
+		handleRowIndex(row);
 		row -= rowMargin;
 		if (row == -1) {
 			return Color.YELLOW;
@@ -205,6 +218,7 @@ abstract class TableType implements ITableType {
 
 	@Override
 	public Color getFocusRow(int row) {
+		handleRowIndex(row);
 		row -= rowMargin;
 		if (row == -1) {
 			return new Color(255, 215, 0);
@@ -216,6 +230,27 @@ abstract class TableType implements ITableType {
 			return new Color(112, 128, 144);
 		}
 		return null;
+	}
+
+	private void handleRowIndex(int row) {
+		if(row >= getRowCount()){
+			throw new IndexOutOfBoundsException("row count: "+getRowCount()+" index: "+row);
+		}
+	}
+	
+	private void handleColumnIndex(int col) {
+		if(col >= getColumnCount()){
+			throw new IndexOutOfBoundsException("column count: "+getColumnCount()+" index: "+col);
+		}
+	}
+	
+	private void handleRowAndColumnIndexes(int row, int column) {
+		handleRowIndex(row);
+		handleColumnIndex(column);
+	}
+
+	public int getRowMargin() {
+		return rowMargin;
 	}
 
 	protected abstract int getFirstRowHeight();

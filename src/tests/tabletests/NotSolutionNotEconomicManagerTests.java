@@ -70,8 +70,7 @@ public class NotSolutionNotEconomicManagerTests {
 
 		createNotEconomTask();
 
-		assertTrue(tableManager.isCellEditable(lastColumnIdx,
-				firstRowForLimitations));
+		assertTrue(tableManager.isCellEditable(firstRowForLimitations, lastColumnIdx));
 	}
 
 	@Test
@@ -284,7 +283,7 @@ public class NotSolutionNotEconomicManagerTests {
 
 		createNotEconomTask();
 		int actualHeight = tableManager.getRowHeight(CRITERION_COUNT
-				+ LIMITATION_COUNT);
+				+ LIMITATION_COUNT-1);
 
 		assertEquals(expectHeight, actualHeight);
 	}
@@ -378,6 +377,18 @@ public class NotSolutionNotEconomicManagerTests {
 		}
 
 		assertTrue(tableManager.isFull());
+	}
+	
+	@Test(expected = IndexOutOfBoundsException.class)
+	public void incorrectRowIndex(){
+		createNotEconomTask();
+		tableManager.isCellEditable(CRITERION_COUNT+LIMITATION_COUNT, 0);
+	}
+	
+	@Test(expected = IndexOutOfBoundsException.class)
+	public void incorrectColumnIndex(){
+		createNotEconomTask();
+		tableManager.isCellEditable(0, VAR_COUNT+2);
 	}
 
 	private void createNotEconomTask() {

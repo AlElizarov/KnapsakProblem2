@@ -51,9 +51,9 @@ public class NotSolutionEconomicManagerTests {
 	}
 
 	@Test
-	public void firstRowLastColColIsNotEditable() {
+	public void firstRowLastColIsNotEditable() {
 		int row = 0;
-		int col = VAR_COUNT + 4;
+		int col = VAR_COUNT + 3;
 
 		createEconomTask();
 
@@ -63,7 +63,7 @@ public class NotSolutionEconomicManagerTests {
 	@Test
 	public void firstRowTypeColIsNotEditable() {
 		int row = 0;
-		int col = VAR_COUNT + 4;
+		int col = VAR_COUNT + 3;
 
 		createEconomTask();
 
@@ -450,7 +450,7 @@ public class NotSolutionEconomicManagerTests {
 
 		assertTrue(tableManager.isFull());
 	}
-
+	
 	private void fullTable() {
 		for(int col = 2; col < manager.getVariableCount()+2; col++){
 			tableManager.setValue("ss", 0, col);

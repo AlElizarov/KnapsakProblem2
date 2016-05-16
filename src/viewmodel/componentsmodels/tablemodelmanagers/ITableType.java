@@ -30,4 +30,6 @@ public interface ITableType{
 
 	public Color getFocusRow(int row);
 
+	public int getRowMargin();
+
 }

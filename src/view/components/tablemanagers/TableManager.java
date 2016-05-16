@@ -50,9 +50,18 @@ public class TableManager implements ITableManager, Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 		if (manager.isTaskEconom()) {
-			tableType = new NotSolutionEconomManager(manager);
+			if (manager.isTaskSolved()) {
+				tableType = new SolvedManager(manager, new NotSolutionEconomManager(manager));
+			} else {
+				tableType = new NotSolutionEconomManager(manager);
+			}
 		} else {
-			tableType = new NotSolutionNotEconomicManager(manager);
+			if(manager.isTaskSolved()){
+			tableType = new SolvedManager(manager, new NotSolutionNotEconomicManager(manager));
+			}
+			else{
+				tableType = new NotSolutionNotEconomicManager(manager);
+			}
 		}
 	}
 

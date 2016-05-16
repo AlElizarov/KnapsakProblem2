@@ -10,6 +10,8 @@ class NotSolutionEconomManager extends TableType {
 
 	public NotSolutionEconomManager(TaskManager manager) {
 		super(manager);
+		columnMargin = 2;
+		rowMargin = 1;
 	}
 
 	@Override
@@ -19,16 +21,6 @@ class NotSolutionEconomManager extends TableType {
 			return true;
 		}
 		return false;
-	}
-
-	@Override
-	protected void setColumnMargin() {
-		columnMargin = 2;
-	}
-
-	@Override
-	protected void setRowMargin() {
-		rowMargin = 1;
 	}
 
 	@Override
@@ -69,6 +61,11 @@ class NotSolutionEconomManager extends TableType {
 	@Override
 	protected int getFirstRowHeight() {
 		return 40;
+	}
+
+	@Override
+	protected int getLastRowHeight() {
+		return 20;
 	}
 
 }

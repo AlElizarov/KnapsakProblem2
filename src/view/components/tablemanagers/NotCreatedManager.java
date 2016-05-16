@@ -67,4 +67,9 @@ class NotCreatedManager implements ITableType {
 		return null;
 	}
 
+	@Override
+	public int getRowMargin() {
+		return 0;
+	}
+
 }

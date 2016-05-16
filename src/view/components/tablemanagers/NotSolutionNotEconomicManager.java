@@ -8,21 +8,13 @@ class NotSolutionNotEconomicManager extends TableType {
 
 	public NotSolutionNotEconomicManager(TaskManager manager) {
 		super(manager);
+		columnMargin = 0;
+		rowMargin = 0;
 	}
 
 	@Override
 	protected boolean isEnythingElseEditable(int row, int col) {
 		return false;
-	}
-
-	@Override
-	protected void setColumnMargin() {
-		columnMargin = 0;
-	}
-
-	@Override
-	protected void setRowMargin() {
-		rowMargin = 0;
 	}
 
 	@Override
@@ -41,6 +33,11 @@ class NotSolutionNotEconomicManager extends TableType {
 
 	@Override
 	protected int getFirstRowHeight() {
+		return 20;
+	}
+
+	@Override
+	protected int getLastRowHeight() {
 		return 20;
 	}
 
