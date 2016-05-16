@@ -116,4 +116,9 @@ public class TableManager implements ITableManager, Observer {
 		manager.onFullEvent();
 	}
 
+	@Override
+	public Color getColumnColor(int col) {
+		return tableType.getColumnColor(col);
+	}
+
 }

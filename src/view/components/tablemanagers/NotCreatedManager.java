@@ -72,4 +72,9 @@ class NotCreatedManager implements ITableType {
 		return 0;
 	}
 
+	@Override
+	public Color getColumnColor(int col) {
+		return null;
+	}
+
 }

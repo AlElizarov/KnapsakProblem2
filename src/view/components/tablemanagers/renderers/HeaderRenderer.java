@@ -29,7 +29,7 @@ public class HeaderRenderer extends JLabel implements TableCellRenderer {
 		setHorizontalAlignment(JLabel.CENTER);
 		setColumnText(tableManager.getColumnName(col));
 		setBorder(UIManager.getBorder("TableHeader.cellBorder"));
-		setBackground(Color.LIGHT_GRAY);
+		setBackground(tableManager.getColumnColor(col));
 		setOpaque(true);
 		return this;
 	}

@@ -32,4 +32,6 @@ public interface ITableType{
 
 	public int getRowMargin();
 
+	public Color getColumnColor(int col);
+
 }

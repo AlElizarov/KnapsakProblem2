@@ -172,7 +172,7 @@ abstract class TableType implements ITableType {
 			return "Name";
 		} else if (col == -1) {
 			return "Unit";
-		} else if ((col+columnMargin) == getColumnCount() - columnMarginRight) {
+		} else if ((col + columnMargin) == getColumnCount() - columnMarginRight) {
 			return "Sum";
 		} else if (col == manager.getVariableCount()) {
 			return "Type";
@@ -204,7 +204,7 @@ abstract class TableType implements ITableType {
 		if (row == -1) {
 			return "Economic";
 		}
-		if (row == (getRowCount() - rowMarginBottom)) {
+		if ((row + rowMargin) == (getRowCount() - rowMarginBottom)) {
 			return "Solution";
 		}
 		if (row < manager.getCriterionCount()) {
@@ -218,7 +218,7 @@ abstract class TableType implements ITableType {
 	public Color getUnFocusRow(int row) {
 		handleRowIndex(row);
 		row -= rowMargin;
-		if (row == -1 || (row+rowMargin) == (getRowCount() - rowMarginBottom)) {
+		if (row == -1 || (row + rowMargin) == (getRowCount() - rowMarginBottom)) {
 			return Color.YELLOW;
 		}
 		if (row < manager.getCriterionCount()) {
@@ -234,7 +234,7 @@ abstract class TableType implements ITableType {
 	public Color getFocusRow(int row) {
 		handleRowIndex(row);
 		row -= rowMargin;
-		if (row == -1 || (row+rowMargin) == (getRowCount() - rowMarginBottom)) {
+		if (row == -1 || (row + rowMargin) == (getRowCount() - rowMarginBottom)) {
 			return new Color(255, 215, 0);
 		}
 		if (row < manager.getCriterionCount()) {
@@ -267,6 +267,17 @@ abstract class TableType implements ITableType {
 
 	public int getRowMargin() {
 		return rowMargin;
+	}
+
+	@Override
+	public Color getColumnColor(int col) {
+		handleColumnIndex(col);
+		col -= columnMargin;
+		if ((col + columnMargin) == getColumnCount() - columnMarginRight) {
+			return Color.GREEN;
+		} else {
+			return Color.LIGHT_GRAY;
+		}
 	}
 
 	protected abstract int getFirstRowHeight();

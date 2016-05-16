@@ -37,4 +37,6 @@ public interface ITableManager {
 
 	void onFullEvent();
 
+	public Color getColumnColor(int col);
+
 }

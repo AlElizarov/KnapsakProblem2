@@ -1,5 +1,7 @@
 package view.components.tablemanagers;
 
+import java.awt.Color;
+
 import javax.swing.table.TableCellEditor;
 
 import view.components.tablemanagers.editors.BoolCellEditor;
@@ -27,6 +29,10 @@ class SolvedManager extends TableType {
 			if (col >= 0 && col < manager.getVariableCount()) {
 				return manager.getSolutionVariable(col) ? 1 : 0;
 			}
+			if (row > -1 && row < (tableType.getRowCount() - rowMargin)
+					&& col == manager.getVariableCount() + 2) {
+				return manager.getSum(row);
+			}
 			return null;
 		}
 	}
@@ -37,7 +43,8 @@ class SolvedManager extends TableType {
 			tableType.setValue(value, row + rowMargin, col + columnMargin);
 		} else {
 			if (col >= 0 && col < manager.getVariableCount()) {
-				manager.setSolutionVariable((int)value == 1 ? true : false, col);
+				manager.setSolutionVariable((int) value == 1 ? true : false,
+						col);
 			}
 		}
 	}
@@ -86,6 +93,26 @@ class SolvedManager extends TableType {
 	@Override
 	protected int getLastRowHeight() {
 		return 40;
+	}
+
+	@Override
+	public Color getColumnColor(int col) {
+		col -= columnMargin;
+		if ((col + columnMargin) == getColumnCount() - columnMarginRight) {
+			if (manager.allSumsOk()) {
+				return Color.GREEN;
+			}
+			return Color.RED;
+		} else {
+			if (col + columnMargin >= manager.getVariableCount() || col < 0) {
+				return Color.LIGHT_GRAY;
+			}
+			if (manager.getSolutionVariable(col)) {
+				return Color.GRAY;
+			} else {
+				return Color.LIGHT_GRAY;
+			}
+		}
 	}
 
 }
