@@ -7,8 +7,8 @@ import java.awt.Color;
 import org.junit.Before;
 import org.junit.Test;
 
-import tests.MockTaskManager;
 import view.components.tablemanagers.TableManager;
+import viewmodel.MockTaskManager;
 import viewmodel.TaskManager;
 import viewmodel.componentsmodels.tablemodelmanagers.ITableManager;
 
@@ -22,7 +22,7 @@ public class SolvedNotEconomManagerTests {
 
 	@Before
 	public void setUp() {
-		manager = MockTaskManager.getInstance();
+		manager = MockTaskManager.getMockInstance();
 		tableManager = new TableManager(manager);
 		manager.setStartState();
 	}
