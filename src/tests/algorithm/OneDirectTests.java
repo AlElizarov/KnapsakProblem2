@@ -37,8 +37,17 @@ public class OneDirectTests {
 	}
 
 	@Test
-	public void taskWithoutSolutions() {
+	public void taskWithoutStartSolutions() {
 		task.setValue(0, 1, 5);
+		solver = new OneDirectSolver(task);
+		solver.createFirstSolution();
+
+		assertFalse(solver.hasSolution());
+	}
+
+	@Test
+	public void taskWithoutSolutions() {
+		task.setValue(1, 1, 5);
 		solver = new OneDirectSolver(task);
 		solver.createFirstSolution();
 
