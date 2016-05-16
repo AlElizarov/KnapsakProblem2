@@ -185,6 +185,7 @@ public class Task {
 			weights.get(limit).add(null);
 		}
 		variableCount++;
+		discretSolution = new boolean[variableCount];
 	}
 
 	public void deleteVariable() {
@@ -197,6 +198,7 @@ public class Task {
 			}
 		}
 		variableCount--;
+		discretSolution = new boolean[variableCount];
 	}
 
 	public void deleteEconomVariable() {
@@ -374,7 +376,7 @@ public class Task {
 		for (int i = 0; i < variableCount; i++) {
 			double tmpX = 0;
 			for (int j = 0; j < criterionCount; j++) {
-				tmpX += costs.get(j).get(i) * 0.25;
+				tmpX += costs.get(j).get(i) * 1/criterionCount;
 			}
 			svertka.add((int) tmpX);
 		}
