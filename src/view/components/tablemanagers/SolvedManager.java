@@ -2,7 +2,7 @@ package view.components.tablemanagers;
 
 import javax.swing.table.TableCellEditor;
 
-import view.components.tablemanagers.editors.DataCellEditor;
+import view.components.tablemanagers.editors.BoolCellEditor;
 import viewmodel.TaskManager;
 import viewmodel.componentsmodels.tablemodelmanagers.ITableType;
 
@@ -20,11 +20,11 @@ class SolvedManager extends TableType {
 
 	@Override
 	protected Object gerEnythingElse(int row, int col) {
-		if (row < tableType.getRowCount()-rowMargin && col < tableType.getColumnCount()-columnMargin) {
-			return tableType.getValueAt(row+rowMargin, col+columnMargin);
+		if (isNotSolutionCell(row, col)) {
+			return tableType.getValueAt(row + rowMargin, col + columnMargin);
 		} else {
 			if (col >= 0 && col < manager.getVariableCount()) {
-				return 1;
+				return manager.getSolutionVariable(col) ? 1 : 0;
 			}
 			return null;
 		}
@@ -32,14 +32,20 @@ class SolvedManager extends TableType {
 
 	@Override
 	protected void setEnythingElse(Object value, int row, int col) {
-		// TODO Auto-generated method stub
-
+		if (isNotSolutionCell(row, col)) {
+			tableType.setValue(value, row + rowMargin, col + columnMargin);
+		} else {
+			if (col >= 0 && col < manager.getVariableCount()) {
+				manager.setSolutionVariable((int)value == 1 ? true : false, col);
+			}
+		}
 	}
 
 	@Override
 	protected boolean isEnythingElseEditable(int row, int col) {
-		if (row < tableType.getRowCount()-rowMargin && col < tableType.getColumnCount()-columnMargin) {
-			return tableType.isCellEditable(row+rowMargin, col+columnMargin);
+		if (isNotSolutionCell(row, col)) {
+			return tableType
+					.isCellEditable(row + rowMargin, col + columnMargin);
 		} else {
 			if (col >= 0 && col < manager.getVariableCount()) {
 				return true;
@@ -48,10 +54,17 @@ class SolvedManager extends TableType {
 		}
 	}
 
+	private boolean isNotSolutionCell(int row, int col) {
+		return row < tableType.getRowCount() - rowMargin
+				&& col < tableType.getColumnCount() - columnMargin;
+	}
+
 	@Override
-	protected TableCellEditor getEnythingElseEditor(int row, int column) {
-		// TODO Auto-generated method stub
-		return new DataCellEditor();
+	protected TableCellEditor getEnythingElseEditor(int row, int col) {
+		if (isNotSolutionCell(row, col)) {
+			return tableType.getCellEditor(row + rowMargin, col + columnMargin);
+		}
+		return new BoolCellEditor();
 	}
 
 	@Override
@@ -61,12 +74,12 @@ class SolvedManager extends TableType {
 
 	@Override
 	public int getColumnCount() {
-		return super.getColumnCount() + 1;
+		return tableType.getColumnCount() + 1;
 	}
 
 	@Override
 	public int getRowCount() {
-		return super.getRowCount() + 1;
+		return tableType.getRowCount() + 1;
 	}
 
 	@Override

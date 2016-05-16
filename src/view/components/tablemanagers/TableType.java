@@ -38,19 +38,23 @@ abstract class TableType implements ITableType {
 	protected Object getAllTheRest(int row, int col) {
 		if (col == manager.getVariableCount()
 				&& (row + rowMargin) < (getRowCount() - rowMarginBottom)) {
-			if (row < manager.getCriterionCount()) {
-				if (row >= 0) {
-					return "-->";
-				}
-			} else {
-				return manager.isMax() ? "<=" : ">=";
-			}
+			return getAllTheRestInTypeColumn(row);
 		} else {
 			if (col == manager.getVariableCount() + 1
 					&& row < manager.getCriterionCount()) {
 				return manager.isMax() ? "max" : "min";
 			}
 			return gerEnythingElse(row, col);
+		}
+	}
+
+	private Object getAllTheRestInTypeColumn(int row) {
+		if (row < manager.getCriterionCount()) {
+			if (row >= 0) {
+				return "-->";
+			}
+		} else {
+			return manager.isMax() ? "<=" : ">=";
 		}
 		return null;
 	}

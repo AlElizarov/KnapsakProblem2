@@ -20,6 +20,7 @@ public class Task {
 	private List<String> critUnits;
 	private List<String> limitUnits;
 	private List<Integer> svertka;
+	private boolean[] discretSolution;
 
 	public Task(String name, int variableCount, int limitationCount,
 			int criterionCount, boolean isMax) {
@@ -54,6 +55,7 @@ public class Task {
 			int limitationCount, int criterionCount, boolean isMax) {
 		this.name = name;
 		this.variableCount = variableCount;
+		discretSolution = new boolean[variableCount];
 		this.limitationCount = limitationCount;
 		this.criterionCount = criterionCount;
 		this.isMax = isMax;
@@ -376,5 +378,17 @@ public class Task {
 			}
 			svertka.add((int) tmpX);
 		}
+	}
+
+	public boolean getSolutionVariable(int col) {
+		return discretSolution[col];
+	}
+
+	public void setSolution(boolean[] solution) {
+		discretSolution = solution;
+	}
+
+	public void setSolutionVariable(boolean value, int col) {
+		discretSolution[col] = value;
 	}
 }

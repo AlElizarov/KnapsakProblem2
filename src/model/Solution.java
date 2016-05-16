@@ -82,4 +82,8 @@ public class Solution implements Comparable<Solution> {
 	public boolean isVarTaken(int var) {
 		return discretSolution[var];
 	}
+
+	public boolean[] getSolution() {
+		return discretSolution;
+	}
 }

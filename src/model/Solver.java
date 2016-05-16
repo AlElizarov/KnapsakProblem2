@@ -81,7 +81,7 @@ public abstract class Solver {
 
 	private boolean isTopCandidate(Solution solution) {
 		return solution.getV() >= currentLeaderSolution.getH()
-				&& solution.getV() > 0;
+				&& solution.getH() > 0;
 	}
 
 	private void setHAndVAndFix(int currentH, Solution solution) {

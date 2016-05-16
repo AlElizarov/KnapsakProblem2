@@ -2,11 +2,14 @@ package viewmodel;
 
 import java.util.Observable;
 
+import model.BiDirectSolver;
+import model.OneDirectSolver;
+import model.Solver;
 import model.Task;
 
 public class TaskManager extends Observable {
 
-	private static TaskManager instance;
+	protected static TaskManager instance;
 
 	private Task task;
 	private boolean isTaskCreated = false;
@@ -19,7 +22,7 @@ public class TaskManager extends Observable {
 	private String economText;
 	private boolean isMax = false;
 
-	private boolean isTaskSolved;
+	protected boolean isTaskSolved;
 
 	public static TaskManager getInstance() {
 		if (instance == null) {
@@ -235,9 +238,34 @@ public class TaskManager extends Observable {
 	}
 
 	public void solveTask() {
+		Solver solver = null;
+		if (task.getLimitationCount() > 1) {
+			solver = new BiDirectSolver(task);
+		} else {
+			solver = new OneDirectSolver(task);
+		}
+		solver.createFirstSolution();
+		if (!solver.hasSolution()) {
+			for (int i = 0; i < task.getVariableCount(); i++) {
+				task.setSolutionVariable(false, i);
+			}
+		} else {
+			while (!solver.isEnd()) {
+				solver.solve();
+			}
+			task.setSolution(solver.getCurrentLeaderTop().getSolution());
+		}
 		isTaskSolved = true;
 		setChanged();
 		notifyObservers();
+	}
+
+	public boolean getSolutionVariable(int col) {
+		return task.getSolutionVariable(col);
+	}
+
+	public void setSolutionVariable(boolean value, int col) {
+		task.setSolutionVariable(value, col);
 	}
 
 }
