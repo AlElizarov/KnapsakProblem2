@@ -238,12 +238,7 @@ public class TaskManager extends Observable {
 	}
 
 	public void solveTask() {
-		Solver solver = null;
-		if (task.getLimitationCount() > 1) {
-			solver = new BiDirectSolver(task);
-		} else {
-			solver = new OneDirectSolver(task);
-		}
+		Solver solver = createSolver();
 		solver.createFirstSolution();
 		if (!solver.hasSolution()) {
 			for (int i = 0; i < task.getVariableCount(); i++) {
@@ -258,6 +253,16 @@ public class TaskManager extends Observable {
 		isTaskSolved = true;
 		setChanged();
 		notifyObservers();
+	}
+
+	private Solver createSolver() {
+		Solver solver = null;
+		if (task.getLimitationCount() > 1) {
+			solver = new BiDirectSolver(task);
+		} else {
+			solver = new OneDirectSolver(task);
+		}
+		return solver;
 	}
 
 	public boolean getSolutionVariable(int col) {
