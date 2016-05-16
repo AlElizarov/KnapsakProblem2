@@ -7,6 +7,6 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({ NotSolutionEconomicManagerTests.class,
 		NotSolutionNotEconomicManagerTests.class, KnapsakTableModelTests.class,
-		SolvedEconomManagerTests.class,SolvedNotEconomManager.class })
+		SolvedEconomManagerTests.class,SolvedNotEconomManagerTests.class })
 public class TableTestSuite {
 }

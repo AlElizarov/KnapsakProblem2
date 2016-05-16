@@ -10,7 +10,7 @@ import view.components.tablemanagers.TableManager;
 import viewmodel.TaskManager;
 import viewmodel.componentsmodels.tablemodelmanagers.ITableManager;
 
-public class SolvedNotEconomManager {
+public class SolvedNotEconomManagerTests {
 
 	private final int VAR_COUNT = 4;
 	private final int LIMITATION_COUNT = 3;

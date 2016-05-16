@@ -61,8 +61,7 @@ public class CenterViewModelTests {
 
 	@Test
 	public void whenTaskCreatedPanelForTableIsVisible() {
-		manager.setTaskData("4", "2", "3");
-		manager.createTask();
+		createTask();
 
 		assertTrue(centerViewModel.isPanelForTableVisible());
 	}
@@ -74,8 +73,7 @@ public class CenterViewModelTests {
 
 	@Test
 	public void whenTaskSolvedPanelForSolutionIsVisible() {
-		manager.setTaskData("4", "2", "3");
-		manager.createTask();
+		createTask();
 		manager.solveTask();
 
 		assertTrue(centerViewModel.isPanelForTableVisible());
@@ -85,8 +83,7 @@ public class CenterViewModelTests {
 	public void whenTaskCreatedSplitForTableAndSolutionDividerSizeEqualsTo10() {
 		int expectDividerSize = 5;
 
-		manager.setTaskData("4", "2", "3");
-		manager.createTask();
+		createTask();
 		manager.solveTask();
 		int actualDividerSize = centerViewModel
 				.getSplitForTableAndSolutionDivivderSize();
@@ -98,12 +95,16 @@ public class CenterViewModelTests {
 	public void whenTaskCreatedCenterSplitDividerSizeNotEqualsTo0() {
 		double expectResizeWeight = 0.7;
 
-		manager.setTaskData("4", "2", "3");
-		manager.createTask();
+		createTask();
 		manager.solveTask();
 		double actualResizeWeight = centerViewModel.getResizeWeight();
 
 		assertEquals(expectResizeWeight, actualResizeWeight, 1e-10);
+	}
+
+	private void createTask() {
+		manager.setTaskData("4", "2", "3");
+		manager.createTask();
 	}
 
 }
