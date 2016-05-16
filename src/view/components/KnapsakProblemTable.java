@@ -64,19 +64,6 @@ public class KnapsakProblemTable extends JTable {
 		}
 		return editorComponent;
 	}
-	
-	@Override
-	public void changeSelection(int row, int column, boolean toggle, boolean extend)
-	{
-		super.changeSelection(row, column, toggle, extend);
-
-		if (editCellAt(row, column))
-		{
-			Component editor = getEditorComponent();
-			editor.requestFocusInWindow();
-			((JTextComponent)editor).selectAll();
-		}
-	}
 
 	@Override
 	public void tableChanged(TableModelEvent e) {
