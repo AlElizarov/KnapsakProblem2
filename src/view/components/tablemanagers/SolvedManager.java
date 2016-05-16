@@ -44,11 +44,6 @@ class SolvedManager extends TableType {
 			if (col >= 0 && col < manager.getVariableCount()) {
 				return true;
 			}
-			row += rowMargin;
-			col += columnMargin;
-			if(col == getColumnCount()-1 && row < getRowCount()-1 && row >= manager.getCriterionCount()){
-				return true;
-			}
 			return false;
 		}
 	}
