@@ -22,7 +22,6 @@ public class Task {
 	private List<String> limitUnits;
 	private List<Integer> svertka;
 	private boolean[] discretSolution;
-	private int upperBound = 100;
 	private double partOfUpperBoundForLimits = 0.5;
 
 	public Task(String name, int variableCount, int limitationCount,
@@ -418,8 +417,8 @@ public class Task {
 	}
 
 	public boolean allSumsOk() {
-		for(int i = 0; i < limitationCount; i++){
-			if(!sumOk(i)){
+		for (int i = 0; i < limitationCount; i++) {
+			if (!sumOk(i)) {
 				return false;
 			}
 		}
@@ -427,23 +426,29 @@ public class Task {
 	}
 
 	private boolean sumOk(int row) {
-		return getSum(row+criterionCount) <= limits.get(row);
+		return getSum(row + criterionCount) <= limits.get(row);
 	}
 
-	public void genData() {
+	public void genData(int lowerBoundCosts, int lowerBoundWeights, int upperBoundCosts, int upperBoundWeights) {
 		Random random = new Random();
-		for(int row = 0; row < criterionCount + limitationCount; row++){
-			for(int col = 0; col < variableCount; col++){
-				setValue(random.nextInt(upperBound), row, col);
+		for (int row = 0; row < criterionCount + limitationCount; row++) {
+			for (int col = 0; col < variableCount; col++) {
+				if (row < criterionCount) {
+					setValue(lowerBoundCosts + random.nextInt(upperBoundCosts-lowerBoundCosts), row, col);
+				}
+				else{
+					setValue(lowerBoundWeights + random.nextInt(upperBoundWeights-lowerBoundWeights), row, col);
+				}
 			}
 		}
-		for(int row = criterionCount; row < criterionCount+limitationCount; row++){
-			setValue(random.nextInt(calculateUpperBoundForLimits()), row,variableCount);
+		for (int row = criterionCount; row < criterionCount + limitationCount; row++) {
+			setValue(random.nextInt(calculateUpperBoundForLimits(upperBoundWeights)), row,
+					variableCount);
 		}
 	}
 
-	private int calculateUpperBoundForLimits() {
-		return (int) ((upperBound*variableCount)*partOfUpperBoundForLimits);
+	private int calculateUpperBoundForLimits(int upperBoundWeights) {
+		return (int) ((upperBoundWeights * variableCount) * partOfUpperBoundForLimits);
 	}
-	
+
 }

@@ -8,18 +8,31 @@ import javax.swing.JRadioButton;
 import view.components.GenTable;
 import view.components.GenTableRenderer;
 import viewmodel.TaskManager;
+import viewmodel.framesmodels.GenerationViewModel;
 
 //I'm not going to serialize that class
 @SuppressWarnings("serial")
 public class GenerationAreaView extends AbstractInteractiveInternalFrame {
 
+	private GenerationViewModel viewModel;
+	private GenTable genTable;
+
 	public GenerationAreaView(Desktop desktop, TaskManager manager) {
 		super("Generation", desktop, 400, 500, 100, 100, manager);
+		viewModel = new GenerationViewModel(manager);
 	}
 
 	@Override
 	protected void createOkAction() {
-		manager.genTaskData();
+		viewModel.setUpperBoundCosts(Integer.parseInt(genTable.getModel()
+				.getValueAt(1, 2).toString()));
+		viewModel.setUpperBoundWeights(Integer.parseInt(genTable.getModel()
+				.getValueAt(2, 2).toString()));
+		viewModel.setLowerBoundCosts(Integer.parseInt(genTable.getModel()
+				.getValueAt(1, 1).toString()));
+		viewModel.setLowerBoundWeights(Integer.parseInt(genTable.getModel()
+				.getValueAt(2, 1).toString()));
+		viewModel.generate();
 	}
 
 	@Override
@@ -54,7 +67,7 @@ public class GenerationAreaView extends AbstractInteractiveInternalFrame {
 	}
 
 	private Component createGenTable() {
-		GenTable genTable = new GenTable();
+		genTable = new GenTable();
 		genTable.getColumnModel().getColumn(0).setPreferredWidth(150);
 		genTable.getColumnModel().getColumn(1).setPreferredWidth(100);
 		genTable.getColumnModel().getColumn(2).setPreferredWidth(100);

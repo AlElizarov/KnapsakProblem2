@@ -55,7 +55,7 @@ public class TaskManagerTests {
 	public void testTaskGenerate() {
 		manager.setTaskData("4", "2", "3");
 		manager.createTask();
-		manager.genTaskData();
+		manager.genTaskData(1, 100, 200,300);
 
 		assertTrue(manager.isTaskFull());
 	}

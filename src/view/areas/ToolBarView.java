@@ -10,6 +10,7 @@ import javax.swing.JToolBar;
 import view.components.ToolBarButton;
 import view.frames.AbstractInteractiveInternalFrame;
 import view.frames.Desktop;
+import view.frames.GenerationAreaView;
 import view.frames.NewTaskCreatingView;
 import viewmodel.TaskManager;
 import viewmodel.areasmodels.ToolBarViewModel;
@@ -52,7 +53,10 @@ class ToolBarView extends JToolBar implements BindableArea {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				manager.genTaskData();
+				desktop.setLayout(null);
+				AbstractInteractiveInternalFrame iframe = new GenerationAreaView(
+						desktop, manager);
+				desktop.addIFrame(iframe);
 			}
 		});
 	}
