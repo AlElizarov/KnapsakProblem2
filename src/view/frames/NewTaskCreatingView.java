@@ -2,20 +2,14 @@ package view.frames;
 
 import handle.FieldAndLabelArea;
 
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
-import javax.swing.border.TitledBorder;
 
 import viewmodel.TaskManager;
 import viewmodel.framesmodels.NewTaskCreatinngViewModel;
@@ -43,8 +37,10 @@ public class NewTaskCreatingView extends AbstractInteractiveInternalFrame {
 	protected void fullPanel() {
 		newTaskCreatinngViewModel = new NewTaskCreatinngViewModel(manager);
 		addTextFields();
-		createButtonGroup();
-		addTypePanel();
+		max = new JRadioButton("max");
+		min = new JRadioButton("min");
+		panel.add(new ChoicePanelBuilder(max, min, "Type").addTypePanel(),
+				"wrap");
 		addEconomMeaning();
 	}
 
@@ -69,32 +65,6 @@ public class NewTaskCreatingView extends AbstractInteractiveInternalFrame {
 			}
 		});
 		addEconomField();
-	}
-
-	private void createButtonGroup() {
-		ButtonGroup gr = new ButtonGroup();
-		gr.add(max);
-		gr.add(min);
-	}
-
-	private void addTypePanel() {
-		max = new JRadioButton();
-		min = new JRadioButton();
-		createButtonGroup();
-		JPanel typePanel = new JPanel();
-		typePanel.setBorder(createTitledBorder());
-		typePanel.add(new JLabel("max"));
-		typePanel.add(max);
-		typePanel.add(new JLabel("min"));
-		typePanel.add(min);
-		panel.add(typePanel, "wrap");
-	}
-
-	private Border createTitledBorder() {
-		TitledBorder tb = new TitledBorder(new LineBorder(Color.BLACK, 1));
-		tb.setTitle("Type");
-		tb.setTitleJustification(TitledBorder.CENTER);
-		return tb;
 	}
 
 	private void addTextFields() {

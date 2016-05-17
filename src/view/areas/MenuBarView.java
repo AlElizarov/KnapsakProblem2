@@ -106,7 +106,10 @@ class MenuBarView extends JMenuBar implements BindableArea {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				new GenerationAreaView(manager);
+				desktop.setLayout(null);
+				AbstractInteractiveInternalFrame iframe = new GenerationAreaView(
+						desktop, manager);
+				desktop.addIFrame(iframe);
 				manager.genTaskData();
 			}
 		});
