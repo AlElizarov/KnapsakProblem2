@@ -37,8 +37,7 @@ abstract class TableType implements ITableType {
 	}
 
 	protected Object getAllTheRest(int row, int col) {
-		if (col == manager.getVariableCount()
-				&& (row + rowMargin) < (getRowCount() - rowMarginBottom)) {
+		if (col == manager.getVariableCount() && isNotLastRow(row)) {
 			return getAllTheRestInTypeColumn(row);
 		} else {
 			if (col == manager.getVariableCount() + 1
@@ -47,6 +46,10 @@ abstract class TableType implements ITableType {
 			}
 			return gerEnythingElse(row, col);
 		}
+	}
+
+	private boolean isNotLastRow(int row) {
+		return (row + rowMargin) < (getRowCount() - rowMarginBottom);
 	}
 
 	private Object getAllTheRestInTypeColumn(int row) {
@@ -78,6 +81,9 @@ abstract class TableType implements ITableType {
 	private void setValueInDataCell(Object value, int row, int col) {
 		try {
 			int intValue = Integer.parseInt(value.toString());
+			if (intValue >= (Integer.MAX_VALUE / manager.getVariableCount())) {
+				throw new TooBigNumberException();
+			}
 			if (isLimitCell(row, col)) {
 				manager.setValue(intValue, row, col - 1);
 			} else {
@@ -125,8 +131,7 @@ abstract class TableType implements ITableType {
 	}
 
 	private boolean checkRow(int row) {
-		return (row >= manager.getCriterionCount())
-				&& (row + rowMargin) < (getRowCount() - rowMarginBottom);
+		return (row >= manager.getCriterionCount()) && isNotLastRow(row);
 	}
 
 	private boolean checkColumn(int col) {
@@ -172,7 +177,7 @@ abstract class TableType implements ITableType {
 			return "Name";
 		} else if (col == -1) {
 			return "Unit";
-		} else if ((col + columnMargin) == getColumnCount() - columnMarginRight) {
+		} else if (isLastColumn(col)) {
 			return "Sum";
 		} else if (col == manager.getVariableCount()) {
 			return "Type";
@@ -218,7 +223,7 @@ abstract class TableType implements ITableType {
 	public Color getUnFocusRow(int row) {
 		handleRowIndex(row);
 		row -= rowMargin;
-		if (row == -1 || (row + rowMargin) == (getRowCount() - rowMarginBottom)) {
+		if (isLastOrFirstRow(row)) {
 			return Color.YELLOW;
 		}
 		if (row < manager.getCriterionCount()) {
@@ -230,11 +235,16 @@ abstract class TableType implements ITableType {
 		return null;
 	}
 
+	private boolean isLastOrFirstRow(int row) {
+		return row == -1
+				|| (row + rowMargin) == (getRowCount() - rowMarginBottom);
+	}
+
 	@Override
 	public Color getFocusRow(int row) {
 		handleRowIndex(row);
 		row -= rowMargin;
-		if (row == -1 || (row + rowMargin) == (getRowCount() - rowMarginBottom)) {
+		if (isLastOrFirstRow(row)) {
 			return new Color(255, 215, 0);
 		}
 		if (row < manager.getCriterionCount()) {
@@ -273,11 +283,15 @@ abstract class TableType implements ITableType {
 	public Color getColumnColor(int col) {
 		handleColumnIndex(col);
 		col -= columnMargin;
-		if ((col + columnMargin) == getColumnCount() - columnMarginRight) {
+		if (isLastColumn(col)) {
 			return Color.GREEN;
 		} else {
 			return Color.LIGHT_GRAY;
 		}
+	}
+
+	private boolean isLastColumn(int col) {
+		return (col + columnMargin) == getColumnCount() - columnMarginRight;
 	}
 
 	protected abstract int getFirstRowHeight();

@@ -71,7 +71,7 @@ public class MainView implements Observer {
 	}
 
 	private ToolBarView createToolBar() {
-		ToolBarView toolBar = new ToolBarView(manager);
+		ToolBarView toolBar = new ToolBarView(desktop, manager);
 		leafs.add(toolBar);
 		return toolBar;
 	}

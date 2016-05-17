@@ -281,4 +281,10 @@ public class TaskManager extends Observable {
 		return task.allSumsOk();
 	}
 
+	public void genTaskData() {
+		task.genData();
+		setChanged();
+		notifyObservers();
+	}
+
 }

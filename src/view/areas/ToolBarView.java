@@ -8,6 +8,9 @@ import javax.swing.JButton;
 import javax.swing.JToolBar;
 
 import view.components.ToolBarButton;
+import view.frames.AbstractInteractiveInternalFrame;
+import view.frames.Desktop;
+import view.frames.NewTaskCreatingView;
 import viewmodel.TaskManager;
 import viewmodel.areasmodels.ToolBarViewModel;
 
@@ -23,17 +26,38 @@ class ToolBarView extends JToolBar implements BindableArea {
 			"generate data for task");
 	private JButton econom = new ToolBarButton("economics",
 			"show econom intepretation of task");
+	private Desktop desktop;
+	private TaskManager manager;
 
 	private ToolBarViewModel toolBarViewModel;
 
-	public ToolBarView(TaskManager manager) {
+	public ToolBarView(Desktop desktop, TaskManager manager) {
+		this.desktop = desktop;
+		this.manager = manager;
 		toolBarViewModel = new ToolBarViewModel(manager);
 		setBackground(new Color(205, 190, 112));
 		setFloatable(false);
 		add(save);
 		add(read);
 		addSeparator();
-		add(newTask);
+		addNewTaskButton();
+		addSolveButton();
+		addGenButton();
+		add(econom);
+	}
+
+	private void addGenButton() {
+		add(gen);
+		gen.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				manager.genTaskData();
+			}
+		});
+	}
+
+	private void addSolveButton() {
 		add(solve);
 		solve.addActionListener(new ActionListener() {
 
@@ -42,8 +66,21 @@ class ToolBarView extends JToolBar implements BindableArea {
 				manager.solveTask();
 			}
 		});
-		add(gen);
-		add(econom);
+	}
+
+	private void addNewTaskButton() {
+		add(newTask);
+		newTask.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				desktop.setLayout(null);
+				AbstractInteractiveInternalFrame iframe = new NewTaskCreatingView(
+						desktop, manager);
+				desktop.addIFrame(iframe);
+				iframe.openingBind();
+			}
+		});
 	}
 
 	@Override

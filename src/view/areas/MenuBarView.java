@@ -14,6 +14,7 @@ import view.frames.AboutProgrammView;
 import view.frames.AbstractDecoratedInternalFrame;
 import view.frames.AbstractInteractiveInternalFrame;
 import view.frames.Desktop;
+import view.frames.GenerationAreaView;
 import view.frames.NewTaskCreatingView;
 import viewmodel.TaskManager;
 import viewmodel.areasmodels.MenuBarViewModel;
@@ -22,7 +23,7 @@ import com.sun.glass.events.KeyEvent;
 
 //I'm not going to serialize that class
 @SuppressWarnings("serial")
-class MenuBarView extends JMenuBar implements BindableArea{
+class MenuBarView extends JMenuBar implements BindableArea {
 
 	private JMenu menu;
 	private JMenuItem item;
@@ -57,7 +58,7 @@ class MenuBarView extends JMenuBar implements BindableArea{
 		JMenu deleteRow = new JMenu("Delete row");
 		item = new JMenuItem("Delete limitation");
 		item.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				manager.deleteLimitation();
@@ -66,7 +67,7 @@ class MenuBarView extends JMenuBar implements BindableArea{
 		deleteRow.add(item);
 		item = new JMenuItem("Delete criterion");
 		item.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				manager.deleteCrit();
@@ -80,7 +81,7 @@ class MenuBarView extends JMenuBar implements BindableArea{
 		JMenu addRow = new JMenu("Add row");
 		item = new JMenuItem("Add limitation");
 		item.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				manager.addLimitation();
@@ -89,7 +90,7 @@ class MenuBarView extends JMenuBar implements BindableArea{
 		addRow.add(item);
 		item = new JMenuItem("Add criterion");
 		item.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				manager.addCriterion();
@@ -101,13 +102,21 @@ class MenuBarView extends JMenuBar implements BindableArea{
 
 	private void createGenItem() {
 		item = new JMenuItem("Generation");
+		item.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				new GenerationAreaView(manager);
+				manager.genTaskData();
+			}
+		});
 		menu.add(item);
 	}
 
 	private void createDeleteVarItem() {
 		item = new JMenuItem("Delete variable");
 		item.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				manager.deleteVariable();
@@ -119,7 +128,7 @@ class MenuBarView extends JMenuBar implements BindableArea{
 	private void createAddVarItem() {
 		item = new JMenuItem("Add variable");
 		item.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				manager.addVariable();
@@ -180,6 +189,13 @@ class MenuBarView extends JMenuBar implements BindableArea{
 
 	private void createAutoItem() {
 		item = new JMenuItem("Auto mode");
+		item.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				manager.solveTask();
+			}
+		});
 		menu.add(item);
 	}
 
@@ -228,10 +244,14 @@ class MenuBarView extends JMenuBar implements BindableArea{
 		getMenu(0).getItem(1).setEnabled(
 				menuBarViewModel.isSaveAndSolutionEnable());
 		getMenu(1).setEnabled(menuBarViewModel.isSaveAndSolutionEnable());
-		getMenu(1).getItem(0).setEnabled(menuBarViewModel.isSaveAndSolutionEnable());
-		getMenu(1).getItem(1).setEnabled(menuBarViewModel.isSaveAndSolutionEnable());
-		getMenu(1).getItem(2).setEnabled(menuBarViewModel.isSaveAndSolutionEnable());
-		getMenu(1).getItem(3).setEnabled(menuBarViewModel.isEconomButtonEnabled());
+		getMenu(1).getItem(0).setEnabled(
+				menuBarViewModel.isSaveAndSolutionEnable());
+		getMenu(1).getItem(1).setEnabled(
+				menuBarViewModel.isSaveAndSolutionEnable());
+		getMenu(1).getItem(2).setEnabled(
+				menuBarViewModel.isSaveAndSolutionEnable());
+		getMenu(1).getItem(3).setEnabled(
+				menuBarViewModel.isEconomButtonEnabled());
 		getMenu(3).setEnabled(menuBarViewModel.isTableMenuEnabled());
 	}
 

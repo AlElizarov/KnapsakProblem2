@@ -22,30 +22,42 @@ public class TaskManagerTests {
 	public void byDefaultTaskIsNotCreated() {
 		assertFalse(manager.isTaskCreated());
 	}
-	
+
 	@Test
-	public void createTask() {
-		manager.setTaskData("4", "2", "3");
-		manager.createTask();
-		
+	public void testTaskCreated() {
+		createTask();
+
 		assertTrue(manager.isTaskCreated());
 	}
 
 	@Test
-	public void createNotEconomTask() {
-		manager.setTaskData("4", "2", "3");
-		manager.createTask();
-		
+	public void testNotEconomTask() {
+		createTask();
+
 		assertFalse(manager.isTaskEconom());
 	}
 
+	private void createTask() {
+		manager.setTaskData("4", "2", "3");
+		manager.createTask();
+	}
+
 	@Test
-	public void createEconomTask() {
+	public void testEconomTask() {
 		manager.setTaskData("4", "2", "3");
 		manager.setEconomText("dresses");
 		manager.createTask();
-		
+
 		assertTrue(manager.isTaskEconom());
+	}
+
+	@Test
+	public void testTaskGenerate() {
+		manager.setTaskData("4", "2", "3");
+		manager.createTask();
+		manager.genTaskData();
+
+		assertTrue(manager.isTaskFull());
 	}
 
 }

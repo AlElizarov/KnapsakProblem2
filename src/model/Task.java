@@ -2,6 +2,7 @@ package model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Task {
 
@@ -21,6 +22,8 @@ public class Task {
 	private List<String> limitUnits;
 	private List<Integer> svertka;
 	private boolean[] discretSolution;
+	private int upperBound = 100;
+	private double partOfUpperBoundForLimits = 0.5;
 
 	public Task(String name, int variableCount, int limitationCount,
 			int criterionCount, boolean isMax) {
@@ -425,6 +428,22 @@ public class Task {
 
 	private boolean sumOk(int row) {
 		return getSum(row+criterionCount) <= limits.get(row);
+	}
+
+	public void genData() {
+		Random random = new Random();
+		for(int row = 0; row < criterionCount + limitationCount; row++){
+			for(int col = 0; col < variableCount; col++){
+				setValue(random.nextInt(upperBound), row, col);
+			}
+		}
+		for(int row = criterionCount; row < criterionCount+limitationCount; row++){
+			setValue(random.nextInt(calculateUpperBoundForLimits()), row,variableCount);
+		}
+	}
+
+	private int calculateUpperBoundForLimits() {
+		return (int) ((upperBound*variableCount)*partOfUpperBoundForLimits);
 	}
 	
 }
