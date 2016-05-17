@@ -282,9 +282,17 @@ public class TaskManager extends Observable {
 	}
 
 	public void genTaskData(int lowerBoundCosts, int lowerBoundWeights,
-			int upperBoundCosts, int upperBoundWeights) {
+			int upperBoundCosts, int upperBoundWeights, double coeff) {
 		task.genData(lowerBoundCosts, lowerBoundWeights, upperBoundCosts,
-				upperBoundWeights);
+				upperBoundWeights, coeff);
+		setChanged();
+		notifyObservers();
+	}
+
+	public void genEmptyData(int lowerBoundCosts, int lowerBoundWeights,
+			int upperBoundCosts, int upperBoundWeights, double coeff) {
+		task.genEmptyData(lowerBoundCosts, lowerBoundWeights, upperBoundCosts,
+				upperBoundWeights, coeff);
 		setChanged();
 		notifyObservers();
 	}

@@ -22,7 +22,6 @@ public class Task {
 	private List<String> limitUnits;
 	private List<Integer> svertka;
 	private boolean[] discretSolution;
-	private double partOfUpperBoundForLimits = 0.5;
 
 	public Task(String name, int variableCount, int limitationCount,
 			int criterionCount, boolean isMax) {
@@ -429,26 +428,64 @@ public class Task {
 		return getSum(row + criterionCount) <= limits.get(row);
 	}
 
-	public void genData(int lowerBoundCosts, int lowerBoundWeights, int upperBoundCosts, int upperBoundWeights) {
-		Random random = new Random();
+	public void genData(int lowerBoundCosts, int lowerBoundWeights,
+			int upperBoundCosts, int upperBoundWeights, double coeff) {
 		for (int row = 0; row < criterionCount + limitationCount; row++) {
 			for (int col = 0; col < variableCount; col++) {
-				if (row < criterionCount) {
-					setValue(lowerBoundCosts + random.nextInt(upperBoundCosts-lowerBoundCosts), row, col);
-				}
-				else{
-					setValue(lowerBoundWeights + random.nextInt(upperBoundWeights-lowerBoundWeights), row, col);
+				genValue(lowerBoundCosts, lowerBoundWeights, upperBoundCosts,
+						upperBoundWeights, row, col);
+			}
+		}
+
+		generateLimits(upperBoundWeights, coeff);
+	}
+
+	private void genValue(int lowerBoundCosts, int lowerBoundWeights,
+			int upperBoundCosts, int upperBoundWeights, int row, int col) {
+		Random random = new Random();
+		int costRandom = random.nextInt(upperBoundCosts - lowerBoundCosts);
+		int costGenValue = lowerBoundCosts + costRandom;
+		int weightRandom = random
+				.nextInt(upperBoundWeights - lowerBoundWeights);
+		int weightGenValue = lowerBoundWeights + weightRandom;
+		if (row < criterionCount) {
+			setValue(costGenValue, row, col);
+		} else {
+			setValue(weightGenValue, row, col);
+		}
+	}
+
+	private void generateLimits(int upperBoundWeights, double coeff) {
+		for (int row = criterionCount; row < criterionCount + limitationCount; row++) {
+			genLimitValue(coeff, row);
+		}
+	}
+
+	private void genLimitValue(double coeff, int row) {
+		int limitGenValue = calculateUpperBoundForLimits(coeff, row
+				- criterionCount);
+		setValue(limitGenValue, row, variableCount);
+	}
+
+	private int calculateUpperBoundForLimits(double coeff, int row) {
+		int sum = 0;
+		for (int col = 0; col < variableCount; col++) {
+			sum += weights.get(row).get(col);
+		}
+		return (int) (sum * coeff);
+	}
+
+	public void genEmptyData(int lowerBoundCosts, int lowerBoundWeights,
+			int upperBoundCosts, int upperBoundWeights, double coeff) {
+		for(int row = 0; row < criterionCount + limitationCount; row++){
+			for(int col = 0; col < variableCount; col++){
+				if(getValue(row, col) == null){
+					genValue(lowerBoundCosts, lowerBoundWeights, upperBoundCosts, upperBoundWeights, row, col);
 				}
 			}
 		}
-		for (int row = criterionCount; row < criterionCount + limitationCount; row++) {
-			setValue(random.nextInt(calculateUpperBoundForLimits(upperBoundWeights)), row,
-					variableCount);
+		for(int row = criterionCount; row < criterionCount + limitationCount; row++){
+			genLimitValue(coeff, row);
 		}
 	}
-
-	private int calculateUpperBoundForLimits(int upperBoundWeights) {
-		return (int) ((upperBoundWeights * variableCount) * partOfUpperBoundForLimits);
-	}
-
 }

@@ -4,12 +4,14 @@ import viewmodel.TaskManager;
 
 public class GenerationViewModel {
 
-	private int upperBoundCosts = 100;
-	private int upperBoundWeights = 100;
-	private int lowerBoundCosts = 100;
-	private int lowerBoundWeights = 100;
-	private double partOfUpperBoundForLimits = 0.5;
+	private int upperBoundCosts;
+	private int upperBoundWeights;
+	private int lowerBoundCosts;
+	private int lowerBoundWeights;
+	private double genCoeff;
 	private TaskManager manager;
+	private boolean isAllButtonEnable = true;
+	private boolean isRandomlyButtonEnable = true;
 
 	public GenerationViewModel(TaskManager manager) {
 		this.manager = manager;
@@ -48,16 +50,41 @@ public class GenerationViewModel {
 	}
 
 	public double getPartOfUpperBoundForLimits() {
-		return partOfUpperBoundForLimits;
+		if (isRandomlyButtonEnable) {
+			return 0.5;
+		}
+		return genCoeff;
 	}
 
 	public void setPartOfUpperBoundForLimits(double partOfUpperBoundForLimits) {
-		this.partOfUpperBoundForLimits = partOfUpperBoundForLimits;
+		this.genCoeff = partOfUpperBoundForLimits;
 	}
 
 	public void generate() {
-		manager.genTaskData(lowerBoundCosts, lowerBoundWeights,
-				upperBoundCosts, upperBoundWeights);
+		double coeff = getPartOfUpperBoundForLimits();
+		if (isAllButtonEnable) {
+			manager.genTaskData(lowerBoundCosts, lowerBoundWeights,
+					upperBoundCosts, upperBoundWeights, coeff);
+		} else {
+			manager.genEmptyData(lowerBoundCosts, lowerBoundWeights,
+					upperBoundCosts, upperBoundWeights, coeff);
+		}
+	}
+
+	public boolean isAllButtonEnable() {
+		return isAllButtonEnable;
+	}
+
+	public boolean isRandomlyButtonEnable() {
+		return isRandomlyButtonEnable;
+	}
+
+	public void setAllButtonEnable(boolean isAllButtonEnable) {
+		this.isAllButtonEnable = isAllButtonEnable;
+	}
+
+	public void setRandomlyButtonEnable(boolean isRandomlyButtonEnable) {
+		this.isRandomlyButtonEnable = isRandomlyButtonEnable;
 	}
 
 }

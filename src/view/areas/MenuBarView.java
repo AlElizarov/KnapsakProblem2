@@ -218,7 +218,6 @@ class MenuBarView extends JMenuBar implements BindableArea {
 				AbstractInteractiveInternalFrame iframe = new NewTaskCreatingView(
 						desktop, manager);
 				desktop.addIFrame(iframe);
-				iframe.openingBind();
 			}
 		});
 		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,

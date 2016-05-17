@@ -13,8 +13,8 @@ import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 
-import viewmodel.TaskManager;
 import net.miginfocom.swing.MigLayout;
+import viewmodel.TaskManager;
 
 //I'm not going to serialize that class
 @SuppressWarnings("serial")

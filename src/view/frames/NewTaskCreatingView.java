@@ -121,8 +121,6 @@ public class NewTaskCreatingView extends AbstractInteractiveInternalFrame {
 	public void openingBind() {
 		bindEconomParameters();
 		bindOkButton();
-		max.setSelected(newTaskCreatinngViewModel.isMaxSelected());
-		min.setSelected(newTaskCreatinngViewModel.isMinSelected());
 		isEconom.setSelected(newTaskCreatinngViewModel
 				.isEconomCheckBoxSelected());
 	}

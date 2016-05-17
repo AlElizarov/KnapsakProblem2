@@ -5,6 +5,8 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
 
 import viewmodel.TaskManager;
 import net.miginfocom.swing.MigLayout;
@@ -20,6 +22,18 @@ public abstract class AbstractInteractiveInternalFrame extends
 	public AbstractInteractiveInternalFrame(String title, Desktop desktop,
 			int width, int height, int x, int y, TaskManager sharedViewModel) {
 		super(title, desktop, width, height, x, y, sharedViewModel);
+		addInternalFrameListener(new InternalFrameAdapter() {
+
+			@Override
+			public void internalFrameOpened(InternalFrameEvent arg0) {
+				openingBind();
+			}
+
+			@Override
+			public void internalFrameActivated(InternalFrameEvent arg0) {
+				openingBind();
+			}
+		});
 		createOkAndCancelButtons();
 	}
 

@@ -81,7 +81,7 @@ abstract class TableType implements ITableType {
 	private void setValueInDataCell(Object value, int row, int col) {
 		try {
 			int intValue = Integer.parseInt(value.toString());
-			if (intValue >= (Integer.MAX_VALUE / manager.getVariableCount())) {
+			if (intValue >= (Long.MAX_VALUE / manager.getVariableCount())) {
 				throw new TooBigNumberException();
 			}
 			if (isLimitCell(row, col)) {

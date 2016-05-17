@@ -8,6 +8,6 @@ import tests.viewmodeltests.areasmodelstests.AreasModelsTestSuite;
 
 @RunWith(Suite.class)
 @SuiteClasses({ AreasModelsTestSuite.class, TaskManagerTests.class,
-		NewTaskCreatingViewModelTests.class })
+		NewTaskCreatingViewModelTests.class, GenerationViewModelTests.class })
 public class ViewModelTestSuite {
 }
