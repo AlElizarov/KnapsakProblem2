@@ -102,6 +102,23 @@ public class CenterViewModelTests {
 		assertEquals(expectResizeWeight, actualResizeWeight, 1e-10);
 	}
 
+	@Test
+	public void whenMultiCriteriaTaskCreatedSvertksVisible() {
+		createTask();
+		manager.solveTask();
+
+		assertTrue(centerViewModel.isSvertkaVisible());
+	}
+
+	@Test
+	public void whenOneCriteriaTaskCreatedSvertksNotVisible() {
+		createTask();
+		manager.setTaskData("4", "2", "1");
+		manager.createTask();
+
+		assertFalse(centerViewModel.isSvertkaVisible());
+	}
+
 	private void createTask() {
 		manager.setTaskData("4", "2", "3");
 		manager.createTask();

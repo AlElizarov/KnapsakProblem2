@@ -7,22 +7,22 @@ import org.junit.Before;
 import org.junit.Test;
 
 import view.components.tablemanagers.TableManager;
-import viewmodel.TaskManager;
+import viewmodel.MockTaskManager;
 import viewmodel.areasmodels.ControlViewModel;
 import viewmodel.areasmodels.MenuBarViewModel;
 import viewmodel.componentsmodels.KnapsakProblemTableModel;
 import viewmodel.componentsmodels.tablemodelmanagers.ITableManager;
 
 public class ControlViewModelTests {
-	
+
 	private ControlViewModel menuBarViewModel;
-	private TaskManager manager;
+	private MockTaskManager manager;
 	private ITableManager tableManager;
 	private KnapsakProblemTableModel tableModel;
 
 	@Before
 	public void setUp() {
-		manager = TaskManager.getInstance();
+		manager = MockTaskManager.getMockInstance();
 		menuBarViewModel = new MenuBarViewModel(manager);
 		tableManager = new TableManager(manager);
 		tableModel = new KnapsakProblemTableModel(tableManager);
@@ -87,7 +87,7 @@ public class ControlViewModelTests {
 
 		assertTrue(isSaveAndSolutionEnable());
 	}
-	
+
 	@Test
 	public void byDefaultEconomButtonIsDisabled() {
 		assertFalse(menuBarViewModel.isEconomButtonEnabled());
@@ -116,4 +116,3 @@ public class ControlViewModelTests {
 	}
 
 }
-

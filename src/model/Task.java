@@ -416,7 +416,7 @@ public class Task {
 	}
 
 	public boolean allSumsOk() {
-		for (int row = criterionCount; row < limitationCount+criterionCount; row++) {
+		for (int row = criterionCount; row < limitationCount + criterionCount; row++) {
 			if (!sumOk(row)) {
 				return false;
 			}
@@ -425,7 +425,7 @@ public class Task {
 	}
 
 	public boolean sumOk(int row) {
-		return getSum(row) <= limits.get(row-criterionCount);
+		return getSum(row) <= limits.get(row - criterionCount);
 	}
 
 	public void genData(int lowerBoundCosts, int lowerBoundWeights,
@@ -477,15 +477,17 @@ public class Task {
 
 	public void genEmptyData(int lowerBoundCosts, int lowerBoundWeights,
 			int upperBoundCosts, int upperBoundWeights, double coeff) {
-		for(int row = 0; row < criterionCount + limitationCount; row++){
-			for(int col = 0; col < variableCount; col++){
-				if(getValue(row, col) == null){
-					genValue(lowerBoundCosts, lowerBoundWeights, upperBoundCosts, upperBoundWeights, row, col);
+		for (int row = 0; row < criterionCount + limitationCount; row++) {
+			for (int col = 0; col < variableCount; col++) {
+				if (getValue(row, col) == null) {
+					genValue(lowerBoundCosts, lowerBoundWeights,
+							upperBoundCosts, upperBoundWeights, row, col);
 				}
 			}
 		}
-		for(int row = criterionCount; row < criterionCount + limitationCount; row++){
+		for (int row = criterionCount; row < criterionCount + limitationCount; row++) {
 			genLimitValue(coeff, row);
 		}
 	}
+
 }

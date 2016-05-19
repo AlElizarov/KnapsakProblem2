@@ -16,6 +16,7 @@ public abstract class Solver {
 	private int limit;
 	private int currentMaxH;
 	protected Task task;
+	private int vertexDeleted;
 
 	public Solver(Task task) {
 		this.task = task;
@@ -50,6 +51,7 @@ public abstract class Solver {
 		for (int candidate = 0; candidate < candidatesSolutions.size(); candidate++) {
 			if (candidatesSolutions.get(candidate).getV() < currentMaxH) {
 				candidatesSolutions.remove(candidate);
+				vertexDeleted++;
 				candidate--;
 			}
 		}
@@ -169,6 +171,18 @@ public abstract class Solver {
 		}
 		setHAndVAndFix(cost, solution);
 		setLeftLimit();
+	}
+
+	public String getH() {
+		return "" + currentLeaderSolution.getH();
+	}
+
+	public String getV() {
+		return "" + currentLeaderSolution.getV();
+	}
+
+	public int vertexDeleted() {
+		return vertexDeleted;
 	}
 
 }

@@ -27,6 +27,10 @@ public class TaskManager extends Observable {
 	protected boolean isTaskSolved;
 	private Solver solver;
 	private KnapsakGuiSolver<Object, Object> guiSolver;
+	private String h;
+	private String v;
+	private int iteration;
+	private int vertexDeleted;
 
 	public static TaskManager getInstance() {
 		if (instance == null) {
@@ -245,8 +249,9 @@ public class TaskManager extends Observable {
 		if (solver == null) {
 			solver = createSolver();
 		}
-		if(solver.isEnd()){
+		if (solver.isEnd()) {
 			solver = null;
+			iteration = 0;
 			return true;
 		}
 		return false;
@@ -254,8 +259,11 @@ public class TaskManager extends Observable {
 
 	public void solveTask() {
 		solver.solve();
+		h = solver.getH();
+		v = solver.getV();
+		iteration++;
+		vertexDeleted = solver.vertexDeleted();
 		task.setSolution(solver.getCurrentLeaderTop().getSolution());
-		setTaskSolved();
 	}
 
 	public void setTaskSolved() {
@@ -321,6 +329,26 @@ public class TaskManager extends Observable {
 
 	public void cancel() {
 		guiSolver.cancel(true);
+	}
+
+	public String getSvertka() {
+		return task.getSvertka().toString();
+	}
+
+	public String getH() {
+		return h;
+	}
+
+	public String getV() {
+		return v;
+	}
+
+	public String getIteraton() {
+		return "" + iteration;
+	}
+
+	public int vertexDeleted() {
+		return vertexDeleted;
 	}
 
 }

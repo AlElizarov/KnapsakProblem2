@@ -33,6 +33,7 @@ class SimpleMode extends CenterViewMode {
 	private JPanel panelForSolution;
 	private JLabel labelForSverka;
 	private JTextPane textPaneForSolution;
+	private String solutionStr;
 
 	public SimpleMode(TaskManager manager) {
 		super(manager);
@@ -70,7 +71,7 @@ class SimpleMode extends CenterViewMode {
 		buttonPanel.setBackground(new Color(205, 190, 112));
 		panelForButtonAndSvertka.add(buttonPanel, BorderLayout.NORTH);
 
-		labelForSverka = new JLabel("sver");
+		labelForSverka = new JLabel();
 		panelForButtonAndSvertka.add(labelForSverka, BorderLayout.CENTER);
 
 		panelForSolution.add(panelForButtonAndSvertka, BorderLayout.NORTH);
@@ -102,6 +103,10 @@ class SimpleMode extends CenterViewMode {
 		panelForTable.setVisible(centerViewModel.isPanelForTableVisible());
 		panelForSolution
 				.setVisible(centerViewModel.isPanelForSolutionVisible());
+		labelForSverka.setVisible(centerViewModel.isSvertkaVisible());
+		labelForSverka.setText(centerViewModel.setSvertkaText());
+		solutionStr = "Solution<br>"+centerViewModel.getSolutionText();
+		textPaneForSolution.setText(solutionStr);
 		setContinuousLayout(centerViewModel
 				.isSplitForTableAndSolutionContinuoslyLayout());
 		setOneTouchExpandable(centerViewModel

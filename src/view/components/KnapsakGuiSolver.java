@@ -19,7 +19,6 @@ public class KnapsakGuiSolver<T, V> extends SwingWorker<T, V> {
 	protected T doInBackground() throws Exception {
 		int step = 0;
 		run = true;
-		System.out.println("do in background");
 		while (!manager.isEnd() && run) {
 			manager.solveTask();
 			if (step++ % 5000 == 0)

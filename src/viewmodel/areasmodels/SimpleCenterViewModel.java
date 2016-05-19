@@ -48,4 +48,25 @@ public class SimpleCenterViewModel {
 		return 0;
 	}
 
+	public boolean isSvertkaVisible() {
+		if (manager.isTaskSolved() && manager.getCriterionCount() > 1) {
+			return true;
+		}
+		return false;
+	}
+
+	public String setSvertkaText() {
+		if (isSvertkaVisible())
+			return "<html><pre>   U = " + manager.getSvertka()+"</pre></html>";
+		return "";
+	}
+
+	public String getSolutionText() {
+		if (manager.isTaskSolved()) {
+			return "    H = " + manager.getH() + "<br>" + "   V = " + manager.getV()
+					+"<br>iteration: "+manager.getIteraton()+"<br>vertex deleted: "+manager.vertexDeleted();
+		}
+		return "hghj";
+	}
+
 }
