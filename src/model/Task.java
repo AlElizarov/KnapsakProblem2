@@ -416,16 +416,16 @@ public class Task {
 	}
 
 	public boolean allSumsOk() {
-		for (int i = 0; i < limitationCount; i++) {
-			if (!sumOk(i)) {
+		for (int row = criterionCount; row < limitationCount+criterionCount; row++) {
+			if (!sumOk(row)) {
 				return false;
 			}
 		}
 		return true;
 	}
 
-	private boolean sumOk(int row) {
-		return getSum(row + criterionCount) <= limits.get(row);
+	public boolean sumOk(int row) {
+		return getSum(row) <= limits.get(row-criterionCount);
 	}
 
 	public void genData(int lowerBoundCosts, int lowerBoundWeights,

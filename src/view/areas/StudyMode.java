@@ -4,7 +4,7 @@ import viewmodel.TaskManager;
 
 //I'm not going to serialize that class
 @SuppressWarnings("serial")
-class StudyMode extends SimpleMode {
+class StudyMode extends CenterViewMode {
 
 	public StudyMode(TaskManager manager) {
 		super(manager);

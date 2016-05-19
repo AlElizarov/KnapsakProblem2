@@ -2,6 +2,7 @@ package viewmodel;
 
 import java.util.Observable;
 
+import view.components.KnapsakGuiSolver;
 import model.BiDirectSolver;
 import model.OneDirectSolver;
 import model.Solver;
@@ -24,6 +25,8 @@ public class TaskManager extends Observable {
 	private boolean isMax = false;
 
 	protected boolean isTaskSolved;
+	private Solver solver;
+	private KnapsakGuiSolver<Object, Object> guiSolver;
 
 	public static TaskManager getInstance() {
 		if (instance == null) {
@@ -238,18 +241,24 @@ public class TaskManager extends Observable {
 		return isTaskSolved;
 	}
 
-	public void solveTask() {
-		Solver solver = createSolver();
-		if (!solver.hasSolution()) {
-			for (int i = 0; i < task.getVariableCount(); i++) {
-				task.setSolutionVariable(false, i);
-			}
-		} else {
-			while (!solver.isEnd()) {
-				solver.solve();
-			}
-			task.setSolution(solver.getCurrentLeaderTop().getSolution());
+	public boolean isEnd() {
+		if (solver == null) {
+			solver = createSolver();
 		}
+		if(solver.isEnd()){
+			solver = null;
+			return true;
+		}
+		return false;
+	}
+
+	public void solveTask() {
+		solver.solve();
+		task.setSolution(solver.getCurrentLeaderTop().getSolution());
+		setTaskSolved();
+	}
+
+	public void setTaskSolved() {
 		isTaskSolved = true;
 		setChanged();
 		notifyObservers();
@@ -281,6 +290,10 @@ public class TaskManager extends Observable {
 		return task.allSumsOk();
 	}
 
+	public boolean sumOk(int row) {
+		return task.sumOk(row);
+	}
+
 	public void genTaskData(int lowerBoundCosts, int lowerBoundWeights,
 			int upperBoundCosts, int upperBoundWeights, double coeff) {
 		task.genData(lowerBoundCosts, lowerBoundWeights, upperBoundCosts,
@@ -295,6 +308,19 @@ public class TaskManager extends Observable {
 				upperBoundWeights, coeff);
 		setChanged();
 		notifyObservers();
+	}
+
+	private void createNewGuiSolver() {
+		guiSolver = new KnapsakGuiSolver<>(this);
+	}
+
+	public void execute() {
+		createNewGuiSolver();
+		guiSolver.execute();
+	}
+
+	public void cancel() {
+		guiSolver.cancel(true);
 	}
 
 }

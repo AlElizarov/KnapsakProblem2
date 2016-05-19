@@ -67,7 +67,7 @@ class ToolBarView extends JToolBar implements BindableArea {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				manager.solveTask();
+				manager.execute();
 			}
 		});
 	}

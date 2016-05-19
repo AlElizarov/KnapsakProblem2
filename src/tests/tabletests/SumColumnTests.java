@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import view.components.tablemanagers.TableManager;
+import viewmodel.MockTaskManager;
 import viewmodel.TaskManager;
 import viewmodel.componentsmodels.tablemodelmanagers.ITableManager;
 
@@ -21,7 +22,7 @@ public class SumColumnTests {
 
 	@Before
 	public void setUp() {
-		manager = TaskManager.getInstance();
+		manager = MockTaskManager.getMockInstance();
 		tableManager = new TableManager(manager);
 		manager.setStartState();
 	}
@@ -31,19 +32,9 @@ public class SumColumnTests {
 		Color expectColor = Color.GREEN;
 
 		createNotEconomSolvedTask();
-		Color actualColor = tableManager.getColumnColor(VAR_COUNT+2);
+		Color actualColor = tableManager.getColumnColor(VAR_COUNT + 2);
 
 		assertEquals(expectColor, actualColor);
-	}
-
-	@Test
-	public void firstCritRowSumIs1() {
-		long expectSum = 1;
-
-		createNotEconomSolvedTask();
-		long actualSum = (long) tableManager.getValueAt(0, VAR_COUNT + 2);
-		
-		assertEquals(expectSum, actualSum);
 	}
 
 	private void fullTable() {

@@ -195,7 +195,7 @@ class MenuBarView extends JMenuBar implements BindableArea {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				manager.solveTask();
+				manager.execute();
 			}
 		});
 		menu.add(item);

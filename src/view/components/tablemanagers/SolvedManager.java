@@ -122,6 +122,16 @@ class SolvedManager extends TableType {
 			}
 		}
 	}
+	
+	@Override
+	public Color getUnFocusRow(int row) {
+		if(row >= manager.getCriterionCount()+rowMargin && row < tableType.getRowCount()){
+			if(!manager.sumOk(row-rowMargin)){
+				return Color.RED;
+			}
+		}
+		return super.getUnFocusRow(row);
+	}
 
 	private boolean isNotSolutionColumn(int col) {
 		return col + columnMargin >= manager.getVariableCount() || col < 0;

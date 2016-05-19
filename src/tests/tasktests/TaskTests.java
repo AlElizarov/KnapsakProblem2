@@ -147,6 +147,22 @@ public class TaskTests {
 
 		assertEquals(expectVarCount, actualVarCount);
 	}
+	
+	public void generation(){
+		Task task = createNotEconomTask();
+		task.genData(1, 1, 100, 100, 0.5);
+		
+		assertGenData(task);
+	}
+
+	private void assertGenData(Task task) {
+		for(int row = 0; row < task.getCriterionCount() + task.getLimitationCount(); row++){
+			for(int col = 0; col < task.getVariableCount(); col++){
+				assertTrue((int)task.getValue(row, col) >= 1);
+				assertTrue((int)task.getValue(row, col) <= 100);
+			}
+		}
+	}
 
 	private Task createNotEconomTask() {
 		Task task = new Task("first Task", VAR_COUNT, LIMITATION_COUNT,

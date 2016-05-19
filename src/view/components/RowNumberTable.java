@@ -23,7 +23,7 @@ import viewmodel.componentsmodels.tablemodelmanagers.ITableManager;
 //I'm not going to serialize this class
 @SuppressWarnings("serial")
 public class RowNumberTable extends JTable implements ChangeListener,
-		PropertyChangeListener, TableModelListener{
+		PropertyChangeListener, TableModelListener {
 
 	private JTable mainTable;
 	private ITableManager tableManager;
@@ -155,9 +155,9 @@ public class RowNumberTable extends JTable implements ChangeListener,
 	 * Attempt to mimic the table header renderer
 	 */
 	private static class RowNumberRenderer extends DefaultTableCellRenderer {
-		
+
 		private ITableManager tableManager;
-		
+
 		public RowNumberRenderer(ITableManager tableManager) {
 			this.tableManager = tableManager;
 			setHorizontalAlignment(JLabel.CENTER);
@@ -179,8 +179,7 @@ public class RowNumberTable extends JTable implements ChangeListener,
 			if (isSelected) {
 				setFont(getFont().deriveFont(Font.BOLD));
 				setBackground(tableManager.getFocusRow(row));
-			}
-			else{
+			} else {
 				setBackground(tableManager.getUnFocusRow(row));
 			}
 
@@ -190,4 +189,5 @@ public class RowNumberTable extends JTable implements ChangeListener,
 			return this;
 		}
 	}
+
 }

@@ -3,6 +3,8 @@ package view.areas;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -48,7 +50,21 @@ class SimpleMode extends CenterViewMode {
 
 		JPanel buttonPanel = new JPanel(new MigLayout());
 		JButton start = new JButton("start");
+		start.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				manager.execute();
+			}
+		});
 		JButton stop = new JButton("stop");
+		stop.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				manager.cancel();
+			}
+		});
 		buttonPanel.add(start, "sg 1");
 		buttonPanel.add(stop, "sg 1");
 		buttonPanel.setBackground(new Color(205, 190, 112));
