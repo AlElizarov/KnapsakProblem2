@@ -33,14 +33,18 @@ public class TaskMapper implements DataMapper {
 	private void putDataInTableWeights(Task task) throws SQLException {
 		String mainQuery = "";
 		mainQuery += "insert into weights (id_limitation, id_variable, weight) values ";
-		for(int row = 0; row < task.getLimitationCount(); row++){
-			for(int col = 0; col < task.getVariableCount(); col++){
-				mainQuery += "("+ (firstLimitationId+row) +", "+(firstVarId+col)+ ", "+task.getValue(row+task.getCriterionCount(), col)+")";
-				if(row < task.getLimitationCount()-1 || col < task.getVariableCount() - 1){
+		for (int row = 0; row < task.getLimitationCount(); row++) {
+			for (int col = 0; col < task.getVariableCount(); col++) {
+				mainQuery += "(" + (firstLimitationId + row) + ", "
+						+ (firstVarId + col) + ", "
+						+ task.getValue(row + task.getCriterionCount(), col)
+						+ ")";
+				if (row < task.getLimitationCount() - 1
+						|| col < task.getVariableCount() - 1) {
 					mainQuery += ", ";
 				}
 			}
-			
+
 		}
 		putDataIntoDB(mainQuery);
 	}
@@ -48,14 +52,17 @@ public class TaskMapper implements DataMapper {
 	private void putDataInTableCosts(Task task) throws SQLException {
 		String mainQuery = "";
 		mainQuery += "insert into costs (id_criterion, id_variable, cost) values ";
-		for(int row = 0; row < task.getCriterionCount(); row++){
-			for(int col = 0; col < task.getVariableCount(); col++){
-				mainQuery += "("+ (firstCritId+row) +", "+(firstVarId+col)+ ", "+task.getValue(row, col)+")";
-				if(row < task.getCriterionCount()-1 || col < task.getVariableCount() - 1){
+		for (int row = 0; row < task.getCriterionCount(); row++) {
+			for (int col = 0; col < task.getVariableCount(); col++) {
+				mainQuery += "(" + (firstCritId + row) + ", "
+						+ (firstVarId + col) + ", " + task.getValue(row, col)
+						+ ")";
+				if (row < task.getCriterionCount() - 1
+						|| col < task.getVariableCount() - 1) {
 					mainQuery += ", ";
 				}
 			}
-			
+
 		}
 		putDataIntoDB(mainQuery);
 	}
@@ -78,7 +85,7 @@ public class TaskMapper implements DataMapper {
 		for (int col = 0; col < task.getVariableCount(); col++) {
 			String query = "select maxCurrentId from myautoincrement where tableName = \'variables\'";
 			int varId = getId(query);
-			if(col == 0){
+			if (col == 0) {
 				firstVarId = varId;
 			}
 			query = "update myautoincrement set maxCurrentId = " + varId
@@ -121,7 +128,7 @@ public class TaskMapper implements DataMapper {
 		for (int row = 0; row < task.getLimitationCount(); row++) {
 			String query = "select maxCurrentId from myautoincrement where tableName = \'limitations\'";
 			int limitationId = getId(query);
-			if(row == 0){
+			if (row == 0) {
 				firstLimitationId = limitationId;
 			}
 			query = "update myautoincrement set maxCurrentId = " + limitationId
@@ -155,7 +162,7 @@ public class TaskMapper implements DataMapper {
 		for (int row = 0; row < task.getCriterionCount(); row++) {
 			String query = "select maxCurrentId from myautoincrement where tableName = \'criterions\'";
 			int critId = getId(query);
-			if(row == 0){
+			if (row == 0) {
 				firstCritId = critId;
 			}
 			query = "update myautoincrement set maxCurrentId = " + critId
@@ -262,6 +269,14 @@ public class TaskMapper implements DataMapper {
 			e.printStackTrace();
 		}
 		return authorsNames;
+	}
+
+	public void addAuthor(String name, String surname, String futhername) throws SQLException {
+		String query = "select maxCurrentId from myautoincrement where tableName = \'authors\'";
+		int idAuthor = getId(query);
+		query = "insert into authors values (" + idAuthor + ", \'" + name
+				+ "\', \'" + surname + "\', \'" + futhername + "\')";
+		putDataIntoDB(query);
 	}
 
 }

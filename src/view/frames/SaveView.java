@@ -1,11 +1,15 @@
 package view.frames;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.Date;
 import java.sql.SQLException;
 
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import viewmodel.TaskManager;
@@ -30,8 +34,7 @@ public class SaveView extends AbstractInteractiveInternalFrame {
 		try {
 			manager.save((String) authors.getSelectedItem(), sqlDate, canRewrie.isSelected());
 		} catch (SQLException e) {
-			e.printStackTrace();
-			//JOptionPane.showMessageDialog(null, "Problems with database connection");
+			JOptionPane.showMessageDialog(null, "Problems with database connection");
 		}
 		SaveView.this.dispose();
 	}
@@ -44,12 +47,15 @@ public class SaveView extends AbstractInteractiveInternalFrame {
 	protected void fullPanel() {
 		authors = new JComboBox<>(manager.getAuthorsNames());
 		JLabel authorLabel = new JLabel("Choice your name:");
-		panel.add(authorLabel, "wrap");
+		panel.add(authorLabel);
+		JButton addAuthor = createAddAuthorButton();
+		panel.add(addAuthor, "wrap");
 		panel.add(authors);
 		createMargin();
 
 		panel.add(new JLabel("date:"), "wrap");
 		chooser = new JDateChooser();
+		chooser.setDate(new java.util.Date());
 		panel.add(chooser);
 		createMargin();
 		
@@ -58,6 +64,21 @@ public class SaveView extends AbstractInteractiveInternalFrame {
 		panel.add(new JLabel("<html>Whether this task<br>could be rewrite?"), "wrap");
 		panel.add(canRewrie);
 		createMargin();
+	}
+
+	private JButton createAddAuthorButton() {
+		JButton addAuthor = new JButton("add");
+		addAuthor.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				desktop.setLayout(null);
+				AddAuthorFrame iframe = new AddAuthorFrame(
+						desktop, manager);
+				desktop.addIFrame(iframe);
+			}
+		});
+		return addAuthor;
 	}
 	
 	private void createMargin() {

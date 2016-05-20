@@ -375,4 +375,8 @@ public class TaskManager extends Observable {
 		mapper.save(task, param);
 	}
 
+	public void addAuthor(String name, String surname, String futhername) throws SQLException {
+		mapper.addAuthor(name, surname, futhername);
+	}
+
 }

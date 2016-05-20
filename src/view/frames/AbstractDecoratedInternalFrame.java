@@ -20,7 +20,7 @@ import viewmodel.TaskManager;
 @SuppressWarnings("serial")
 public abstract class AbstractDecoratedInternalFrame extends JInternalFrame {
 
-	private Desktop desktop;
+	protected Desktop desktop;
 	protected JPanel panel = new JPanel(new MigLayout());
 	protected TaskManager manager;
 
