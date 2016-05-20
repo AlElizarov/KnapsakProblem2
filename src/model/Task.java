@@ -490,4 +490,28 @@ public class Task {
 		}
 	}
 
+	public List<String> getVarNames() {
+		return varNames;
+	}
+
+	public List<String> getCritNames() {
+		return critNames;
+	}
+
+	public List<String> getLimitNames() {
+		return limitNames;
+	}
+
+	public List<String> getCritUnits() {
+		return critUnits;
+	}
+
+	public List<String> getLimitUnits() {
+		return limitUnits;
+	}
+
+	public List<Integer> getLimits() {
+		return limits;
+	}
+
 }

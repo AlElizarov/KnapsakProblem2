@@ -16,6 +16,7 @@ import view.frames.AbstractInteractiveInternalFrame;
 import view.frames.Desktop;
 import view.frames.GenerationAreaView;
 import view.frames.NewTaskCreatingView;
+import view.frames.SaveView;
 import viewmodel.TaskManager;
 import viewmodel.areasmodels.MenuBarViewModel;
 
@@ -235,6 +236,16 @@ class MenuBarView extends JMenuBar implements BindableArea {
 
 	private void createSaveItem() {
 		item = new JMenuItem("Save", new ImageIcon("images/ic_save_18pt.png"));
+		item.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				desktop.setLayout(null);
+				SaveView iframe = new SaveView(
+						desktop, manager);
+				desktop.addIFrame(iframe);
+			}
+		});
 		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
 				InputEvent.CTRL_MASK));
 		menu.add(item);

@@ -1,12 +1,17 @@
 package viewmodel;
 
+import java.sql.Date;
+import java.sql.SQLException;
 import java.util.Observable;
+import java.util.Vector;
 
+import db.TaskMapper;
 import view.components.KnapsakGuiSolver;
 import model.BiDirectSolver;
 import model.OneDirectSolver;
 import model.Solver;
 import model.Task;
+import model.TaskParameters;
 
 public class TaskManager extends Observable {
 
@@ -31,6 +36,8 @@ public class TaskManager extends Observable {
 	private String v;
 	private int iteration;
 	private int vertexDeleted;
+
+	private TaskMapper mapper = new TaskMapper();
 
 	public static TaskManager getInstance() {
 		if (instance == null) {
@@ -349,6 +356,23 @@ public class TaskManager extends Observable {
 
 	public int vertexDeleted() {
 		return vertexDeleted;
+	}
+
+	public Vector<String> getAuthorsNames() {
+		return mapper.getAuthorsNames();
+	}
+
+	public void save(String authorName, Date sqlTaskDate, boolean canRewrite) throws SQLException {
+		TaskParameters param = new TaskParameters();
+		param.setEconom(isTaskEconom);
+		param.setMax(isMax);
+		param.setName(taskName);
+		param.setAuthorName(authorName);
+		param.setSqlDate(sqlTaskDate);
+		param.setCanRewrite(canRewrite);
+		param.setEconomMeaning(economText);
+		param.setIsSolved(isTaskSolved);
+		mapper.save(task, param);
 	}
 
 }
