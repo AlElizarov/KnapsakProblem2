@@ -12,6 +12,7 @@ import view.frames.AbstractInteractiveInternalFrame;
 import view.frames.Desktop;
 import view.frames.GenerationAreaView;
 import view.frames.NewTaskCreatingView;
+import view.frames.ReadView;
 import view.frames.SaveView;
 import viewmodel.TaskManager;
 import viewmodel.areasmodels.ToolBarViewModel;
@@ -39,6 +40,27 @@ class ToolBarView extends JToolBar implements BindableArea {
 		toolBarViewModel = new ToolBarViewModel(manager);
 		setBackground(new Color(205, 190, 112));
 		setFloatable(false);
+		addSaveTaskButton();
+		
+		add(read);
+		read.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				desktop.setLayout(null);
+				ReadView iframe = new ReadView(desktop, manager);
+				desktop.addIFrame(iframe);
+			}
+		});
+		
+		addSeparator();
+		addNewTaskButton();
+		addSolveButton();
+		addGenButton();
+		add(econom);
+	}
+
+	private void addSaveTaskButton() {
 		add(save);
 		save.addActionListener(new ActionListener() {
 
@@ -49,12 +71,6 @@ class ToolBarView extends JToolBar implements BindableArea {
 				desktop.addIFrame(iframe);
 			}
 		});
-		add(read);
-		addSeparator();
-		addNewTaskButton();
-		addSolveButton();
-		addGenButton();
-		add(econom);
 	}
 
 	private void addGenButton() {

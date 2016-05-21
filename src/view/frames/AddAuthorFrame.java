@@ -6,7 +6,10 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
+
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
 import viewmodel.TaskManager;
 import viewmodel.framesmodels.utils.HandlerStringParameters;
@@ -32,11 +35,13 @@ public class AddAuthorFrame extends AbstractInteractiveInternalFrame {
 			manager.addAuthor(nameArea.getText(), surnameArea.getText(),
 					futhernameArea.getText());
 			if (saveView != null) {
-				saveView.dispose();
-				desktop.setLayout(null);
-				SaveView iframe = new SaveView(desktop, manager);
-				desktop.addIFrame(iframe);
+				saveView.getAuthors().setModel(
+						new DefaultComboBoxModel<>(manager.getAuthorsNames()));
 			}
+		} catch (MySQLIntegrityConstraintViolationException exc) {
+			exc.printStackTrace();
+			JOptionPane.showMessageDialog(null,
+					"User already exists, please enter new data");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(null,

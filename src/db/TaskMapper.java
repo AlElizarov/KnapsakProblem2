@@ -1,6 +1,7 @@
 package db;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -185,12 +186,8 @@ public class TaskMapper implements DataMapper {
 
 	private void putDataInTableTasks(TaskParameters param) throws SQLException {
 		String[] initials = param.getAuthorName().split("\\s");
-		String query = "select id from authors where name = \'" + initials[1]
-				+ "\'" + " and surname = \'" + initials[0]
-				+ "\'";
-		if(initials.length == 3){
-			query += " and futhername = \'" + initials[2] + "\'";
-		}
+		String query = "select id from authors where name = \'";
+		query += checkAuthor(initials);
 		int idAuthor = getIdAuthor(query);
 
 		query = "select maxCurrentId from myautoincrement where tableName = \'tasks\'";
@@ -201,11 +198,10 @@ public class TaskMapper implements DataMapper {
 
 		if (!param.isEconom()) {
 			query = "insert into tasks (id, id_author, isMax, isEconom, name, dateOfCreating, canRewrite";
-			if(!param.getNote().equals("")){
-				query += ", note)"; 
-			}
-			else{
-				query += ")";
+			if (!param.getNote().equals("")) {
+				query += ", note, isSolved)";
+			} else {
+				query += ", isSolved)";
 			}
 			query += "values (" + idTask + ", " + idAuthor + ", "
 					+ param.isMax() + ", " + param.isEconom() + ", \'"
@@ -213,10 +209,9 @@ public class TaskMapper implements DataMapper {
 					+ param.isCanRewrite();
 		} else {
 			query = "insert into tasks (id, id_author, isMax, isEconom, name, dateOfCreating, canRewrite, economMeaning";
-			if(!param.getNote().equals("")){
-				query += ", note)"; 
-			}
-			else{
+			if (!param.getNote().equals("")) {
+				query += ", note)";
+			} else {
 				query += ")";
 			}
 			query += "values (" + idTask + ", " + idAuthor + ", "
@@ -225,13 +220,22 @@ public class TaskMapper implements DataMapper {
 					+ param.isCanRewrite() + ", \'" + param.getEconomMeaning()
 					+ "\'";
 		}
-		if(!param.getNote().equals("")){
-			query += ", \'"+param.getNote()+"\')"; 
+		if (!param.getNote().equals("")) {
+			query += ", \'" + param.getNote() + "\'";
+		} else {
+			query += "";
 		}
-		else{
-			query += ")";
-		}
+		query += ", " +param.isSolved()+")";
 		putDataIntoDB(query);
+	}
+
+	private String checkAuthor(String[] initials) {
+		String query = initials[1] + "\'" + " and surname = \'" + initials[0]
+				+ "\'";
+		if (initials.length == 3) {
+			query += " and futhername = \'" + initials[2] + "\'";
+		}
+		return query;
 	}
 
 	private int getId(String query) {
@@ -260,11 +264,6 @@ public class TaskMapper implements DataMapper {
 			e.printStackTrace();
 		}
 		return idAuthor;
-	}
-
-	@Override
-	public Task read() {
-		return null;
 	}
 
 	private void putDataIntoDB(String query) throws SQLException {
@@ -307,12 +306,482 @@ public class TaskMapper implements DataMapper {
 
 	public void deleteAuthor(String author) throws SQLException {
 		String[] initials = author.split("\\s");
-		String query = "delete from authors where name = \'"+initials[1] +"\' and surname = \'"
-				+ initials[0] +"\'";
-		if(initials.length == 3){
-			query += " and futhername = \'"+initials[2] +"\'";
-		}
+		String query = "delete from authors where name = \'";
+		query += checkAuthor(initials);
 		putDataIntoDB(query);
+	}
+
+	public Vector<String> readTasks() {
+		Vector<String> tasks = new Vector<>();
+		String query = "select tasks.name, surname, authors.name, futhername, dateOfCreating from tasks, authors"
+				+ " where tasks.id_author = authors.id"
+				+ " order by tasks.name, surname, authors.name, futhername, dateOfCreating";
+		try (Connection con = DriverManager.getConnection(url, user, password);
+				Statement stmt = con.createStatement();
+				ResultSet rs = stmt.executeQuery(query);) {
+			while (rs.next()) {
+				String task = rs.getString(1);
+				task += "; " + rs.getString(2);
+				task += " " + rs.getString(3);
+				task += " " + rs.getString(4);
+				task += "; " + rs.getString(5);
+				tasks.add(task);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return tasks;
+	}
+
+	public Vector<String> readTasks(String author) {
+		String[] initials = author.split("\\s");
+		Vector<String> tasks = new Vector<>();
+		String query = "select tasks.name, surname, authors.name,, surname, futhername, dateOfCreating from tasks, authors"
+				+ " where tasks.id_author = authors.id and authors.name = \'";
+		query += checkAuthor(initials);
+		query += " order by tasks.name, surname, authors.name, futhername, dateOfCreating";
+		try (Connection con = DriverManager.getConnection(url, user, password);
+				Statement stmt = con.createStatement();
+				ResultSet rs = stmt.executeQuery(query);) {
+			while (rs.next()) {
+				String task = rs.getString(1);
+				task += "; " + rs.getString(2);
+				task += " " + rs.getString(3);
+				task += " " + rs.getString(4);
+				task += "; " + rs.getString(5);
+				tasks.add(task);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return tasks;
+	}
+
+	public Vector<String> readTasks(String author, Date sd, Date fd) {
+		String[] initials = author.split("\\s");
+		Vector<String> tasks = new Vector<>();
+		String query = "select tasks.name, surname, authors.name, futhername, dateOfCreating from tasks, authors"
+				+ " where tasks.id_author = authors.id and authors.name = \'";
+
+		query += checkAuthor(initials);
+		query += " and dateOfCreating between \'"
+				+ sd
+				+ "\' and \'"
+				+ fd
+				+ "\'"
+				+ " order by tasks.name, surname, authors.name, futhername, dateOfCreating";
+		try (Connection con = DriverManager.getConnection(url, user, password);
+				Statement stmt = con.createStatement();
+				ResultSet rs = stmt.executeQuery(query);) {
+			while (rs.next()) {
+				String task = rs.getString(1);
+				task += "; " + rs.getString(2);
+				task += " " + rs.getString(3);
+				task += " " + rs.getString(4);
+				task += "; " + rs.getString(5);
+				tasks.add(task);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return tasks;
+	}
+
+	public Vector<String> readTasks(Date sd, Date fd) {
+		Vector<String> tasks = new Vector<>();
+		String query = "select tasks.name, surname, authors.name, futhername, dateOfCreating from tasks, authors"
+				+ " where tasks.id_author = authors.id and dateOfCreating between \'"
+				+ sd
+				+ "\' and \'"
+				+ fd
+				+ "\'"
+				+ " order by tasks.name, surname, authors.name, futhername, dateOfCreating";
+		try (Connection con = DriverManager.getConnection(url, user, password);
+				Statement stmt = con.createStatement();
+				ResultSet rs = stmt.executeQuery(query);) {
+			while (rs.next()) {
+				String task = rs.getString(1);
+				task += "; " + rs.getString(2);
+				task += " " + rs.getString(3);
+				task += " " + rs.getString(4);
+				task += "; " + rs.getString(5);
+				tasks.add(task);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return tasks;
+	}
+
+	public boolean readCanRewrite(String name, String author, Date taskDate) {
+		String[] initials = author.split("\\s");
+		String query = "select canRewrite from tasks where name = \'" + name
+				+ "\' and id_author = (select id from authors where name = \'";
+		query += checkAuthor(initials);
+		query += ") and dateOfCreating = \'" + taskDate + "\'";
+		boolean canRewrite = false;
+		try (Connection con = DriverManager.getConnection(url, user, password);
+				Statement stmt = con.createStatement();
+				ResultSet rs = stmt.executeQuery(query);) {
+			while (rs.next()) {
+				canRewrite = rs.getBoolean(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return canRewrite;
+	}
+
+	public String readNote(String name, String author, Date taskDate) {
+		String[] initials = author.split("\\s");
+		String query = "select note from tasks where name = \'" + name
+				+ "\' and id_author = (select id from authors where name = \'";
+		query += checkAuthor(initials);
+		query += ") and dateOfCreating = \'" + taskDate + "\'";
+		String note = "";
+		try (Connection con = DriverManager.getConnection(url, user, password);
+				Statement stmt = con.createStatement();
+				ResultSet rs = stmt.executeQuery(query);) {
+			while (rs.next()) {
+				note = rs.getString(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return note;
+	}
+
+	public boolean readIsMax(String name, String author, Date taskDate) {
+		String[] initials = author.split("\\s");
+		String query = "select isMax from tasks where name = \'" + name + "\'"
+				+ " and id_author = (select id from authors where name = \'";
+		query += checkAuthor(initials);
+		query += ") and dateOfCreating = \'" + taskDate + "\'";
+		boolean isMax = false;
+		try (Connection con = DriverManager.getConnection(url, user, password);
+				Statement stmt = con.createStatement();
+				ResultSet rs = stmt.executeQuery(query);) {
+			while (rs.next()) {
+				isMax = rs.getBoolean(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return isMax;
+	}
+
+	public boolean readIsEconom(String name, String author, Date taskDate) {
+		String[] initials = author.split("\\s");
+		String query = "select isEconom from tasks where name = \'" + name
+				+ "\' and id_author = (select id from authors where name = \'";
+		query += checkAuthor(initials);
+		query += ") and dateOfCreating = \'" + taskDate + "\'";
+		boolean isEconom = false;
+		try (Connection con = DriverManager.getConnection(url, user, password);
+				Statement stmt = con.createStatement();
+				ResultSet rs = stmt.executeQuery(query);) {
+			while (rs.next()) {
+				isEconom = rs.getBoolean(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return isEconom;
+	}
+
+	public String readEconomText(String name, String author, Date taskDate) {
+		String[] initials = author.split("\\s");
+		String query = "select economMeaning from tasks where name = \'" + name
+				+ "\' and id_author = (select id from authors where name = \'";
+		query += checkAuthor(initials);
+		query += ") and dateOfCreating = \'" + taskDate + "\'";
+		String economMeaning = "";
+		try (Connection con = DriverManager.getConnection(url, user, password);
+				Statement stmt = con.createStatement();
+				ResultSet rs = stmt.executeQuery(query);) {
+			while (rs.next()) {
+				economMeaning = rs.getString(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return economMeaning;
+	}
+
+	public int readVarCount(String name, String author, Date taskDate) {
+		String[] initials = author.split("\\s");
+		String query = "select count(id) from variables where id_task = (select id from tasks where name = \'"
+				+ name
+				+ "\' and id_author = (select id from authors where name = \'";
+		query += checkAuthor(initials);
+		query += ") and dateOfCreating = \'" + taskDate + "\')";
+		int varCount = 0;
+		try (Connection con = DriverManager.getConnection(url, user, password);
+				Statement stmt = con.createStatement();
+				ResultSet rs = stmt.executeQuery(query);) {
+			while (rs.next()) {
+				varCount = rs.getInt(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return varCount;
+	}
+
+	public int readCriterionCount(String name, String author, Date taskDate) {
+		String[] initials = author.split("\\s");
+		String query = "select count(id) from criterions where id_task = (select id from tasks where name = \'"
+				+ name
+				+ "\' and id_author = (select id from authors where name = \'";
+		query += checkAuthor(initials);
+		query += ") and dateOfCreating = \'" + taskDate + "\')";
+		int criterionCount = 0;
+		try (Connection con = DriverManager.getConnection(url, user, password);
+				Statement stmt = con.createStatement();
+				ResultSet rs = stmt.executeQuery(query);) {
+			while (rs.next()) {
+				criterionCount = rs.getInt(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return criterionCount;
+	}
+
+	public int readLimitationCount(String name, String author, Date taskDate) {
+		String[] initials = author.split("\\s");
+		String query = "select count(id) from limitations where id_task = (select id from tasks where name = \'"
+				+ name
+				+ "\' and id_author = (select id from authors where name = \'";
+		query += checkAuthor(initials);
+		query += ") and dateOfCreating = \'" + taskDate + "\')";
+		int limitationCount = 0;
+		try (Connection con = DriverManager.getConnection(url, user, password);
+				Statement stmt = con.createStatement();
+				ResultSet rs = stmt.executeQuery(query);) {
+			while (rs.next()) {
+				limitationCount = rs.getInt(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return limitationCount;
+	}
+
+	public void readEconom(String name, String author, Date taskDate, Task task) {
+		read(name, author, taskDate, task);
+		readNamesAndUnits(name, author, taskDate, task);
+		readVarNames(name, author, taskDate, task);
+	}
+
+	private void readVarNames(String name, String author, Date taskDate,
+			Task task) {
+		String[] initials = author.split("\\s");
+		String query = "select name from variables"
+				+ " where id_task = (select id from tasks where name = \'"
+				+ name
+				+ "\' and id_author = (select id from authors where name = \'";
+		query += checkAuthor(initials);
+		query += ") and dateOfCreating = \'" + taskDate + "\')";
+		
+		try (Connection con = DriverManager.getConnection(url, user, password);
+				Statement stmt = con.createStatement();
+				ResultSet rs = stmt.executeQuery(query);) {
+			int col = 0;
+			while (rs.next()) {
+				task.getVarNames().set(col, rs.getString(1));
+				col++;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void readNamesAndUnits(String name, String author, Date taskDate,
+			Task task) {
+		String[] initials = author.split("\\s");
+		String query = "select name, unit from criterions"
+				+ " where id_task = (select id from tasks where name = \'"
+				+ name
+				+ "\' and id_author = (select id from authors where name = \'";
+		query += checkAuthor(initials);
+		query += ") and dateOfCreating = \'" + taskDate + "\') UNION ";
+		query += "select name, unit from limitations"
+				+ " where id_task = (select id from tasks where name = \'"
+				+ name
+				+ "\' and id_author = (select id from authors where name = \'";
+		query += checkAuthor(initials);
+		query += ") and dateOfCreating = \'" + taskDate + "\')";
+
+		try (Connection con = DriverManager.getConnection(url, user, password);
+				Statement stmt = con.createStatement();
+				ResultSet rs = stmt.executeQuery(query);) {
+			int row = 0;
+			while (rs.next()) {
+
+				String ecName = rs.getString(1);
+				if (row < task.getCriterionCount()) {
+					task.getCritNames().set(row, ecName);
+				} else {
+					task.getLimitNames().set(row - task.getCriterionCount(),
+							ecName);
+				}
+				String unit = rs.getString(2);
+				if (row < task.getCriterionCount()) {
+					task.getCritUnits().set(row, unit);
+				}
+				else{
+					task.getLimitUnits().set(row-task.getCriterionCount(), unit);
+				}
+				row++;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void read(String name, String author, Date taskDate, Task task) {
+		readCosts(name, author, taskDate, task);
+		readWeights(name, author, taskDate, task);
+		readLimits(name, author, taskDate, task);
+	}
+
+	private void readLimits(String name, String author, Date taskDate, Task task) {
+		String[] initials = author.split("\\s");
+		String query = "select limitValue from limitations"
+				+ " where id_task = (select id from tasks where name = \'"
+				+ name
+				+ "\' and id_author = (select id from authors where name = \'";
+		query += checkAuthor(initials);
+		query += ") and dateOfCreating = \'" + taskDate + "\')";
+
+		try (Connection con = DriverManager.getConnection(url, user, password);
+				Statement stmt = con.createStatement();
+				ResultSet rs = stmt.executeQuery(query);) {
+			int row = 0;
+			int col = task.getVariableCount();
+			while (rs.next()) {
+
+				int val = rs.getInt(1);
+				task.setValue(val, row + task.getCriterionCount(), col);
+				row++;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void readWeights(String name, String author, Date taskDate,
+			Task task) {
+		String[] initials = author.split("\\s");
+		String query = "select weight from weights"
+				+ " where id_limitation in ( select id from limitations"
+				+ " where id_task = (select id from tasks where name = \'"
+				+ name
+				+ "\' and id_author = (select id from authors where name = \'";
+		query += checkAuthor(initials);
+		query += ") and dateOfCreating = \'" + taskDate + "\'))";
+
+		try (Connection con = DriverManager.getConnection(url, user, password);
+				Statement stmt = con.createStatement();
+				ResultSet rs = stmt.executeQuery(query);) {
+			int row = 0;
+			int col = 0;
+			while (rs.next()) {
+
+				int val = rs.getInt(1);
+				task.setValue(val, row + task.getCriterionCount(), col);
+				if (col < task.getVariableCount() - 1) {
+					col++;
+				} else {
+					row++;
+					col = 0;
+				}
+
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void readCosts(String name, String author, Date taskDate, Task task) {
+		String[] initials = author.split("\\s");
+		String query = "select cost from costs"
+				+ " where id_criterion in ( select id from criterions"
+				+ " where id_task = (select id from tasks where name = \'"
+				+ name
+				+ "\' and id_author = (select id from authors where name = \'";
+		query += checkAuthor(initials);
+		query += ") and dateOfCreating = \'" + taskDate + "\'))";
+
+		try (Connection con = DriverManager.getConnection(url, user, password);
+				Statement stmt = con.createStatement();
+				ResultSet rs = stmt.executeQuery(query);) {
+			int row = 0;
+			int col = 0;
+			while (rs.next()) {
+
+				int val = rs.getInt(1);
+				task.setValue(val, row, col);
+				if (col < task.getVariableCount() - 1) {
+					col++;
+				} else {
+					row++;
+					col = 0;
+				}
+
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void readSolveEconom(String name, String author, Date taskDate,
+			Task task) {
+		readEconom(name, author, taskDate, task);
+		readSolution(name, author, taskDate, task);
+	}
+
+	private void readSolution(String name, String author, Date taskDate, Task task) {
+		String[] initials = author.split("\\s");
+		String query = "select resultValue from variables"
+				+ " where id_task = (select id from tasks where name = \'"
+				+ name
+				+ "\' and id_author = (select id from authors where name = \'";
+		query += checkAuthor(initials);
+		query += ") and dateOfCreating = \'" + taskDate + "\')";
+		
+		try (Connection con = DriverManager.getConnection(url, user, password);
+				Statement stmt = con.createStatement();
+				ResultSet rs = stmt.executeQuery(query);) {
+			int col = 0;
+			while (rs.next()) {
+				task.setSolutionVariable(rs.getBoolean(1), col);
+				col++;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public boolean readIsSolved(String name, String author, Date taskDate) {
+		String[] initials = author.split("\\s");
+		String query = "select isSolved from tasks where name = \'" + name
+				+ "\' and id_author = (select id from authors where name = \'";
+		query += checkAuthor(initials);
+		query += ") and dateOfCreating = \'" + taskDate + "\'";
+		boolean isSolved = false;
+		try (Connection con = DriverManager.getConnection(url, user, password);
+				Statement stmt = con.createStatement();
+				ResultSet rs = stmt.executeQuery(query);) {
+			while (rs.next()) {
+				isSolved = rs.getBoolean(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return isSolved;
 	}
 
 }

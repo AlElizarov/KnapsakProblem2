@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -39,15 +40,12 @@ public class DeleteAuthorFrame extends AbstractDecoratedInternalFrame{
 			public void actionPerformed(ActionEvent e) {
 				try {
 					manager.deleteAuthor((String) authorsNames.getSelectedItem());
-					DeleteAuthorFrame.this.dispose();
-					desktop.setLayout(null);
-					DeleteAuthorFrame iframe = new DeleteAuthorFrame(desktop, manager);
-					desktop.addIFrame(iframe);
+					authorsNames.setModel(new DefaultComboBoxModel<>(manager.getAuthorsNames()));
 				} 
 				catch(MySQLIntegrityConstraintViolationException exc){
 					exc.printStackTrace();
 					JOptionPane.showMessageDialog(null,
-							"You can't delete author wich already creat tasks");
+							"You can't delete author which already creat tasks");
 				}
 				catch (SQLException e1) {
 					e1.printStackTrace();

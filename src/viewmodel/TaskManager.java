@@ -2,16 +2,18 @@ package viewmodel;
 
 import java.sql.Date;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Observable;
 import java.util.Vector;
 
-import db.TaskMapper;
-import view.components.KnapsakGuiSolver;
 import model.BiDirectSolver;
 import model.OneDirectSolver;
 import model.Solver;
 import model.Task;
 import model.TaskParameters;
+import view.components.KnapsakGuiSolver;
+import db.TaskMapper;
 
 public class TaskManager extends Observable {
 
@@ -74,10 +76,11 @@ public class TaskManager extends Observable {
 			task = new Task(taskName, Integer.parseInt(varCount),
 					Integer.parseInt(limitationCount),
 					Integer.parseInt(criterionCount), isMax, economText);
+		} else {
+			task = new Task(taskName, Integer.parseInt(varCount),
+					Integer.parseInt(limitationCount),
+					Integer.parseInt(criterionCount), isMax);
 		}
-		task = new Task(taskName, Integer.parseInt(varCount),
-				Integer.parseInt(limitationCount),
-				Integer.parseInt(criterionCount), isMax);
 		isTaskCreated = true;
 		isTaskSolved = false;
 		canRewrite = true;
@@ -423,6 +426,91 @@ public class TaskManager extends Observable {
 
 	public boolean isCanRewrite() {
 		return canRewrite;
+	}
+
+	public Vector<String> readTasks() {
+		return mapper.readTasks();
+	}
+
+	public Vector<String> readTasks(String author) {
+		return mapper.readTasks(author);
+	}
+
+	public Vector<String> readTasks(String author, java.sql.Date sd,
+			java.sql.Date fd) {
+		return mapper.readTasks(author, sd, fd);
+	}
+
+	public Vector<String> readTasks(java.sql.Date sd, java.sql.Date fd) {
+		return mapper.readTasks(sd, fd);
+	}
+
+	public void read(String taskData) {
+		String[] data = taskData.split(";");
+		for (int i = 0; i < data.length; i++) {
+			data[i] = data[i].trim();
+		}
+
+		SimpleDateFormat format = new SimpleDateFormat();
+		format.applyPattern("yyyy-MM-dd");
+		try {
+			taskDate = new Date(format.parse(data[2]).getTime());
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		isTaskSolved = mapper.readIsSolved(data[0], data[1], taskDate);
+
+		isMax = mapper.readIsMax(data[0], data[1], taskDate);
+		isTaskEconom = mapper.readIsEconom(data[0], data[1], taskDate);
+
+		if (isTaskEconom) {
+			economText = mapper.readEconomText(data[0], data[1], taskDate);
+		}
+		varCount = String.valueOf(mapper.readVarCount(data[0], data[1],
+				taskDate));
+		criterionCount = String.valueOf(mapper.readCriterionCount(data[0],
+				data[1], taskDate));
+		limitationCount = String.valueOf(mapper.readLimitationCount(data[0],
+				data[1], taskDate));
+
+		if (isTaskEconom && !isTaskSolved) {
+			task = new Task(taskName, Integer.parseInt(varCount),
+					Integer.parseInt(limitationCount),
+					Integer.parseInt(criterionCount), isMax, economText);
+			mapper.readEconom(data[0], data[1], taskDate, task);
+		}
+		if (!isTaskEconom && isTaskSolved) {
+			task = new Task(taskName, Integer.parseInt(varCount),
+					Integer.parseInt(limitationCount),
+					Integer.parseInt(criterionCount), isMax);
+			mapper.readSolveEconom(data[0], data[1], taskDate, task);
+		}
+		if (isTaskEconom && isTaskSolved) {
+
+		}
+		if (!isTaskEconom && !isTaskSolved) {
+			task = new Task(taskName, Integer.parseInt(varCount),
+					Integer.parseInt(limitationCount),
+					Integer.parseInt(criterionCount), isMax);
+			mapper.read(data[0], data[1], taskDate, task);
+		}
+
+		isTaskCreated = true;
+
+		canRewrite = mapper.readCanRewrite(data[0], data[1], taskDate);
+		authorName = data[1];
+
+		note = mapper.readNote(data[0], data[1], taskDate);
+		taskName = data[0];
+
+		System.out.println(varCount + "  " + criterionCount + "  "
+				+ limitationCount + "  " + taskName + "  " + authorName + "  "
+				+ note + "  " + canRewrite + "  " + isMax + "  " + isTaskEconom
+				+ "  " + economText);
+
+		setChanged();
+		notifyObservers();
 	}
 
 }

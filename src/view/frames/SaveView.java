@@ -16,6 +16,7 @@ import javax.swing.JTextArea;
 
 import viewmodel.TaskManager;
 
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 import com.toedter.calendar.JDateChooser;
 
 //I/m not going to serialize this class
@@ -40,7 +41,12 @@ public class SaveView extends AbstractInteractiveInternalFrame {
 		try {
 			manager.save((String) authors.getSelectedItem(), sqlDate, canRewrie.isSelected(), note.getText());
 			manager.setCanRewrite(canRewrie.isSelected());
-		} catch (SQLException e) {
+		} 
+		catch (MySQLIntegrityConstraintViolationException exc){
+			exc.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Task already exists");
+		}
+		catch (SQLException e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Problems with database connection");
 		}
@@ -55,10 +61,10 @@ public class SaveView extends AbstractInteractiveInternalFrame {
 	public void fullPanel() {
 		createAuthorsList();
 		JLabel authorLabel = new JLabel("Choice your name:");
-		panel.add(authorLabel);
+		panel.add(authorLabel, "wrap");
 		JButton addAuthor = createAddAuthorButton();
-		panel.add(addAuthor, "wrap");
 		panel.add(authors);
+		panel.add(addAuthor);
 		createMargin();
 
 		panel.add(new JLabel("date:"), "wrap");
@@ -105,7 +111,9 @@ public class SaveView extends AbstractInteractiveInternalFrame {
 		panel.add(new JPanel(), "wrap");
 		panel.add(new JPanel(), "wrap");
 	}
-	
-	
+
+	public JComboBox<String> getAuthors() {
+		return authors;
+	}
 
 }

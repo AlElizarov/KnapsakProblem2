@@ -18,6 +18,7 @@ import view.frames.DeleteAuthorFrame;
 import view.frames.Desktop;
 import view.frames.GenerationAreaView;
 import view.frames.NewTaskCreatingView;
+import view.frames.ReadView;
 import view.frames.SaveView;
 import viewmodel.TaskManager;
 import viewmodel.areasmodels.MenuBarViewModel;
@@ -269,6 +270,15 @@ class MenuBarView extends JMenuBar implements BindableArea {
 	private void createReadItem() {
 		item = new JMenuItem("Read", new ImageIcon(
 				"images/ic_folder_open_18pt.png"));
+		item.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				desktop.setLayout(null);
+				ReadView iframe = new ReadView(desktop, manager);
+				desktop.addIFrame(iframe);
+			}
+		});
 		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R,
 				InputEvent.CTRL_MASK));
 		menu.add(item);
