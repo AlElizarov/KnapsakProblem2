@@ -12,6 +12,7 @@ public class TaskParameters {
 	private boolean canRewrite;
 	private String economMeaning;
 	private boolean isSolved;
+	private String note;
 
 	public boolean isEconom() {
 		return isEconom;
@@ -75,6 +76,14 @@ public class TaskParameters {
 
 	public void setIsSolved(boolean isTaskSolved) {
 		isSolved = isTaskSolved;
+	}
+
+	public void setNote(String note) {
+		this.note = note;
+	}
+
+	public String getNote() {
+		return note;
 	}
 
 }

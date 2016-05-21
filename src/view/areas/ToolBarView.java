@@ -98,8 +98,8 @@ class ToolBarView extends JToolBar implements BindableArea {
 
 	@Override
 	public void bind() {
-		save.setEnabled(toolBarViewModel.isSaveAndSolutionEnable());
-		solve.setEnabled(toolBarViewModel.isSaveAndSolutionEnable());
+		save.setEnabled(toolBarViewModel.isSaveEnable());
+		solve.setEnabled(toolBarViewModel.isSolutionEnable());
 		gen.setEnabled(toolBarViewModel.isGenButtonEnabled());
 		econom.setEnabled(toolBarViewModel.isEconomButtonEnabled());
 	}

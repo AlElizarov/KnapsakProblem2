@@ -187,7 +187,10 @@ public class TaskMapper implements DataMapper {
 		String[] initials = param.getAuthorName().split("\\s");
 		String query = "select id from authors where name = \'" + initials[1]
 				+ "\'" + " and surname = \'" + initials[0]
-				+ "\' and futhername = \'" + initials[2] + "\'";
+				+ "\'";
+		if(initials.length == 3){
+			query += " and futhername = \'" + initials[2] + "\'";
+		}
 		int idAuthor = getIdAuthor(query);
 
 		query = "select maxCurrentId from myautoincrement where tableName = \'tasks\'";
@@ -197,18 +200,36 @@ public class TaskMapper implements DataMapper {
 		putDataIntoDB(query);
 
 		if (!param.isEconom()) {
-			query = "insert into tasks (id, id_author, isMax, isEconom, name, dateOfCreating, canRewrite) ";
+			query = "insert into tasks (id, id_author, isMax, isEconom, name, dateOfCreating, canRewrite";
+			if(!param.getNote().equals("")){
+				query += ", note)"; 
+			}
+			else{
+				query += ")";
+			}
 			query += "values (" + idTask + ", " + idAuthor + ", "
 					+ param.isMax() + ", " + param.isEconom() + ", \'"
 					+ param.getName() + "\', \'" + param.getSqlDate() + "\', "
-					+ param.isCanRewrite() + ")";
+					+ param.isCanRewrite();
 		} else {
-			query = "insert into tasks (id, id_author, isMax, isEconom, name, dateOfCreating, canRewrite, economMeaning) ";
+			query = "insert into tasks (id, id_author, isMax, isEconom, name, dateOfCreating, canRewrite, economMeaning";
+			if(!param.getNote().equals("")){
+				query += ", note)"; 
+			}
+			else{
+				query += ")";
+			}
 			query += "values (" + idTask + ", " + idAuthor + ", "
 					+ param.isMax() + ", " + param.isEconom() + ", \'"
 					+ param.getName() + "\', \'" + param.getSqlDate() + "\', "
 					+ param.isCanRewrite() + ", \'" + param.getEconomMeaning()
-					+ "\')";
+					+ "\'";
+		}
+		if(!param.getNote().equals("")){
+			query += ", \'"+param.getNote()+"\')"; 
+		}
+		else{
+			query += ")";
 		}
 		putDataIntoDB(query);
 	}
@@ -255,7 +276,7 @@ public class TaskMapper implements DataMapper {
 
 	public Vector<String> getAuthorsNames() {
 		Vector<String> authorsNames = new Vector<>();
-		String query = "select name, surname, futhername from authors";
+		String query = "select name, surname, futhername from authors order by name, surname, futhername";
 		try (Connection con = DriverManager.getConnection(url, user, password);
 				Statement stmt = con.createStatement();
 				ResultSet rs = stmt.executeQuery(query);) {
@@ -271,11 +292,26 @@ public class TaskMapper implements DataMapper {
 		return authorsNames;
 	}
 
-	public void addAuthor(String name, String surname, String futhername) throws SQLException {
+	public void addAuthor(String name, String surname, String futhername)
+			throws SQLException {
 		String query = "select maxCurrentId from myautoincrement where tableName = \'authors\'";
 		int idAuthor = getId(query);
-		query = "insert into authors values (" + idAuthor + ", \'" + name
+		query = "insert into authors values (" + (idAuthor + 1) + ", \'" + name
 				+ "\', \'" + surname + "\', \'" + futhername + "\')";
+		putDataIntoDB(query);
+
+		query = "update myautoincrement set maxCurrentId = " + (idAuthor + 1)
+				+ " where tableName = \'authors\'";
+		putDataIntoDB(query);
+	}
+
+	public void deleteAuthor(String author) throws SQLException {
+		String[] initials = author.split("\\s");
+		String query = "delete from authors where name = \'"+initials[1] +"\' and surname = \'"
+				+ initials[0] +"\'";
+		if(initials.length == 3){
+			query += " and futhername = \'"+initials[2] +"\'";
+		}
 		putDataIntoDB(query);
 	}
 

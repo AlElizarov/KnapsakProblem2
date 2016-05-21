@@ -11,6 +11,8 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 import viewmodel.TaskManager;
 
@@ -23,17 +25,23 @@ public class SaveView extends AbstractInteractiveInternalFrame {
 	private JCheckBox canRewrie;
 	private JDateChooser chooser;
 	private JComboBox<String> authors;
+	private JTextArea note;
 
 	public SaveView(Desktop desktop, TaskManager manager) {
 		super("save", desktop, 400, 500, 200, 150, manager);
+		if(authors.getItemCount() == 0){
+			ok.setEnabled(false);
+		}
 	}
 
 	@Override
 	protected void createOkAction() {
 		Date sqlDate = new Date(chooser.getDate().getTime());
 		try {
-			manager.save((String) authors.getSelectedItem(), sqlDate, canRewrie.isSelected());
+			manager.save((String) authors.getSelectedItem(), sqlDate, canRewrie.isSelected(), note.getText());
+			manager.setCanRewrite(canRewrie.isSelected());
 		} catch (SQLException e) {
+			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Problems with database connection");
 		}
 		SaveView.this.dispose();
@@ -44,8 +52,8 @@ public class SaveView extends AbstractInteractiveInternalFrame {
 	}
 
 	@Override
-	protected void fullPanel() {
-		authors = new JComboBox<>(manager.getAuthorsNames());
+	public void fullPanel() {
+		createAuthorsList();
 		JLabel authorLabel = new JLabel("Choice your name:");
 		panel.add(authorLabel);
 		JButton addAuthor = createAddAuthorButton();
@@ -59,11 +67,22 @@ public class SaveView extends AbstractInteractiveInternalFrame {
 		panel.add(chooser);
 		createMargin();
 		
+		panel.add(new JLabel("note:"), "wrap");
+		note = new JTextArea(10,18);
+		note.setFont(note.getFont().deriveFont(14f));
+		JScrollPane scrollForNote = new JScrollPane(note);
+		panel.add(scrollForNote);
+		createMargin();
+		
 		canRewrie = new JCheckBox();
 		canRewrie.setSelected(true);
 		panel.add(new JLabel("<html>Whether this task<br>could be rewrite?"), "wrap");
 		panel.add(canRewrie);
 		createMargin();
+	}
+
+	public void createAuthorsList() {
+		authors = new JComboBox<>(manager.getAuthorsNames());
 	}
 
 	private JButton createAddAuthorButton() {
@@ -74,7 +93,7 @@ public class SaveView extends AbstractInteractiveInternalFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				desktop.setLayout(null);
 				AddAuthorFrame iframe = new AddAuthorFrame(
-						desktop, manager);
+						desktop, manager, SaveView.this);
 				desktop.addIFrame(iframe);
 			}
 		});
@@ -86,5 +105,7 @@ public class SaveView extends AbstractInteractiveInternalFrame {
 		panel.add(new JPanel(), "wrap");
 		panel.add(new JPanel(), "wrap");
 	}
+	
+	
 
 }

@@ -1,6 +1,8 @@
 package view.areas;
 
 import java.awt.Color;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -12,10 +14,10 @@ import viewmodel.areasmodels.InfoPanelViewModel;
 
 //I'm not going to serialize that class
 @SuppressWarnings("serial")
-class InfoPanelView extends JPanel implements BindableArea{
+class InfoPanelView extends JPanel implements BindableArea {
 
 	private JLabel infoLabel = new JLabel();
-	private JTextField taskNameFiled = new JTextField(10);
+	private JTextField taskNameField = new JTextField(10);
 	private JTextField economMeaningField = new JTextField(10);
 	private InfoPanelViewModel infoPanelViewModel;
 
@@ -26,17 +28,37 @@ class InfoPanelView extends JPanel implements BindableArea{
 		JLabel taskNameNote = new JLabel("Task name:");
 		add(taskNameNote, "wrap");
 		JLabel economMeaningNote = new JLabel("Econom meaning:");
-		add(taskNameFiled, "wrap");
+		add(taskNameField, "wrap");
+		taskNameField.addKeyListener(new KeyAdapter() {
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if (!infoPanelViewModel.setTaskName(taskNameField.getText())) {
+					taskNameField.setText(infoPanelViewModel.getTaskName());
+				}
+			}
+
+		});
 		add(economMeaningNote, "wrap");
 		add(economMeaningField);
+		economMeaningField.addKeyListener(new KeyAdapter() {
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if (!infoPanelViewModel.setEconomMeaning(economMeaningField.getText())) {
+					economMeaningField.setText(infoPanelViewModel.getEconomText());
+				}
+			}
+
+		});
 		setBackground(Color.WHITE);
 	}
 
 	@Override
 	public void bind() {
 		infoLabel.setText(infoPanelViewModel.getInfoText());
-		taskNameFiled.setEnabled(infoPanelViewModel.isTaskNameFieldEnabled());
-		taskNameFiled.setText(infoPanelViewModel.getTaskName());
+		taskNameField.setEnabled(infoPanelViewModel.isTaskNameFieldEnabled());
+		taskNameField.setText(infoPanelViewModel.getTaskName());
 		economMeaningField.setEnabled(infoPanelViewModel.isTaskEconom());
 		economMeaningField.setText(infoPanelViewModel.getEconomText());
 	}

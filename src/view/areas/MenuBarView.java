@@ -13,6 +13,8 @@ import javax.swing.KeyStroke;
 import view.frames.AboutProgrammView;
 import view.frames.AbstractDecoratedInternalFrame;
 import view.frames.AbstractInteractiveInternalFrame;
+import view.frames.AddAuthorFrame;
+import view.frames.DeleteAuthorFrame;
 import view.frames.Desktop;
 import view.frames.GenerationAreaView;
 import view.frames.NewTaskCreatingView;
@@ -44,6 +46,44 @@ class MenuBarView extends JMenuBar implements BindableArea {
 		add(menu);
 		createMenuTable();
 		add(menu);
+		createMenuAuthors();
+		add(menu);
+	}
+
+	private void createMenuAuthors() {
+		menu = new JMenu("Authors");
+		createAddAuthor();
+		createDeleteAuthor();
+	}
+
+	private void createDeleteAuthor() {
+		item = new JMenuItem("delete");
+		item.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				desktop.setLayout(null);
+				DeleteAuthorFrame iframe = new DeleteAuthorFrame(desktop,
+						manager);
+				desktop.addIFrame(iframe);
+			}
+		});
+		menu.add(item);
+	}
+
+	private void createAddAuthor() {
+		item = new JMenuItem("add");
+		item.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				desktop.setLayout(null);
+				AddAuthorFrame iframe = new AddAuthorFrame(desktop, manager,
+						null);
+				desktop.addIFrame(iframe);
+			}
+		});
+		menu.add(item);
 	}
 
 	private void createMenuTable() {
@@ -237,12 +277,11 @@ class MenuBarView extends JMenuBar implements BindableArea {
 	private void createSaveItem() {
 		item = new JMenuItem("Save", new ImageIcon("images/ic_save_18pt.png"));
 		item.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				desktop.setLayout(null);
-				SaveView iframe = new SaveView(
-						desktop, manager);
+				SaveView iframe = new SaveView(desktop, manager);
 				desktop.addIFrame(iframe);
 			}
 		});
@@ -253,15 +292,11 @@ class MenuBarView extends JMenuBar implements BindableArea {
 
 	@Override
 	public void bind() {
-		getMenu(0).getItem(1).setEnabled(
-				menuBarViewModel.isSaveAndSolutionEnable());
-		getMenu(1).setEnabled(menuBarViewModel.isSaveAndSolutionEnable());
-		getMenu(1).getItem(0).setEnabled(
-				menuBarViewModel.isSaveAndSolutionEnable());
-		getMenu(1).getItem(1).setEnabled(
-				menuBarViewModel.isSaveAndSolutionEnable());
-		getMenu(1).getItem(2).setEnabled(
-				menuBarViewModel.isSaveAndSolutionEnable());
+		getMenu(0).getItem(1).setEnabled(menuBarViewModel.isSaveEnable());
+		getMenu(1).setEnabled(menuBarViewModel.isSolutionEnable());
+		getMenu(1).getItem(0).setEnabled(menuBarViewModel.isSolutionEnable());
+		getMenu(1).getItem(1).setEnabled(menuBarViewModel.isSolutionEnable());
+		getMenu(1).getItem(2).setEnabled(menuBarViewModel.isSolutionEnable());
 		getMenu(1).getItem(3).setEnabled(
 				menuBarViewModel.isEconomButtonEnabled());
 		getMenu(3).setEnabled(menuBarViewModel.isTableMenuEnabled());

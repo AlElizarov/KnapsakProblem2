@@ -6,6 +6,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 
+import javax.swing.JOptionPane;
+
 import viewmodel.TaskManager;
 import viewmodel.framesmodels.utils.HandlerStringParameters;
 
@@ -16,9 +18,12 @@ public class AddAuthorFrame extends AbstractInteractiveInternalFrame {
 	private FieldAndLabelArea nameArea;
 	private FieldAndLabelArea surnameArea;
 	private FieldAndLabelArea futhernameArea;
+	private SaveView saveView;
 
-	public AddAuthorFrame(Desktop desktop, TaskManager manager) {
+	public AddAuthorFrame(Desktop desktop, TaskManager manager,
+			SaveView saveView) {
 		super("Add author", desktop, 300, 300, 200, 250, manager);
+		this.saveView = saveView;
 	}
 
 	@Override
@@ -26,9 +31,16 @@ public class AddAuthorFrame extends AbstractInteractiveInternalFrame {
 		try {
 			manager.addAuthor(nameArea.getText(), surnameArea.getText(),
 					futhernameArea.getText());
+			if (saveView != null) {
+				saveView.dispose();
+				desktop.setLayout(null);
+				SaveView iframe = new SaveView(desktop, manager);
+				desktop.addIFrame(iframe);
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-			//JOptionPane.showMessageDialog(null, "Problems with database connection");
+			JOptionPane.showMessageDialog(null,
+					"Problems with database connection");
 		}
 		AddAuthorFrame.this.dispose();
 	}
@@ -74,8 +86,12 @@ public class AddAuthorFrame extends AbstractInteractiveInternalFrame {
 	}
 
 	public void bindOkButton() {
-		if (nameArea.getHandler().isGood() && surnameArea.getHandler().isGood()
-				&& futhernameArea.getHandler().isGood()) {
+		if (nameArea.getHandler().isGood()
+				&& surnameArea.getHandler().isGood()
+				&& futhernameArea.getHandler().isGood()
+				|| (nameArea.getHandler().isGood()
+						&& surnameArea.getHandler().isGood() && futhernameArea
+						.getText().equals(""))) {
 			ok.setEnabled(true);
 		} else {
 			ok.setEnabled(false);

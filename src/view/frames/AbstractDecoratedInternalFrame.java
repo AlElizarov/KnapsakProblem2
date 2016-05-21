@@ -25,9 +25,9 @@ public abstract class AbstractDecoratedInternalFrame extends JInternalFrame {
 	protected TaskManager manager;
 
 	public AbstractDecoratedInternalFrame(String title, Desktop desktop,
-			int width, int height, int x, int y, TaskManager sharedViewModel) {
+			int width, int height, int x, int y, TaskManager manager) {
 		super(title, true, true, false, false);
-		this.manager = sharedViewModel;
+		this.manager = manager;
 		createInternalFrame(desktop, width, height, x, y);
 	}
 

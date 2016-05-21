@@ -38,6 +38,10 @@ public class TaskManager extends Observable {
 	private int vertexDeleted;
 
 	private TaskMapper mapper = new TaskMapper();
+	private String authorName;
+	private Date taskDate;
+	private String note;
+	private boolean canRewrite;
 
 	public static TaskManager getInstance() {
 		if (instance == null) {
@@ -76,6 +80,10 @@ public class TaskManager extends Observable {
 				Integer.parseInt(criterionCount), isMax);
 		isTaskCreated = true;
 		isTaskSolved = false;
+		canRewrite = true;
+		authorName = null;
+		taskDate = null;
+		note = null;
 		setChanged();
 		notifyObservers();
 	}
@@ -362,21 +370,59 @@ public class TaskManager extends Observable {
 		return mapper.getAuthorsNames();
 	}
 
-	public void save(String authorName, Date sqlTaskDate, boolean canRewrite) throws SQLException {
+	public void save(String authorName, Date sqlTaskDate, boolean canRewrite,
+			String note) throws SQLException {
 		TaskParameters param = new TaskParameters();
 		param.setEconom(isTaskEconom);
 		param.setMax(isMax);
 		param.setName(taskName);
 		param.setAuthorName(authorName);
+		this.authorName = authorName;
 		param.setSqlDate(sqlTaskDate);
+		taskDate = sqlTaskDate;
 		param.setCanRewrite(canRewrite);
+		this.canRewrite = canRewrite;
 		param.setEconomMeaning(economText);
 		param.setIsSolved(isTaskSolved);
+		param.setNote(note);
+		if (!note.equals("")) {
+			this.note = note;
+		}
 		mapper.save(task, param);
+		setChanged();
+		notifyObservers();
 	}
 
-	public void addAuthor(String name, String surname, String futhername) throws SQLException {
+	public void addAuthor(String name, String surname, String futhername)
+			throws SQLException {
 		mapper.addAuthor(name, surname, futhername);
+	}
+
+	public void deleteAuthor(String author) throws SQLException {
+		mapper.deleteAuthor(author);
+	}
+
+	public String getAuthor() {
+		return authorName;
+	}
+
+	public String getDate() {
+		if (taskDate != null) {
+			return taskDate.toString();
+		}
+		return null;
+	}
+
+	public String getNote() {
+		return note;
+	}
+
+	public void setCanRewrite(boolean canRewrite) {
+		this.canRewrite = canRewrite;
+	}
+
+	public boolean isCanRewrite() {
+		return canRewrite;
 	}
 
 }

@@ -18,6 +18,22 @@ public class ControlViewModel {
 		}
 	}
 	
+	public boolean isSolutionEnable(){
+		if (manager.isTaskFull()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public boolean isSaveEnable(){
+		if (manager.isTaskFull() && manager.isCanRewrite()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	public boolean isEconomButtonEnabled() {
 		if(manager.isTaskSolved() && manager.isTaskEconom()){
 			return true;
