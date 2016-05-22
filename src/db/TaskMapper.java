@@ -210,9 +210,9 @@ public class TaskMapper implements DataMapper {
 		} else {
 			query = "insert into tasks (id, id_author, isMax, isEconom, name, dateOfCreating, canRewrite, economMeaning";
 			if (!param.getNote().equals("")) {
-				query += ", note)";
+				query += ", note, isSolved)";
 			} else {
-				query += ")";
+				query += ", isSolved)";
 			}
 			query += "values (" + idTask + ", " + idAuthor + ", "
 					+ param.isMax() + ", " + param.isEconom() + ", \'"
@@ -336,7 +336,7 @@ public class TaskMapper implements DataMapper {
 	public Vector<String> readTasks(String author) {
 		String[] initials = author.split("\\s");
 		Vector<String> tasks = new Vector<>();
-		String query = "select tasks.name, surname, authors.name,, surname, futhername, dateOfCreating from tasks, authors"
+		String query = "select tasks.name, surname, authors.name, futhername, dateOfCreating from tasks, authors"
 				+ " where tasks.id_author = authors.id and authors.name = \'";
 		query += checkAuthor(initials);
 		query += " order by tasks.name, surname, authors.name, futhername, dateOfCreating";

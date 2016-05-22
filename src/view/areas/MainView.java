@@ -105,6 +105,7 @@ public class MainView implements Observer {
 	private void createFrameProperties() {
 		frame.setIconImage(frame.getToolkit().getImage(
 				"images/icon_prog_48.png"));
+		
 		frame.addWindowListener(new FrameClosingListener());
 		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);

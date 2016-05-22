@@ -35,21 +35,21 @@ public class SimpleCenterViewModel {
 	}
 
 	public boolean isPanelForSolutionVisible() {
-		if (manager.isTaskSolved()) {
+		if (manager.isTaskSolved() && !manager.isRead()) {
 			return true;
 		}
 		return false;
 	}
 
 	public double getResizeWeight() {
-		if (manager.isTaskSolved()) {
+		if (manager.isTaskSolved() && !manager.isRead()) {
 			return 0.7;
 		}
 		return 0;
 	}
 
 	public boolean isSvertkaVisible() {
-		if (manager.isTaskSolved() && manager.getCriterionCount() > 1) {
+		if (manager.isTaskSolved() && manager.getCriterionCount() > 1 && !manager.isRead()) {
 			return true;
 		}
 		return false;
@@ -62,11 +62,11 @@ public class SimpleCenterViewModel {
 	}
 
 	public String getSolutionText() {
-		if (manager.isTaskSolved()) {
+		if (manager.isTaskSolved() && !manager.isRead()) {
 			return "    H = " + manager.getH() + "<br>" + "   V = " + manager.getV()
 					+"<br>iteration: "+manager.getIteraton()+"<br>vertex deleted: "+manager.vertexDeleted();
 		}
-		return "hghj";
+		return "";
 	}
 
 }

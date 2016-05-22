@@ -54,38 +54,14 @@ public class ReadView extends AbstractInteractiveInternalFrame {
 
 		addAuthorFilter();
 
+		addDateListener();
+	}
+
+	private void addDateListener() {
 		isDateFilter = new JCheckBox("Date filter: ");
 		isDateFilter.setSelected(false);
-		isDateFilter.addActionListener(new ActionListener() {
+		isDateFilter.addActionListener(new DateFilterListener());
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (isDateFilter.isSelected() && isAuthorFilter.isSelected()) {
-					startChooser.setEnabled(true);
-					finishChooser.setEnabled(true);
-					createTasksList((String) authors.getSelectedItem(),
-							startChooser.getDate(), finishChooser.getDate());
-				} else if (isDateFilter.isSelected()
-						&& !isAuthorFilter.isSelected()) {
-					startChooser.setEnabled(true);
-					finishChooser.setEnabled(true);
-					createTasksList(startChooser.getDate(),
-							finishChooser.getDate());
-				} else {
-					startChooser.setEnabled(false);
-					finishChooser.setEnabled(false);
-					if (isAuthorFilter.isSelected()) {
-						createTasksList((String) authors.getSelectedItem());
-					}
-					else{
-						createTasksList();
-					}
-				}
-				if (tasksList.getItemCount() == 0) {
-					ok.setEnabled(false);
-				}
-			}
-		});
 		JPanel datePanel = new JPanel();
 		startChooser = new JDateChooser();
 		Calendar cal = Calendar.getInstance();
@@ -93,83 +69,14 @@ public class ReadView extends AbstractInteractiveInternalFrame {
 		startChooser.setDate(cal.getTime());
 
 		startChooser.getDateEditor().addPropertyChangeListener(
-				new PropertyChangeListener() {
-					@Override
-					public void propertyChange(PropertyChangeEvent e) {
-						if ("date".equals(e.getPropertyName())) {
-							if (finishChooser.getDate().compareTo(
-									startChooser.getDate()) <= 0) {
-								JOptionPane
-										.showMessageDialog(null,
-												"start date must be less than finish date");
-								Calendar cal = Calendar.getInstance();
-								cal.setTime(finishChooser.getDate());
-
-								Calendar cal2 = Calendar.getInstance();
-								cal2.set(Calendar.YEAR, cal.get(Calendar.YEAR));
-								cal2.set(Calendar.MONTH,
-										cal.get(Calendar.MONTH));
-								cal2.set(Calendar.DAY_OF_MONTH,
-										cal.get(Calendar.DAY_OF_MONTH) - 1);
-								Date da = new Date(cal2.getTimeInMillis());
-								startChooser.setDate(da);
-							}
-							if (isDateFilter.isSelected()
-									&& isAuthorFilter.isSelected()) {
-								createTasksList(
-										(String) authors.getSelectedItem(),
-										startChooser.getDate(),
-										finishChooser.getDate());
-							} else if (isDateFilter.isSelected()
-									&& !isAuthorFilter.isSelected()) {
-								createTasksList(startChooser.getDate(),
-										finishChooser.getDate());
-							}
-						}
-					}
-				});
+				new DatePickerListener());
 		datePanel.add(new JLabel("from: "));
 		datePanel.add(startChooser);
 
 		finishChooser = new JDateChooser();
 		finishChooser.setDate(new Date());
 		finishChooser.getDateEditor().addPropertyChangeListener(
-				new PropertyChangeListener() {
-					@Override
-					public void propertyChange(PropertyChangeEvent e) {
-						if ("date".equals(e.getPropertyName())) {
-							if (finishChooser.getDate().compareTo(
-									startChooser.getDate()) <= 0) {
-								JOptionPane
-										.showMessageDialog(null,
-												"start date must be less than finish date");
-								Calendar cal = Calendar.getInstance();
-								cal.setTime(finishChooser.getDate());
-
-								Calendar cal2 = Calendar.getInstance();
-								cal2.set(Calendar.YEAR, cal.get(Calendar.YEAR));
-								cal2.set(Calendar.MONTH,
-										cal.get(Calendar.MONTH));
-								cal2.set(Calendar.DAY_OF_MONTH,
-										cal.get(Calendar.DAY_OF_MONTH) - 1);
-								Date da = new Date(cal2.getTimeInMillis());
-								startChooser.setDate(da);
-							} else {
-								if (isDateFilter.isSelected()
-										&& isAuthorFilter.isSelected()) {
-									createTasksList(
-											(String) authors.getSelectedItem(),
-											startChooser.getDate(),
-											finishChooser.getDate());
-								} else if (isDateFilter.isSelected()
-										&& !isAuthorFilter.isSelected()) {
-									createTasksList(startChooser.getDate(),
-											finishChooser.getDate());
-								}
-							}
-						}
-					}
-				});
+				new DatePickerListener());
 		datePanel.add(new JLabel("to: "));
 		datePanel.add(finishChooser);
 		panel.add(isDateFilter, "wrap");
@@ -189,32 +96,7 @@ public class ReadView extends AbstractInteractiveInternalFrame {
 	private void addAuthorFilter() {
 		isAuthorFilter = new JCheckBox("Author filter: ");
 		isAuthorFilter.setSelected(false);
-		isAuthorFilter.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (isAuthorFilter.isSelected() && !isDateFilter.isSelected()) {
-					authors.setEnabled(true);
-					createTasksList((String) authors.getSelectedItem());
-				} else if (isAuthorFilter.isSelected()
-						&& isDateFilter.isSelected()) {
-					authors.setEnabled(true);
-					createTasksList((String) authors.getSelectedItem(),
-							startChooser.getDate(), finishChooser.getDate());
-				} else {
-					authors.setEnabled(false);
-					if (isDateFilter.isSelected()) {
-						createTasksList(startChooser.getDate(),
-								finishChooser.getDate());
-					} else {
-						createTasksList();
-					}
-				}
-				if (tasksList.getItemCount() == 0) {
-					ok.setEnabled(false);
-				}
-			}
-		});
+		isAuthorFilter.addActionListener(new AuthorFilterListener());
 		panel.add(isAuthorFilter, "wrap");
 		createAuthorsList();
 		JLabel authorLabel = new JLabel("Choice your name:");
@@ -232,9 +114,7 @@ public class ReadView extends AbstractInteractiveInternalFrame {
 						createTasksList((String) authors.getSelectedItem(),
 								startChooser.getDate(), finishChooser.getDate());
 					}
-					if (tasksList.getItemCount() == 0) {
-						ok.setEnabled(false);
-					}
+					checkOkButton();
 				}
 			}
 		});
@@ -274,6 +154,104 @@ public class ReadView extends AbstractInteractiveInternalFrame {
 		panel.add(new JPanel(), "wrap");
 		panel.add(new JPanel(), "wrap");
 		panel.add(new JPanel(), "wrap");
+	}
+
+	private class DateFilterListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (isDateFilter.isSelected() && isAuthorFilter.isSelected()) {
+				startChooser.setEnabled(true);
+				finishChooser.setEnabled(true);
+				createTasksList((String) authors.getSelectedItem(),
+						startChooser.getDate(), finishChooser.getDate());
+			} else if (isDateFilter.isSelected()
+					&& !isAuthorFilter.isSelected()) {
+				startChooser.setEnabled(true);
+				finishChooser.setEnabled(true);
+				createTasksList(startChooser.getDate(), finishChooser.getDate());
+			} else {
+				startChooser.setEnabled(false);
+				finishChooser.setEnabled(false);
+				if (isAuthorFilter.isSelected()) {
+					createTasksList((String) authors.getSelectedItem());
+				} else {
+					createTasksList();
+				}
+			}
+			checkOkButton();
+		}
+
+	}
+
+	private class DatePickerListener implements PropertyChangeListener {
+
+		@Override
+		public void propertyChange(PropertyChangeEvent e) {
+			if ("date".equals(e.getPropertyName())) {
+				if (finishChooser.getDate().compareTo(startChooser.getDate()) <= 0) {
+					JOptionPane.showMessageDialog(null,
+							"start date must be less than finish date");
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(finishChooser.getDate());
+
+					Calendar cal2 = Calendar.getInstance();
+					cal2.set(Calendar.YEAR, cal.get(Calendar.YEAR));
+					cal2.set(Calendar.MONTH, cal.get(Calendar.MONTH));
+					cal2.set(Calendar.DAY_OF_MONTH,
+							cal.get(Calendar.DAY_OF_MONTH) - 1);
+					Date da = new Date(cal2.getTimeInMillis());
+					startChooser.setDate(da);
+				} else {
+					if (isDateFilter.isSelected()
+							&& isAuthorFilter.isSelected()) {
+						createTasksList((String) authors.getSelectedItem(),
+								startChooser.getDate(), finishChooser.getDate());
+					}
+					if (isDateFilter.isSelected()
+							&& !isAuthorFilter.isSelected()) {
+						createTasksList(startChooser.getDate(),
+								finishChooser.getDate());
+					}
+					checkOkButton();
+				}
+			}
+
+		}
+
+	}
+
+	private class AuthorFilterListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (isAuthorFilter.isSelected() && !isDateFilter.isSelected()) {
+				authors.setEnabled(true);
+				createTasksList((String) authors.getSelectedItem());
+			} else if (isAuthorFilter.isSelected() && isDateFilter.isSelected()) {
+				authors.setEnabled(true);
+				createTasksList((String) authors.getSelectedItem(),
+						startChooser.getDate(), finishChooser.getDate());
+			} else {
+				authors.setEnabled(false);
+				if (isDateFilter.isSelected()) {
+					createTasksList(startChooser.getDate(),
+							finishChooser.getDate());
+				} else {
+					createTasksList();
+				}
+			}
+			checkOkButton();
+		}
+
+	}
+
+	private void checkOkButton() {
+		if (tasksList.getItemCount() == 0) {
+			ok.setEnabled(false);
+		} else {
+			ok.setEnabled(true);
+		}
 	}
 
 }

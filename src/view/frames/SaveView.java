@@ -106,6 +106,15 @@ public class SaveView extends AbstractInteractiveInternalFrame {
 		return addAuthor;
 	}
 	
+	public void afterAddAuthor(){
+		if(authors.getItemCount() == 0){
+			ok.setEnabled(false);
+		}
+		else{
+			ok.setEnabled(true);
+		}
+	}
+	
 	private void createMargin() {
 		panel.add(new JPanel(), "wrap");
 		panel.add(new JPanel(), "wrap");

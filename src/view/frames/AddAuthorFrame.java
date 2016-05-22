@@ -37,6 +37,7 @@ public class AddAuthorFrame extends AbstractInteractiveInternalFrame {
 			if (saveView != null) {
 				saveView.getAuthors().setModel(
 						new DefaultComboBoxModel<>(manager.getAuthorsNames()));
+				saveView.afterAddAuthor();
 			}
 		} catch (MySQLIntegrityConstraintViolationException exc) {
 			exc.printStackTrace();

@@ -1,12 +1,13 @@
 package viewmodel.componentsmodels;
 
+import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
 
 //I'm not going to serialize that class
 @SuppressWarnings("serial")
 public class GenTableModel extends AbstractTableModel {
 
-	Object data[][] = { { "eneration intervals", "low", "high" },
+	private Object data[][] = { { "eneration intervals", "low", "high" },
 			{ "costs", 1, 100 }, { "weights", 1, 100 } };
 
 	@Override
@@ -29,7 +30,13 @@ public class GenTableModel extends AbstractTableModel {
 
 	@Override
 	public void setValueAt(Object value, int row, int col) {
+		int old = Integer.parseInt(data[row][col].toString());
 		data[row][col] = value;
+		if (Integer.parseInt(data[row][1].toString()) >= Integer.parseInt(data[row][2].toString())) {
+			JOptionPane.showMessageDialog(null,
+					"Lower bound must be less yhen upper bound!");
+			data[row][col] = old;
+		}
 	}
 
 	@Override

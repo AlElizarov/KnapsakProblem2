@@ -44,6 +44,7 @@ public class TaskManager extends Observable {
 	private Date taskDate;
 	private String note;
 	private boolean canRewrite;
+	private boolean isRead;
 
 	public static TaskManager getInstance() {
 		if (instance == null) {
@@ -82,6 +83,7 @@ public class TaskManager extends Observable {
 					Integer.parseInt(criterionCount), isMax);
 		}
 		isTaskCreated = true;
+		isRead = false;
 		isTaskSolved = false;
 		canRewrite = true;
 		authorName = null;
@@ -504,13 +506,14 @@ public class TaskManager extends Observable {
 		note = mapper.readNote(data[0], data[1], taskDate);
 		taskName = data[0];
 
-		System.out.println(varCount + "  " + criterionCount + "  "
-				+ limitationCount + "  " + taskName + "  " + authorName + "  "
-				+ note + "  " + canRewrite + "  " + isMax + "  " + isTaskEconom
-				+ "  " + economText);
-
+		isRead = true;
+		
 		setChanged();
 		notifyObservers();
+	}
+
+	public boolean isRead() {
+		return isRead;
 	}
 
 }
