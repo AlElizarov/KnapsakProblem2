@@ -41,16 +41,14 @@ public class SaveView extends AbstractInteractiveInternalFrame {
 		try {
 			manager.save((String) authors.getSelectedItem(), sqlDate, canRewrie.isSelected(), note.getText());
 			manager.setCanRewrite(canRewrie.isSelected());
+			SaveView.this.dispose();
 		} 
 		catch (MySQLIntegrityConstraintViolationException exc){
-			exc.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Task already exists");
 		}
 		catch (SQLException e) {
-			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Problems with database connection");
 		}
-		SaveView.this.dispose();
 	}
 
 	@Override

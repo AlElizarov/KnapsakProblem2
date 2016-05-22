@@ -447,69 +447,87 @@ public class TaskManager extends Observable {
 		return mapper.readTasks(sd, fd);
 	}
 
-	public void read(String taskData) {
+	public void read(String taskData) throws SQLException {
 		String[] data = taskData.split(";");
 		for (int i = 0; i < data.length; i++) {
 			data[i] = data[i].trim();
 		}
 
-		SimpleDateFormat format = new SimpleDateFormat();
-		format.applyPattern("yyyy-MM-dd");
 		try {
-			taskDate = new Date(format.parse(data[2]).getTime());
-		} catch (ParseException e) {
-			e.printStackTrace();
+			SimpleDateFormat format = new SimpleDateFormat();
+			format.applyPattern("yyyy-MM-dd");
+			try {
+				taskDate = new Date(format.parse(data[2]).getTime());
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			isTaskSolved = mapper.readIsSolved(data[0], data[1], taskDate);
+
+			isMax = mapper.readIsMax(data[0], data[1], taskDate);
+			isTaskEconom = mapper.readIsEconom(data[0], data[1], taskDate);
+
+			if (isTaskEconom) {
+				economText = mapper.readEconomText(data[0], data[1], taskDate);
+			}
+			varCount = String.valueOf(mapper.readVarCount(data[0], data[1],
+					taskDate));
+			criterionCount = String.valueOf(mapper.readCriterionCount(data[0],
+					data[1], taskDate));
+			limitationCount = String.valueOf(mapper.readLimitationCount(
+					data[0], data[1], taskDate));
+
+			if (isTaskEconom && !isTaskSolved) {
+				task = new Task(taskName, Integer.parseInt(varCount),
+						Integer.parseInt(limitationCount),
+						Integer.parseInt(criterionCount), isMax, economText);
+				mapper.readEconom(data[0], data[1], taskDate, task);
+			}
+			if (!isTaskEconom && isTaskSolved) {
+				task = new Task(taskName, Integer.parseInt(varCount),
+						Integer.parseInt(limitationCount),
+						Integer.parseInt(criterionCount), isMax);
+				mapper.readSolve(data[0], data[1], taskDate, task);
+			}
+			if (isTaskEconom && isTaskSolved) {
+				task = new Task(taskName, Integer.parseInt(varCount),
+						Integer.parseInt(limitationCount),
+						Integer.parseInt(criterionCount), isMax, economText);
+				mapper.readSolveEconom(data[0], data[1], taskDate, task);
+			}
+			if (!isTaskEconom && !isTaskSolved) {
+				task = new Task(taskName, Integer.parseInt(varCount),
+						Integer.parseInt(limitationCount),
+						Integer.parseInt(criterionCount), isMax);
+				mapper.read(data[0], data[1], taskDate, task);
+			}
+
+			isTaskCreated = true;
+
+			canRewrite = mapper.readCanRewrite(data[0], data[1], taskDate);
+			authorName = data[1];
+
+			note = mapper.readNote(data[0], data[1], taskDate);
+			taskName = data[0];
+
+			isRead = true;
+
+			setChanged();
+			notifyObservers();
+		} catch (SQLException e) {
+			rollback();
+			throw new SQLException();
 		}
+	}
 
-		isTaskSolved = mapper.readIsSolved(data[0], data[1], taskDate);
-
-		isMax = mapper.readIsMax(data[0], data[1], taskDate);
-		isTaskEconom = mapper.readIsEconom(data[0], data[1], taskDate);
-
-		if (isTaskEconom) {
-			economText = mapper.readEconomText(data[0], data[1], taskDate);
-		}
-		varCount = String.valueOf(mapper.readVarCount(data[0], data[1],
-				taskDate));
-		criterionCount = String.valueOf(mapper.readCriterionCount(data[0],
-				data[1], taskDate));
-		limitationCount = String.valueOf(mapper.readLimitationCount(data[0],
-				data[1], taskDate));
-
-		if (isTaskEconom && !isTaskSolved) {
-			task = new Task(taskName, Integer.parseInt(varCount),
-					Integer.parseInt(limitationCount),
-					Integer.parseInt(criterionCount), isMax, economText);
-			mapper.readEconom(data[0], data[1], taskDate, task);
-		}
-		if (!isTaskEconom && isTaskSolved) {
-			task = new Task(taskName, Integer.parseInt(varCount),
-					Integer.parseInt(limitationCount),
-					Integer.parseInt(criterionCount), isMax);
-			mapper.readSolveEconom(data[0], data[1], taskDate, task);
-		}
-		if (isTaskEconom && isTaskSolved) {
-
-		}
-		if (!isTaskEconom && !isTaskSolved) {
-			task = new Task(taskName, Integer.parseInt(varCount),
-					Integer.parseInt(limitationCount),
-					Integer.parseInt(criterionCount), isMax);
-			mapper.read(data[0], data[1], taskDate, task);
-		}
-
-		isTaskCreated = true;
-
-		canRewrite = mapper.readCanRewrite(data[0], data[1], taskDate);
-		authorName = data[1];
-
-		note = mapper.readNote(data[0], data[1], taskDate);
-		taskName = data[0];
-
-		isRead = true;
-		
-		setChanged();
-		notifyObservers();
+	private void rollback() {
+		isTaskCreated = false;
+		isTaskSolved = false;
+		isTaskEconom = false;
+		canRewrite = true;
+		authorName = null;
+		taskDate = null;
+		note = null;
+		isRead = false;
 	}
 
 	public boolean isRead() {

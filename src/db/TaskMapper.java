@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Vector;
 
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
+
 import model.Task;
 import model.TaskParameters;
 
@@ -23,15 +25,39 @@ public class TaskMapper implements DataMapper {
 
 	@Override
 	public void save(Task task, TaskParameters param) throws SQLException {
-		putDataInTableTasks(param);
-		putDataInTableCriterions(param, task);
-		putDataInTableLimitations(param, task);
-		putDataInTableVariables(param, task);
-		putDataInTableCosts(task);
-		putDataInTableWeights(task);
+		try (Connection con = DriverManager.getConnection(url, user, password);) {
+
+			con.setAutoCommit(false);
+
+			try (Statement stmt = con.createStatement();) {
+				putDataInTableTasks(param, stmt);
+				putDataInTableCriterions(param, task, stmt, con);
+				putDataInTableLimitations(param, task, stmt, con);
+				putDataInTableVariables(param, task, stmt, con);
+				putDataInTableCosts(task, stmt);
+				putDataInTableWeights(task, stmt);
+				con.commit();
+			} catch (MySQLIntegrityConstraintViolationException e) {
+				e.printStackTrace();
+				con.rollback();
+				throw new MySQLIntegrityConstraintViolationException();
+			} catch (SQLException e) {
+				con.rollback();
+				throw new SQLException();
+			} finally {
+				con.setAutoCommit(true);
+			}
+
+		} catch (MySQLIntegrityConstraintViolationException e) {
+			throw new MySQLIntegrityConstraintViolationException();
+		} catch (SQLException e) {
+			throw new SQLException();
+		}
+
 	}
 
-	private void putDataInTableWeights(Task task) throws SQLException {
+	private void putDataInTableWeights(Task task, Statement stmt)
+			throws SQLException {
 		String mainQuery = "";
 		mainQuery += "insert into weights (id_limitation, id_variable, weight) values ";
 		for (int row = 0; row < task.getLimitationCount(); row++) {
@@ -47,10 +73,11 @@ public class TaskMapper implements DataMapper {
 			}
 
 		}
-		putDataIntoDB(mainQuery);
+		putDataIntoDB(mainQuery, stmt);
 	}
 
-	private void putDataInTableCosts(Task task) throws SQLException {
+	private void putDataInTableCosts(Task task, Statement stmt)
+			throws SQLException {
 		String mainQuery = "";
 		mainQuery += "insert into costs (id_criterion, id_variable, cost) values ";
 		for (int row = 0; row < task.getCriterionCount(); row++) {
@@ -65,11 +92,11 @@ public class TaskMapper implements DataMapper {
 			}
 
 		}
-		putDataIntoDB(mainQuery);
+		putDataIntoDB(mainQuery, stmt);
 	}
 
-	private void putDataInTableVariables(TaskParameters param, Task task)
-			throws SQLException {
+	private void putDataInTableVariables(TaskParameters param, Task task,
+			Statement stmt, Connection con) throws SQLException {
 		String mainQuery = "";
 		if (!param.isEconom() && !param.isSolved()) {
 			mainQuery = "insert into variables (id, id_task) values ";
@@ -89,9 +116,12 @@ public class TaskMapper implements DataMapper {
 			if (col == 0) {
 				firstVarId = varId;
 			}
+			
+			con.setAutoCommit(true);
 			query = "update myautoincrement set maxCurrentId = " + varId
 					+ " where tableName = \'variables\'";
-			putDataIntoDB(query);
+			putDataIntoDB(query, stmt);
+			con.setAutoCommit(false);
 
 			if (!param.isEconom() && !param.isSolved()) {
 				mainQuery += "(" + varId + ", " + idTask + ")";
@@ -114,12 +144,12 @@ public class TaskMapper implements DataMapper {
 				mainQuery += ", ";
 			}
 		}
-		putDataIntoDB(mainQuery);
+		putDataIntoDB(mainQuery, stmt);
 
 	}
 
-	private void putDataInTableLimitations(TaskParameters param, Task task)
-			throws SQLException {
+	private void putDataInTableLimitations(TaskParameters param, Task task,
+			Statement stmt, Connection con) throws SQLException {
 		String mainQuery = "";
 		if (!param.isEconom()) {
 			mainQuery = "insert into limitations (id, id_task, limitValue) values ";
@@ -132,9 +162,11 @@ public class TaskMapper implements DataMapper {
 			if (row == 0) {
 				firstLimitationId = limitationId;
 			}
+			con.setAutoCommit(true);
 			query = "update myautoincrement set maxCurrentId = " + limitationId
 					+ " where tableName = \'limitations\'";
-			putDataIntoDB(query);
+			putDataIntoDB(query, stmt);
+			con.setAutoCommit(false);
 
 			if (!param.isEconom()) {
 				mainQuery += "(" + limitationId + ", " + idTask + ", "
@@ -149,11 +181,11 @@ public class TaskMapper implements DataMapper {
 				mainQuery += ", ";
 			}
 		}
-		putDataIntoDB(mainQuery);
+		putDataIntoDB(mainQuery, stmt);
 	}
 
-	private void putDataInTableCriterions(TaskParameters param, Task task)
-			throws SQLException {
+	private void putDataInTableCriterions(TaskParameters param, Task task,
+			Statement stmt, Connection con) throws SQLException {
 		String mainQuery = "";
 		if (!param.isEconom()) {
 			mainQuery = "insert into criterions (id, id_task) values ";
@@ -166,9 +198,11 @@ public class TaskMapper implements DataMapper {
 			if (row == 0) {
 				firstCritId = critId;
 			}
+			con.setAutoCommit(true);
 			query = "update myautoincrement set maxCurrentId = " + critId
 					+ " where tableName = \'criterions\'";
-			putDataIntoDB(query);
+			putDataIntoDB(query, stmt);
+			con.setAutoCommit(false);
 
 			if (!param.isEconom()) {
 				mainQuery += "(" + critId + ", " + idTask + ")";
@@ -181,10 +215,11 @@ public class TaskMapper implements DataMapper {
 				mainQuery += ", ";
 			}
 		}
-		putDataIntoDB(mainQuery);
+		putDataIntoDB(mainQuery, stmt);
 	}
 
-	private void putDataInTableTasks(TaskParameters param) throws SQLException {
+	private void putDataInTableTasks(TaskParameters param, Statement stmt)
+			throws SQLException {
 		String[] initials = param.getAuthorName().split("\\s");
 		String query = "select id from authors where name = \'";
 		query += checkAuthor(initials);
@@ -194,7 +229,7 @@ public class TaskMapper implements DataMapper {
 		idTask = getId(query);
 		query = "update myautoincrement set maxCurrentId = " + idTask
 				+ " where tableName = \'tasks\'";
-		putDataIntoDB(query);
+		putDataIntoDB(query, stmt);
 
 		if (!param.isEconom()) {
 			query = "insert into tasks (id, id_author, isMax, isEconom, name, dateOfCreating, canRewrite";
@@ -225,8 +260,8 @@ public class TaskMapper implements DataMapper {
 		} else {
 			query += "";
 		}
-		query += ", " +param.isSolved()+")";
-		putDataIntoDB(query);
+		query += ", " + param.isSolved() + ")";
+		putDataIntoDB(query, stmt);
 	}
 
 	private String checkAuthor(String[] initials) {
@@ -266,11 +301,9 @@ public class TaskMapper implements DataMapper {
 		return idAuthor;
 	}
 
-	private void putDataIntoDB(String query) throws SQLException {
-		try (Connection con = DriverManager.getConnection(url, user, password);
-				Statement stmt = con.createStatement();) {
-			stmt.executeUpdate(query);
-		}
+	private void putDataIntoDB(String query, Statement stmt)
+			throws SQLException {
+		stmt.executeUpdate(query);
 	}
 
 	public Vector<String> getAuthorsNames() {
@@ -293,22 +326,46 @@ public class TaskMapper implements DataMapper {
 
 	public void addAuthor(String name, String surname, String futhername)
 			throws SQLException {
-		String query = "select maxCurrentId from myautoincrement where tableName = \'authors\'";
-		int idAuthor = getId(query);
-		query = "insert into authors values (" + (idAuthor + 1) + ", \'" + name
-				+ "\', \'" + surname + "\', \'" + futhername + "\')";
-		putDataIntoDB(query);
+		try (Connection con = DriverManager.getConnection(url, user, password);) {
 
-		query = "update myautoincrement set maxCurrentId = " + (idAuthor + 1)
-				+ " where tableName = \'authors\'";
-		putDataIntoDB(query);
+			con.setAutoCommit(false);
+
+			try (Statement stmt = con.createStatement();) {
+				String query = "select maxCurrentId from myautoincrement where tableName = \'authors\'";
+				int idAuthor = getId(query);
+				query = "update myautoincrement set maxCurrentId = " + idAuthor
+						+ " where tableName = \'authors\'";
+				putDataIntoDB(query, stmt);
+
+				query = "insert into authors values (" + idAuthor + ", \'"
+						+ name + "\', \'" + surname + "\', \'" + futhername
+						+ "\')";
+				putDataIntoDB(query, stmt);
+				con.commit();
+			} catch (MySQLIntegrityConstraintViolationException e) {
+				con.rollback();
+				throw new MySQLIntegrityConstraintViolationException();
+			} catch (SQLException e) {
+				con.rollback();
+				throw new SQLException();
+			} finally {
+				con.setAutoCommit(true);
+			}
+		} catch (MySQLIntegrityConstraintViolationException e) {
+			throw new MySQLIntegrityConstraintViolationException();
+		} catch (SQLException e) {
+			throw new SQLException();
+		}
 	}
 
 	public void deleteAuthor(String author) throws SQLException {
-		String[] initials = author.split("\\s");
-		String query = "delete from authors where name = \'";
-		query += checkAuthor(initials);
-		putDataIntoDB(query);
+		try (Connection con = DriverManager.getConnection(url, user, password);
+				Statement stmt = con.createStatement();) {
+			String[] initials = author.split("\\s");
+			String query = "delete from authors where name = \'";
+			query += checkAuthor(initials);
+			putDataIntoDB(query, stmt);
+		}
 	}
 
 	public Vector<String> readTasks() {
@@ -413,7 +470,7 @@ public class TaskMapper implements DataMapper {
 		return tasks;
 	}
 
-	public boolean readCanRewrite(String name, String author, Date taskDate) {
+	public boolean readCanRewrite(String name, String author, Date taskDate) throws SQLException {
 		String[] initials = author.split("\\s");
 		String query = "select canRewrite from tasks where name = \'" + name
 				+ "\' and id_author = (select id from authors where name = \'";
@@ -426,13 +483,11 @@ public class TaskMapper implements DataMapper {
 			while (rs.next()) {
 				canRewrite = rs.getBoolean(1);
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		} 
 		return canRewrite;
 	}
 
-	public String readNote(String name, String author, Date taskDate) {
+	public String readNote(String name, String author, Date taskDate) throws SQLException {
 		String[] initials = author.split("\\s");
 		String query = "select note from tasks where name = \'" + name
 				+ "\' and id_author = (select id from authors where name = \'";
@@ -445,13 +500,11 @@ public class TaskMapper implements DataMapper {
 			while (rs.next()) {
 				note = rs.getString(1);
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		} 
 		return note;
 	}
 
-	public boolean readIsMax(String name, String author, Date taskDate) {
+	public boolean readIsMax(String name, String author, Date taskDate) throws SQLException {
 		String[] initials = author.split("\\s");
 		String query = "select isMax from tasks where name = \'" + name + "\'"
 				+ " and id_author = (select id from authors where name = \'";
@@ -464,13 +517,11 @@ public class TaskMapper implements DataMapper {
 			while (rs.next()) {
 				isMax = rs.getBoolean(1);
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		} 
 		return isMax;
 	}
 
-	public boolean readIsEconom(String name, String author, Date taskDate) {
+	public boolean readIsEconom(String name, String author, Date taskDate) throws SQLException {
 		String[] initials = author.split("\\s");
 		String query = "select isEconom from tasks where name = \'" + name
 				+ "\' and id_author = (select id from authors where name = \'";
@@ -483,13 +534,11 @@ public class TaskMapper implements DataMapper {
 			while (rs.next()) {
 				isEconom = rs.getBoolean(1);
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		} 
 		return isEconom;
 	}
 
-	public String readEconomText(String name, String author, Date taskDate) {
+	public String readEconomText(String name, String author, Date taskDate) throws SQLException {
 		String[] initials = author.split("\\s");
 		String query = "select economMeaning from tasks where name = \'" + name
 				+ "\' and id_author = (select id from authors where name = \'";
@@ -502,13 +551,11 @@ public class TaskMapper implements DataMapper {
 			while (rs.next()) {
 				economMeaning = rs.getString(1);
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		} 
 		return economMeaning;
 	}
 
-	public int readVarCount(String name, String author, Date taskDate) {
+	public int readVarCount(String name, String author, Date taskDate) throws SQLException {
 		String[] initials = author.split("\\s");
 		String query = "select count(id) from variables where id_task = (select id from tasks where name = \'"
 				+ name
@@ -522,13 +569,11 @@ public class TaskMapper implements DataMapper {
 			while (rs.next()) {
 				varCount = rs.getInt(1);
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		} 
 		return varCount;
 	}
 
-	public int readCriterionCount(String name, String author, Date taskDate) {
+	public int readCriterionCount(String name, String author, Date taskDate) throws SQLException {
 		String[] initials = author.split("\\s");
 		String query = "select count(id) from criterions where id_task = (select id from tasks where name = \'"
 				+ name
@@ -542,13 +587,11 @@ public class TaskMapper implements DataMapper {
 			while (rs.next()) {
 				criterionCount = rs.getInt(1);
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		} 
 		return criterionCount;
 	}
 
-	public int readLimitationCount(String name, String author, Date taskDate) {
+	public int readLimitationCount(String name, String author, Date taskDate) throws SQLException {
 		String[] initials = author.split("\\s");
 		String query = "select count(id) from limitations where id_task = (select id from tasks where name = \'"
 				+ name
@@ -562,20 +605,18 @@ public class TaskMapper implements DataMapper {
 			while (rs.next()) {
 				limitationCount = rs.getInt(1);
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
 		}
 		return limitationCount;
 	}
 
-	public void readEconom(String name, String author, Date taskDate, Task task) {
+	public void readEconom(String name, String author, Date taskDate, Task task) throws SQLException {
 		read(name, author, taskDate, task);
 		readNamesAndUnits(name, author, taskDate, task);
 		readVarNames(name, author, taskDate, task);
 	}
 
 	private void readVarNames(String name, String author, Date taskDate,
-			Task task) {
+			Task task) throws SQLException {
 		String[] initials = author.split("\\s");
 		String query = "select name from variables"
 				+ " where id_task = (select id from tasks where name = \'"
@@ -583,7 +624,7 @@ public class TaskMapper implements DataMapper {
 				+ "\' and id_author = (select id from authors where name = \'";
 		query += checkAuthor(initials);
 		query += ") and dateOfCreating = \'" + taskDate + "\')";
-		
+
 		try (Connection con = DriverManager.getConnection(url, user, password);
 				Statement stmt = con.createStatement();
 				ResultSet rs = stmt.executeQuery(query);) {
@@ -592,13 +633,11 @@ public class TaskMapper implements DataMapper {
 				task.getVarNames().set(col, rs.getString(1));
 				col++;
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		} 
 	}
 
 	private void readNamesAndUnits(String name, String author, Date taskDate,
-			Task task) {
+			Task task) throws SQLException {
 		String[] initials = author.split("\\s");
 		String query = "select name, unit from criterions"
 				+ " where id_task = (select id from tasks where name = \'"
@@ -629,25 +668,23 @@ public class TaskMapper implements DataMapper {
 				String unit = rs.getString(2);
 				if (row < task.getCriterionCount()) {
 					task.getCritUnits().set(row, unit);
-				}
-				else{
-					task.getLimitUnits().set(row-task.getCriterionCount(), unit);
+				} else {
+					task.getLimitUnits().set(row - task.getCriterionCount(),
+							unit);
 				}
 				row++;
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		} 
 	}
 
 	@Override
-	public void read(String name, String author, Date taskDate, Task task) {
+	public void read(String name, String author, Date taskDate, Task task) throws SQLException {
 		readCosts(name, author, taskDate, task);
 		readWeights(name, author, taskDate, task);
 		readLimits(name, author, taskDate, task);
 	}
 
-	private void readLimits(String name, String author, Date taskDate, Task task) {
+	private void readLimits(String name, String author, Date taskDate, Task task) throws SQLException {
 		String[] initials = author.split("\\s");
 		String query = "select limitValue from limitations"
 				+ " where id_task = (select id from tasks where name = \'"
@@ -667,13 +704,11 @@ public class TaskMapper implements DataMapper {
 				task.setValue(val, row + task.getCriterionCount(), col);
 				row++;
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		} 
 	}
 
 	private void readWeights(String name, String author, Date taskDate,
-			Task task) {
+			Task task) throws SQLException {
 		String[] initials = author.split("\\s");
 		String query = "select weight from weights"
 				+ " where id_limitation in ( select id from limitations"
@@ -700,12 +735,10 @@ public class TaskMapper implements DataMapper {
 				}
 
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		} 
 	}
 
-	private void readCosts(String name, String author, Date taskDate, Task task) {
+	private void readCosts(String name, String author, Date taskDate, Task task) throws SQLException {
 		String[] initials = author.split("\\s");
 		String query = "select cost from costs"
 				+ " where id_criterion in ( select id from criterions"
@@ -732,18 +765,17 @@ public class TaskMapper implements DataMapper {
 				}
 
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		} 
 	}
 
 	public void readSolveEconom(String name, String author, Date taskDate,
-			Task task) {
+			Task task) throws SQLException {
 		readEconom(name, author, taskDate, task);
 		readSolution(name, author, taskDate, task);
 	}
 
-	private void readSolution(String name, String author, Date taskDate, Task task) {
+	private void readSolution(String name, String author, Date taskDate,
+			Task task) throws SQLException {
 		String[] initials = author.split("\\s");
 		String query = "select resultValue from variables"
 				+ " where id_task = (select id from tasks where name = \'"
@@ -751,7 +783,7 @@ public class TaskMapper implements DataMapper {
 				+ "\' and id_author = (select id from authors where name = \'";
 		query += checkAuthor(initials);
 		query += ") and dateOfCreating = \'" + taskDate + "\')";
-		
+
 		try (Connection con = DriverManager.getConnection(url, user, password);
 				Statement stmt = con.createStatement();
 				ResultSet rs = stmt.executeQuery(query);) {
@@ -760,12 +792,11 @@ public class TaskMapper implements DataMapper {
 				task.setSolutionVariable(rs.getBoolean(1), col);
 				col++;
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		} 
 	}
 
-	public boolean readIsSolved(String name, String author, Date taskDate) {
+	public boolean readIsSolved(String name, String author, Date taskDate)
+			throws SQLException {
 		String[] initials = author.split("\\s");
 		String query = "select isSolved from tasks where name = \'" + name
 				+ "\' and id_author = (select id from authors where name = \'";
@@ -778,10 +809,14 @@ public class TaskMapper implements DataMapper {
 			while (rs.next()) {
 				isSolved = rs.getBoolean(1);
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
 		}
 		return isSolved;
+	}
+
+	public void readSolve(String name, String author, Date taskDate,
+			Task task) throws SQLException {
+		read(name, author, taskDate, task);
+		readSolution(name, author, taskDate, task);
 	}
 
 }

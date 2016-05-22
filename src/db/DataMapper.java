@@ -10,5 +10,5 @@ public interface DataMapper {
 
 	public void save(Task task, TaskParameters param) throws SQLException;
 
-	public void read(String name, String author, Date taskDate, Task task);
+	public void read(String name, String author, Date taskDate, Task task) throws SQLException;
 }

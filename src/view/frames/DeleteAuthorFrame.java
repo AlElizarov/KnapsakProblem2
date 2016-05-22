@@ -43,12 +43,10 @@ public class DeleteAuthorFrame extends AbstractDecoratedInternalFrame{
 					authorsNames.setModel(new DefaultComboBoxModel<>(manager.getAuthorsNames()));
 				} 
 				catch(MySQLIntegrityConstraintViolationException exc){
-					exc.printStackTrace();
 					JOptionPane.showMessageDialog(null,
 							"You can't delete author which already creat tasks");
 				}
 				catch (SQLException e1) {
-					e1.printStackTrace();
 					JOptionPane.showMessageDialog(null,
 							"Problems with database connection");
 				}

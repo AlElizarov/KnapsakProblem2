@@ -39,16 +39,14 @@ public class AddAuthorFrame extends AbstractInteractiveInternalFrame {
 						new DefaultComboBoxModel<>(manager.getAuthorsNames()));
 				saveView.afterAddAuthor();
 			}
+			AddAuthorFrame.this.dispose();
 		} catch (MySQLIntegrityConstraintViolationException exc) {
-			exc.printStackTrace();
 			JOptionPane.showMessageDialog(null,
 					"User already exists, please enter new data");
 		} catch (SQLException e) {
-			e.printStackTrace();
 			JOptionPane.showMessageDialog(null,
 					"Problems with database connection");
 		}
-		AddAuthorFrame.this.dispose();
 	}
 
 	@Override

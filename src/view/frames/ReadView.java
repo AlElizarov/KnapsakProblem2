@@ -6,6 +6,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -40,8 +41,13 @@ public class ReadView extends AbstractInteractiveInternalFrame {
 
 	@Override
 	protected void createOkAction() {
-		manager.read((String) tasksList.getSelectedItem());
-		ReadView.this.dispose();
+		try {
+			manager.read((String) tasksList.getSelectedItem());
+			ReadView.this.dispose();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null,
+					"Problems with database connection");
+		}
 	}
 
 	@Override
