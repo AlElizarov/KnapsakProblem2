@@ -469,6 +469,9 @@ public class TaskManager extends Observable {
 			if (isTaskEconom) {
 				economText = mapper.readEconomText(data[0], data[1], taskDate);
 			}
+			else{
+				economText = "";
+			}
 			varCount = String.valueOf(mapper.readVarCount(data[0], data[1],
 					taskDate));
 			criterionCount = String.valueOf(mapper.readCriterionCount(data[0],
@@ -532,6 +535,10 @@ public class TaskManager extends Observable {
 
 	public boolean isRead() {
 		return isRead;
+	}
+	
+	public Date getDate2(){
+		return taskDate;
 	}
 
 }
