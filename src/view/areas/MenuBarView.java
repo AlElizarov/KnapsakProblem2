@@ -192,7 +192,6 @@ class MenuBarView extends JMenuBar implements BindableArea {
 						startIdCr = rs.getInt(1);
 					}
 				} catch (SQLException e2) {
-					// TODO Auto-generated catch block
 					e2.printStackTrace();
 				}
 
@@ -208,7 +207,6 @@ class MenuBarView extends JMenuBar implements BindableArea {
 						startIdVar = rs.getInt(1);
 					}
 				} catch (SQLException e2) {
-					// TODO Auto-generated catch block
 					e2.printStackTrace();
 				}
 
@@ -224,7 +222,6 @@ class MenuBarView extends JMenuBar implements BindableArea {
 						startIdLim = rs.getInt(1);
 					}
 				} catch (SQLException e2) {
-					// TODO Auto-generated catch block
 					e2.printStackTrace();
 				}
 
