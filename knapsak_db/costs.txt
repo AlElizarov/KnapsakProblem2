@@ -1,0 +1,8 @@
+create table costs(
+id_criterion int not null,
+id_variable int not null,
+cost int not null,
+constraint pk_id_criterion_and_id_variable primary key(id_criterion, id_variable),
+constraint fk_id_criterion foreign key(id_criterion) references criterions(id),
+constraint fk_id_variable_in_costs foreign key(id_variable) references variables(id)
+)

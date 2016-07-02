@@ -1,0 +1,8 @@
+create table weights(
+id_limitation int not null,
+id_variable int not null,
+weight int not null,
+constraint pk_id_limitation_and_id_variable primary key(id_limitation, id_variable),
+constraint fk_id_limitation foreign key(id_limitation) references limitations(id),
+constraint fk_id_variable_in_limitations foreign key(id_variable) references variables(id)
+)

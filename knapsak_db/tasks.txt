@@ -1,0 +1,14 @@
+create table tasks(
+id int not null,
+id_author int not null,
+isMax boolean not null,
+isEconom boolean not null,
+name varchar(100) not null,
+dateOfCreating Date not null,
+canRewrite boolean not null default true,
+economMeaning varchar(100) null,
+note varchar(100) null,
+isSolved boolean not null,
+constraint pk_id primary key (id),
+constraint fk_id_author foreign key(id_author) references authors(id),
+constraint name_author_date UNIQUE (name, id_author, dateOfCreating))

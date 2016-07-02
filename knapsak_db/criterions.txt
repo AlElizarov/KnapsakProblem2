@@ -1,0 +1,8 @@
+create table criterions(
+id int not null,
+id_task int not null,
+name varchar(100) null,
+unit varchar(100) null,
+constraint pk_id primary key(id),
+constraint fk_id_task_in_criterion foreign key(id_task) references tasks(id)
+)

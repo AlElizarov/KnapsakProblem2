@@ -1,0 +1,9 @@
+create table limitations(
+id int not null,
+id_task int not null,
+limitValue int not null,
+name varchar(100) null,
+unit varchar(100) null,
+constraint pk_id primary key(id),
+constraint fk_id_task_in_limitation foreign key(id_task) references tasks(id)
+)

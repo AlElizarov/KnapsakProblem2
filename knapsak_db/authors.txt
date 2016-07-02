@@ -1,0 +1,7 @@
+create table authors (
+id int not null,
+name varchar(30) not null,
+surname varchar(30) not null,
+futhername varchar(30),
+constraint id_pk primary key (id)
+constraint nsf UNIQUE (name, surname, futhername))

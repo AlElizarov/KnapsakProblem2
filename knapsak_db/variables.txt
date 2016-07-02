@@ -1,0 +1,8 @@
+create table variables(
+id int not null,
+id_task int not null,
+name varchar(100) null,
+resultValue boolean null,
+constraint pk_id primary key(id),
+constraint fk_id_task_in_variables foreign key(id_task) references tasks(id)
+)

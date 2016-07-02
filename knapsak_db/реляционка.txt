@@ -1,0 +1,76 @@
+create table myautoincrement(
+tableName varchar(100) not null,
+maxCurrentId int not null,
+constraint pk_tableName primary key(tableName)
+)
+
+
+create table authors (
+id int not null,
+name varchar(30) not null,
+surname varchar(30) not null,
+futhername varchar(30),
+constraint id_pk primary key (id))
+
+
+create table tasks(
+id int not null,
+canRewrite boolean not null default true,
+id_author int not null,
+isMax boolean not null,
+isEconom boolean not null,
+name varchar(100) not null,
+dateOfCreating Date not null,
+constraint pk_id primary key (id),
+constraint fk_id_author foreign key(id_author) references authors(id))
+
+
+create table criterions(
+id int not null,
+id_task int not null,
+name varchar(100) null,
+unit varchar(100) null,
+constraint pk_id primary key(id),
+constraint fk_id_task_in_criterion foreign key(id_task) references tasks(id)
+)
+
+
+create table limitations(
+id int not null,
+id_task int not null,
+limitValue int not null,
+name varchar(100) null,
+unit varchar(100) null,
+constraint pk_id primary key(id),
+constraint fk_id_task_in_limitation foreign key(id_task) references tasks(id)
+)
+
+
+create table variables(
+id int not null,
+id_task int not null,
+name varchar(100) null,
+resultValue boolean null,
+constraint pk_id primary key(id),
+constraint fk_id_task_in_variables foreign key(id_task) references tasks(id)
+)
+
+
+create table costs(
+id_criterion int not null,
+id_variable int not null,
+cost int not null,
+constraint pk_id_criterion_and_id_variable primary key(id_criterion, id_variable),
+constraint fk_id_criterion foreign key(id_criterion) references criterions(id),
+constraint fk_id_variable_in_costs foreign key(id_variable) references variables(id)
+)
+
+
+create table weights(
+id_limitation int not null,
+id_variable int not null,
+weight int not null,
+constraint pk_id_limitation_and_id_variable primary key(id_limitation, id_variable),
+constraint fk_id_limitation foreign key(id_limitation) references limitations(id),
+constraint fk_id_variable_in_limitations foreign key(id_variable) references variables(id)
+)

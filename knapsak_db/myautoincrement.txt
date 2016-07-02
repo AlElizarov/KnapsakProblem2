@@ -1,0 +1,5 @@
+create table myautoincrement(
+tableName varchar(100) not null,
+maxCurrentId int not null,
+constraint pk_tableName primary key(tableName)
+)
