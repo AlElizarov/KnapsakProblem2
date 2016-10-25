@@ -25,6 +25,7 @@ import viewmodel.areasmodels.MainViewModel;
 public class MainView implements Observer {
 
 	public static void main(String[] args) {
+		//new location
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				try {
